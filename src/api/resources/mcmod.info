@@ -1,0 +1,9 @@
+[{
+  "modid": "civilengineering",
+  "name": "Civil Engineering",
+  "description": "Minecraft Server Matterbridge link",
+  "version": "0.0.1",
+  "mcversion": "1.12.2",
+  "authorList":["Arcanitor"],
+  "credits": "Blame Nikky for talking me into this."
+}]
