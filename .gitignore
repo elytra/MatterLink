@@ -1,0 +1,24 @@
+#Courtesy of Buildcraft
+
+#idea
+*.iml
+*.ipr
+*.iws
+.idea
+out
+
+#eclipse
+.project
+.classpath
+.settings/
+.metadata
+*.launch
+org.*
+bin
+
+#runtime
+run
+run_server
+
+#mac
+.DS_Store
