@@ -17,14 +17,13 @@ public class ServerChatWriter {
         ApiMessage nextMessage = messages.poll();
 
         if (nextMessage != null) {
-            CivilEngineering.logger.info("Processing message");
             String user = nextMessage.getUsername();
             String text = nextMessage.getMessage().trim();
 
             String message;
 
             if (!text.isEmpty()) {
-                if (nextMessage.getEvent() == "user_action") {
+                if (nextMessage.getEvent().equals("user_action")) {
                     message = "* " + user + " " + text;
                 } else {
                     message = "<" + user + "> " + text;

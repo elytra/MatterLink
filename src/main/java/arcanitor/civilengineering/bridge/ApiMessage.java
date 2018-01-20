@@ -19,6 +19,11 @@ public class ApiMessage {
         this.gateway = Config.gateway;
 
     }
+    public ApiMessage(String user, String msg, String event) {
+        this.username = user;
+        this.text = msg;
+        this.event = event;
+    }
 
     public static ApiMessage decode(String json) {
         Gson gson = new Gson();
@@ -43,5 +48,7 @@ public class ApiMessage {
     public String getEvent() {
         return this.event;
     }
+
+
 
 }

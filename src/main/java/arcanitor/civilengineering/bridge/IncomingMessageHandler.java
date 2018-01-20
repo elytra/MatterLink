@@ -11,11 +11,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class MessageHandler implements Runnable {
+public class IncomingMessageHandler implements Runnable {
     private HttpURLConnection connection = null;
 
     public void run() {
-        CivilEngineering.logger.info("Network Thread starting.");
+        CivilEngineering.logger.info("Receiving Network Thread starting.");
         try {
             connect(Config.connectURL,Config.authToken);
             BufferedReader input =
@@ -31,9 +31,10 @@ public class MessageHandler implements Runnable {
 
             if (e instanceof InterruptedException) {
                 connection.disconnect();    //close the connection
-                CivilEngineering.logger.info("Bridge demolished!");
+                CivilEngineering.logger.info("Receiving connection closed.");
             } else if (e instanceof IOException) {
-                CivilEngineering.logger.error("Bridge construction failed!");
+                CivilEngineering.outgoingMessageThread.interrupt();
+                CivilEngineering.logger.error("Error connecting to bridge server!");
                 CivilEngineering.logger.error(e.getMessage());
             }
         }
