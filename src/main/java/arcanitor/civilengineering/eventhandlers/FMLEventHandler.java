@@ -3,6 +3,7 @@ package arcanitor.civilengineering.eventhandlers;
 
 import arcanitor.civilengineering.CivilEngineering;
 import arcanitor.civilengineering.Config;
+import arcanitor.civilengineering.command.BridgeCommand;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -26,6 +27,7 @@ public class FMLEventHandler {
         }
     }
     public static void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new BridgeCommand());
         CivilEngineering.incomingMessageThread.start();
         CivilEngineering.outgoingMessageThread.start();
     }

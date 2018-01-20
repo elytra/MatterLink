@@ -23,6 +23,7 @@ public class UserActionHandler {
             for(String word:args) {
                 message = message + " " + word;
             }
+            message = message.trim();
 
             OutgoingMessageHandler.queue.add(new ApiMessage(user,message,"user_action"));
         }
