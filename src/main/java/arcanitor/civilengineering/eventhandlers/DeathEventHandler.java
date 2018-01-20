@@ -2,6 +2,8 @@ package arcanitor.civilengineering.eventhandlers;
 
 import arcanitor.civilengineering.CivilEngineering;
 import arcanitor.civilengineering.Config;
+import arcanitor.civilengineering.bridge.ApiMessage;
+import arcanitor.civilengineering.bridge.OutgoingMessageHandler;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -16,11 +18,8 @@ public class DeathEventHandler {
             EntityLivingBase entity = event.getEntityLiving();
             if (entity instanceof EntityPlayer) {
                 String message = entity.getCombatTracker().getDeathMessage().getUnformattedText();
-                CivilEngineering.logger.info(message);
+                OutgoingMessageHandler.queue.add(new ApiMessage("Server",message));
             }
         }
-
     }
-
-
 }

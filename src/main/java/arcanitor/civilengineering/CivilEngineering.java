@@ -1,7 +1,8 @@
 package arcanitor.civilengineering;
 
+import arcanitor.civilengineering.bridge.OutgoingMessageHandler;
 import arcanitor.civilengineering.eventhandlers.FMLEventHandler;
-import arcanitor.civilengineering.bridge.MessageHandler;
+import arcanitor.civilengineering.bridge.IncomingMessageHandler;
 import arcanitor.civilengineering.server.ServerChatWriter;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -25,7 +26,8 @@ public class CivilEngineering {
     public static CivilEngineering instance;
 
     public static Logger logger;
-    public static Thread networkThread = new Thread(new MessageHandler());
+    public static Thread incomingMessageThread = new Thread(new IncomingMessageHandler());
+    public static Thread outgoingMessageThread = new Thread(new OutgoingMessageHandler());
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {

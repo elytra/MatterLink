@@ -26,9 +26,11 @@ public class FMLEventHandler {
         }
     }
     public static void serverStarting(FMLServerStartingEvent event) {
-        CivilEngineering.networkThread.start();
+        CivilEngineering.incomingMessageThread.start();
+        CivilEngineering.outgoingMessageThread.start();
     }
     public static void serverStopping(FMLServerStoppingEvent event) {
-        CivilEngineering.networkThread.interrupt();
+        CivilEngineering.incomingMessageThread.interrupt();
+        CivilEngineering.outgoingMessageThread.interrupt();
     }
 }
