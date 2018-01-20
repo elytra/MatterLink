@@ -1,6 +1,7 @@
 package arcanitor.civilengineering;
 
 import arcanitor.civilengineering.eventhandlers.FMLEventHandler;
+import arcanitor.civilengineering.network.NetworkHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +23,7 @@ public class CivilEngineering {
     public static CivilEngineering instance;
 
     public static Logger logger;
+    public static Thread networkThread = new Thread(new NetworkHandler());
 
 
     @Mod.EventHandler
@@ -47,4 +49,9 @@ public class CivilEngineering {
         FMLEventHandler.serverStarting(event);
     }
 
+    @Mod.EventHandler
+    public void serverStopping(FMLServerStoppingEvent event) {
+        logger.info("Demolishing chat bridge.");
+        FMLEventHandler.serverStopping(event);
+    }
 }
