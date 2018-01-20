@@ -30,10 +30,10 @@ public class FMLEventHandler {
 
     public static void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new BridgeCommand());
-        CivilEngineering.incomingMessageThread.start();
+        CivilEngineering.MessageNetworkThread.start();
     }
 
     public static void serverStopping(FMLServerStoppingEvent event) {
-        CivilEngineering.incomingMessageThread.interrupt();
+        CivilEngineering.MessageNetworkThread.interrupt();
     }
 }
