@@ -10,6 +10,7 @@ public class Config {
 
     public static boolean relayDeathEvents = false;
     public static boolean relayAdvancements = false; //unused for now
+    public static boolean relayJoinLeave = false;
 
     public static String connectURL = "localhost";
     public static String authToken = "";
@@ -36,13 +37,19 @@ public class Config {
                 "relayDeathEvents",
                 CATEGORY_RELAY_OPTIONS,
                 false,
-                "Set to true to send death messages over the chat relay."
+                "Relay player death messages"
         );
         relayAdvancements = cfg.getBoolean(
                 "relayAdvancements",
                 CATEGORY_RELAY_OPTIONS,
                 false,
-                "This option does nothing as advancement relays are not implemented."
+                "Relay player advancements [NOT IMPLEMENTED]"
+        );
+        relayJoinLeave = cfg.getBoolean(
+                "relayJoinLeave",
+                CATEGORY_RELAY_OPTIONS,
+                false,
+                "Relay when a player joins or leaves the game [NOT IMPLEMENTED]"
         );
 
         connectURL = cfg.getString(
