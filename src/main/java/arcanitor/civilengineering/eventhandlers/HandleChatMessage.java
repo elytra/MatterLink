@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod.EventBusSubscriber
 public class HandleChatMessage {
     @SubscribeEvent
-    public static void chatMessageGlobal(ServerChatEvent event) {
+    public static void handleServerChatEvent (ServerChatEvent event) {
         CivilEngineering.logger.info("Message on server: "+event.getMessage()+" sent by "+event.getUsername());
     }
 }
