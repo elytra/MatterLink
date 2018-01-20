@@ -1,11 +1,9 @@
 package arcanitor.civilengineering.eventhandlers;
 
-import arcanitor.civilengineering.CivilEngineering;
 import arcanitor.civilengineering.bridge.ApiMessage;
-import arcanitor.civilengineering.bridge.OutgoingMessageHandler;
+import arcanitor.civilengineering.bridge.MessageHandler;
 import net.minecraft.command.server.CommandEmote;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -25,7 +23,7 @@ public class UserActionHandler {
             }
             message = message.trim();
 
-            OutgoingMessageHandler.queue.add(new ApiMessage(user,message,"user_action"));
+            MessageHandler.xmitQueue.add(new ApiMessage(user,message,"user_action"));
         }
     }
 }

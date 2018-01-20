@@ -21,18 +21,19 @@ public class FMLEventHandler {
         config = new Configuration(new File(directory.getPath(), "CivilEngineering.cfg"));
         Config.readConfig();
     }
+
     public static void postInit(FMLPostInitializationEvent event) {
         if (config.hasChanged()) {
             config.save();
         }
     }
+
     public static void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new BridgeCommand());
         CivilEngineering.incomingMessageThread.start();
-        CivilEngineering.outgoingMessageThread.start();
     }
+
     public static void serverStopping(FMLServerStoppingEvent event) {
         CivilEngineering.incomingMessageThread.interrupt();
-        CivilEngineering.outgoingMessageThread.interrupt();
     }
 }

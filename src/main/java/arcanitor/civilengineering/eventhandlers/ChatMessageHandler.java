@@ -1,8 +1,7 @@
 package arcanitor.civilengineering.eventhandlers;
 
-import arcanitor.civilengineering.CivilEngineering;
 import arcanitor.civilengineering.bridge.ApiMessage;
-import arcanitor.civilengineering.bridge.OutgoingMessageHandler;
+import arcanitor.civilengineering.bridge.MessageHandler;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -13,6 +12,6 @@ public class ChatMessageHandler {
     public static void handleServerChatEvent (ServerChatEvent event) {
         String message = event.getMessage().trim();
         if (!message.isEmpty())
-            OutgoingMessageHandler.queue.add(new ApiMessage(event.getUsername(),message));
+            MessageHandler.xmitQueue.add(new ApiMessage(event.getUsername(),message));
     }
 }
