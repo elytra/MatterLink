@@ -3,9 +3,11 @@ package arcanitor.civilengineering.eventhandlers;
 
 import arcanitor.civilengineering.CivilEngineering;
 import arcanitor.civilengineering.Config;
+import arcanitor.civilengineering.network.NetworkHandler;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 import java.io.File;
 
@@ -22,5 +24,8 @@ public class FMLEventHandler {
         if (config.hasChanged()) {
             config.save();
         }
+    }
+    public static void serverStarting(FMLServerStartingEvent event) {
+        (new Thread(new NetworkHandler())).start();
     }
 }

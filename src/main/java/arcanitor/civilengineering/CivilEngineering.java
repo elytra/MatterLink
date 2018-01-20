@@ -2,9 +2,7 @@ package arcanitor.civilengineering;
 
 import arcanitor.civilengineering.eventhandlers.FMLEventHandler;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Logger;
 
 @Mod(
@@ -40,9 +38,13 @@ public class CivilEngineering {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        logger.info("Bridge building post-init.");
-
         FMLEventHandler.postInit(event);
+    }
+
+    @Mod.EventHandler
+    public void serverStarting(FMLServerStartingEvent event){
+        logger.info("Building chat bridge");
+        FMLEventHandler.serverStarting(event);
     }
 
 }
