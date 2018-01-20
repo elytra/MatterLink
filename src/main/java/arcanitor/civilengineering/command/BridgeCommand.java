@@ -1,11 +1,10 @@
 package arcanitor.civilengineering.command;
 
 import arcanitor.civilengineering.CivilEngineering;
+import arcanitor.civilengineering.bridge.MessageHandler;
 import com.google.common.collect.Lists;
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 
 import javax.annotation.Nonnull;
@@ -44,15 +43,11 @@ public class BridgeCommand extends CommandBase {
         String cmd = args[0];
         if (cmd.toLowerCase().equals("connect")) {
             if(!CivilEngineering.incomingMessageThread.isAlive()) {
+                CivilEngineering.incomingMessageThread = new Thread(new MessageHandler());
                 CivilEngineering.incomingMessageThread.start();
             }
-            if(!CivilEngineering.outgoingMessageThread.isAlive()){
-                CivilEngineering.outgoingMessageThread.start();
-            }
-
         } else if (cmd.toLowerCase().equals("disconnect")) {
             CivilEngineering.incomingMessageThread.interrupt();
-            CivilEngineering.outgoingMessageThread.interrupt();
         }
     }
 

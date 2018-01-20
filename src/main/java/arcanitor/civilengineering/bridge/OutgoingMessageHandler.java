@@ -67,10 +67,6 @@ public class OutgoingMessageHandler implements Runnable {
         post.flush();
         post.close();
 
-        int response = connection.getResponseCode();
-
-        connection.disconnect();
-
-        return response;
+        return connection.getResponseCode();
     }
 }
