@@ -6,7 +6,13 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = CivilEngineering.MODID, name = CivilEngineering.NAME, version = CivilEngineering.VERSION, serverSideOnly = true,useMetadata = true)
+@Mod(
+        modid = CivilEngineering.MODID,
+        name = CivilEngineering.NAME,
+        version = CivilEngineering.VERSION,
+        serverSideOnly = true,
+        useMetadata = true
+)
 public class CivilEngineering {
     public static final String MODID = "civilengineering";
     public static final String NAME = "Civil Engineering";
