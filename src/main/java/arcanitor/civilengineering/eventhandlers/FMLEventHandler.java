@@ -3,7 +3,6 @@ package arcanitor.civilengineering.eventhandlers;
 
 import arcanitor.civilengineering.CivilEngineering;
 import arcanitor.civilengineering.Config;
-import arcanitor.civilengineering.network.NetworkHandler;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;

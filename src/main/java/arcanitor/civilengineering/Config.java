@@ -1,7 +1,6 @@
 package arcanitor.civilengineering;
 
 import arcanitor.civilengineering.eventhandlers.FMLEventHandler;
-import arcanitor.civilengineering.network.NetworkHandler;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
@@ -13,6 +12,8 @@ public class Config {
     public static boolean relayAdvancements = false; //unused for now
 
     public static String connectURL = "localhost";
+    public static String authToken = "";
+    public static String gateway = "";
 
     public static void readConfig() {
         Configuration config = FMLEventHandler.config;
@@ -43,12 +44,26 @@ public class Config {
                 false,
                 "This option does nothing as advancement relays are not implemented."
         );
+
         connectURL = cfg.getString(
                 "connectURL",
                 CATEGORY_CONNECTION,
-                "localhost",
-                "The URL or IP address of the bridge server"
+                "http://example.com:1234",
+                "The URL or IP address of the bridge server, ex. http://example.com:1234"
         );
+        authToken = cfg.getString(
+                "auth_token",
+                CATEGORY_CONNECTION,
+                "",
+                "Auth token used to connect to the bridge server"
+        );
+        gateway = cfg.getString(
+                "gateway",
+                CATEGORY_CONNECTION,
+                "",
+                "MatterBridge gateway"
+        );
+
 
     }
 
