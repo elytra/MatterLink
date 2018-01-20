@@ -26,7 +26,7 @@ public class MessageHandler implements Runnable {
             while(true) {
                 transmitFromQueue();
                 receiveToQueue();
-                sleep(50);
+                sleep(1000);
             }
         } catch (Exception e) {
 
@@ -35,6 +35,7 @@ public class MessageHandler implements Runnable {
             } else if (e instanceof IOException) {
                 CivilEngineering.logger.error("Error connecting to bridge server!");
                 CivilEngineering.logger.error(e.getMessage());
+
             }
         }
 
@@ -71,6 +72,7 @@ public class MessageHandler implements Runnable {
                 CivilEngineering.logger.error("Server returned "+connection.getResponseCode());
                 break;
             }
+            nextMessage = xmitQueue.poll();
         }
 
     }
