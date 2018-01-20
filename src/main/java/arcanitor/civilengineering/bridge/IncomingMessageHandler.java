@@ -22,9 +22,10 @@ public class IncomingMessageHandler implements Runnable {
                     new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String line;
             while ((line = input.readLine( )) != null) {
+                if(CivilEngineering.incomingMessageThread.isInterrupted()) throw new InterruptedException();
+
                 CivilEngineering.logger.debug(line);
                 ServerChatWriter.messages.add(ApiMessage.decode(line));
-                Thread.sleep(1);
             }
 
         } catch (Exception e) {

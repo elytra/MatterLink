@@ -26,8 +26,8 @@ public class OutgoingMessageHandler implements Runnable {
                         CivilEngineering.logger.error("Server returned error "+response);
                         break;
                     }
-                    sleep(50);
                 }
+                sleep(50);
             }
         } catch (Exception e) {
             if (e instanceof InterruptedException) {
@@ -44,7 +44,7 @@ public class OutgoingMessageHandler implements Runnable {
     public int postMessage(ApiMessage message) throws IOException {
 
         //open a connection
-        URL url = new URL(Config.connectURL + "/api/messages");
+        URL url = new URL(Config.connectURL + "/api/message");
         URLConnection urlConnection = url.openConnection();
         HttpURLConnection connection = (HttpURLConnection)urlConnection;
 
@@ -68,7 +68,6 @@ public class OutgoingMessageHandler implements Runnable {
         post.close();
 
         int response = connection.getResponseCode();
-        CivilEngineering.logger.info(response);
 
         connection.disconnect();
 
