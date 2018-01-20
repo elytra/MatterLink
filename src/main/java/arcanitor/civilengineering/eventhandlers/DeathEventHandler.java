@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
-public class HandleDeath {
+public class DeathEventHandler {
     @SubscribeEvent
     public static void handleLivingDeathEvent (LivingDeathEvent event) {
         if(Config.relayDeathEvents) {

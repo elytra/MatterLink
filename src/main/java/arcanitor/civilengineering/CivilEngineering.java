@@ -1,13 +1,11 @@
 package arcanitor.civilengineering;
 
-import net.minecraftforge.common.config.Configuration;
+import arcanitor.civilengineering.eventhandlers.FMLEventHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
-
-import java.io.File;
 
 @Mod(
         modid = CivilEngineering.MODID,
@@ -26,17 +24,13 @@ public class CivilEngineering {
     public static CivilEngineering instance;
 
     public static Logger logger;
-    public static Configuration config;
+
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
 
-        logger.info("Reading bridge blueprints...");
-
-        File directory = event.getModConfigurationDirectory();
-        config = new Configuration(new File(directory.getPath(), "CivilEngineering.cfg"));
-        Config.readConfig();
+        FMLEventHandler.preInit(event);
     }
 
     @Mod.EventHandler
@@ -45,11 +39,10 @@ public class CivilEngineering {
     }
 
     @Mod.EventHandler
-    public void init(FMLPostInitializationEvent event) {
+    public void postInit(FMLPostInitializationEvent event) {
         logger.info("Bridge building post-init.");
-        if (config.hasChanged()) {
-            config.save();
-        }
+
+        FMLEventHandler.postInit(event);
     }
 
 }
