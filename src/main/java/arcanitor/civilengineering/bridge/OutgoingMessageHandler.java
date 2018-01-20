@@ -44,7 +44,7 @@ public class OutgoingMessageHandler implements Runnable {
     public int postMessage(ApiMessage message) throws IOException {
 
         //open a connection
-        URL url = new URL(Config.connectURL + "api/messages");
+        URL url = new URL(Config.connectURL + "/api/messages");
         URLConnection urlConnection = url.openConnection();
         HttpURLConnection connection = (HttpURLConnection)urlConnection;
 
