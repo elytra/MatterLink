@@ -1,5 +1,7 @@
 package arcanitor.civilengineering;
 
+import arcanitor.civilengineering.eventhandlers.FMLEventHandler;
+import arcanitor.civilengineering.network.NetworkHandler;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
@@ -13,7 +15,7 @@ public class Config {
     public static String connectURL = "localhost";
 
     public static void readConfig() {
-        Configuration config = CivilEngineering.config;
+        Configuration config = FMLEventHandler.config;
         try {
             config.load();
             initConfig(config);
