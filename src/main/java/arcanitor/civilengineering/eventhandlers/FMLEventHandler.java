@@ -8,6 +8,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 import java.io.File;
 
@@ -26,6 +27,9 @@ public class FMLEventHandler {
         }
     }
     public static void serverStarting(FMLServerStartingEvent event) {
-        (new Thread(new NetworkHandler())).start();
+        CivilEngineering.networkThread.start();
+    }
+    public static void serverStopping(FMLServerStoppingEvent event) {
+        CivilEngineering.networkThread.interrupt();
     }
 }
