@@ -42,12 +42,12 @@ public class BridgeCommand extends CommandBase {
         }
         String cmd = args[0];
         if (cmd.toLowerCase().equals("connect")) {
-            if(!CivilEngineering.incomingMessageThread.isAlive()) {
-                CivilEngineering.incomingMessageThread = new Thread(new MessageHandler());
-                CivilEngineering.incomingMessageThread.start();
+            if(!CivilEngineering.MessageNetworkThread.isAlive()) {
+                CivilEngineering.MessageNetworkThread = new Thread(new MessageHandler());
+                CivilEngineering.MessageNetworkThread.start();
             }
         } else if (cmd.toLowerCase().equals("disconnect")) {
-            CivilEngineering.incomingMessageThread.interrupt();
+            CivilEngineering.MessageNetworkThread.interrupt();
         }
     }
 

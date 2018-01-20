@@ -25,8 +25,7 @@ public class CivilEngineering {
     public static CivilEngineering instance;
 
     public static Logger logger;
-    public static Thread incomingMessageThread = new Thread(new MessageHandler());
-    //public static Thread outgoingMessageThread = new Thread(new OutgoingMessageHandler());
+    public static Thread MessageNetworkThread = new Thread(new MessageHandler());
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -48,13 +47,11 @@ public class CivilEngineering {
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event){
-        logger.info("Building chat bridge");
         FMLEventHandler.serverStarting(event);
     }
 
     @Mod.EventHandler
     public void serverStopping(FMLServerStoppingEvent event) {
-        logger.info("Demolishing chat bridge.");
         FMLEventHandler.serverStopping(event);
     }
 }

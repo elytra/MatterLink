@@ -33,7 +33,7 @@ public class OutgoingMessageHandler implements Runnable {
             if (e instanceof InterruptedException) {
                 CivilEngineering.logger.info("Sending connection closed.");
             } else if (e instanceof IOException) {
-                CivilEngineering.incomingMessageThread.interrupt();
+                CivilEngineering.MessageNetworkThread.interrupt();
                 CivilEngineering.logger.error("Error connecting to bridge server!");
                 CivilEngineering.logger.error(e.getMessage());
             }
