@@ -1,10 +1,8 @@
 package civilengineering.bridge
 
-import civilengineering.Config
 import com.google.gson.Gson
-import java.util.*
 
-data class ApiMessage (
+data class ApiMessage(
         val text: String = "",
         val channel: String = "",
         val username: String = "",
