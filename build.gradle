@@ -1,18 +1,24 @@
 buildscript {
+    ext.kotlin_version = '1.2.20'
     repositories {
         jcenter()
         maven { url = "http://files.minecraftforge.net/maven" }
+        mavenCentral()
     }
     dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
     }
 }
+apply plugin: 'kotlin'
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.github.johnrengelman.shadow'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
 version = "0.0.1"
-group = "arcanitor.civilengineering" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "ivilengineering" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CivilEngineering"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -33,7 +39,19 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+repositories {
+    jcenter()
+    maven {
+        url = 'http://unascribed.com/maven/releases'
+    }
+    maven {
+        url "http://maven.shadowfacts.net/"
+    }
+}
+
 dependencies {
+    compile group: "net.shadowfacts", name: "Forgelin", version: "1.6.0"
+    compile group:  'io.github.microutils', name: 'kotlin-logging', version: '+'
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
@@ -57,6 +75,16 @@ dependencies {
 
 }
 
+shadowJar {
+    relocate 'org.jetbrains.annotations', 'ivilengineering.jetbrains.annotations'
+    classifier ''
+    configurations = [project.configurations.shadow]
+}
+
+reobf {
+    shadowJar { mappingType = 'SEARGE' }
+}
+
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
@@ -74,4 +102,8 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+}
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
 }
