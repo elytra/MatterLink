@@ -66,7 +66,7 @@ object CivilEngineering {
         if (config.hasChanged()) {
             config.save()
         }
-        MinecraftForge.EVENT_BUS.register(ServerChatHelper::class.java)
+//        MinecraftForge.EVENT_BUS.register(ServerChatHelper::class.java)
 
     }
 
@@ -77,6 +77,7 @@ object CivilEngineering {
         MessageHandler.start()
 
         //maybe try registering them manually
+        MinecraftForge.EVENT_BUS.register(ServerChatHelper())
         MinecraftForge.EVENT_BUS.register(ChatMessageHandler())
         MinecraftForge.EVENT_BUS.register(DeathEventHandler())
         MinecraftForge.EVENT_BUS.register(UserActionHandler())

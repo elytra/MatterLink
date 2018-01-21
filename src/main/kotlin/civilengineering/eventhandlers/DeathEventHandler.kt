@@ -14,7 +14,7 @@ class DeathEventHandler {
             val entity = event.entityLiving
             if (entity is EntityPlayer) {
                 val message = entity.getCombatTracker().deathMessage.unformattedText
-                MessageHandler.transmit(ApiMessage("Server", message))
+                MessageHandler.transmit(ApiMessage(username = "Server", text = message))
             }
         }
     }

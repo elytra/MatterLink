@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 object MessageHandler {
 
     private fun createThread(): CancellableConnectionFollowThread {
+        CivilEngineering.logger.info("building bridge")
         return CancellableConnectionFollowThread(
                 {
                     CivilEngineering.logger.info("Connecting to bridge server @ " + Config.connectURL)
@@ -23,7 +24,7 @@ object MessageHandler {
                     rcvQueue.add(
                             ApiMessage.decode(it)
                     )
-                    CivilEngineering.logger.trace("received: " + it)
+                    CivilEngineering.logger.info("received: " + it)
                 }
         )
     }
@@ -37,21 +38,22 @@ object MessageHandler {
     fun transmit(msg: ApiMessage) {
         CivilEngineering.logger.info("transmitting " + msg)
         transmitMessage(msg)
-        //TODO: create thread with Runnable(sendstuff).execute()
     }
 
     fun stop() {
+        CivilEngineering.logger.info("bridge closing")
+//        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
         cancellableThread.abort()
-        CivilEngineering.logger.info("bridge closed ")
+        CivilEngineering.logger.info("bridge closed")
     }
 
     fun start(): Boolean {
-        if (cancellableThread.isInterrupted) {
-            CivilEngineering.logger.info("rebuilding bridge")
+        if (cancellableThread.cancelled) {
             cancellableThread = createThread()
         }
         if (!cancellableThread.isAlive) {
             cancellableThread.start()
+//            MessageHandler.transmit(ApiMessage(text="bridge connected", username="Server"))
             return true
         }
         return false

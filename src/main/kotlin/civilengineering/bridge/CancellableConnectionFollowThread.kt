@@ -10,10 +10,11 @@ import java.net.HttpURLConnection
  */
 
 class CancellableConnectionFollowThread(httpConnClosure: () -> HttpURLConnection, private val mhandler: (String) -> Unit) : Thread() {
-    val cancelGuard = Object()
-    var waitingOnNetwork = true
+    private val cancelGuard = Object()
+    private var waitingOnNetwork = true
     var cancelled = false
-    val httpConn = httpConnClosure()
+        private set
+    private val httpConn = httpConnClosure()
 
     override fun run() {
         try {

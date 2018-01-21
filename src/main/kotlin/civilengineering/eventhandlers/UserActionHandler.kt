@@ -21,7 +21,7 @@ class UserActionHandler {
             }
             message = message.trim { it <= ' ' }
 
-            MessageHandler.transmit(ApiMessage(user, message, "user_action"))
+            MessageHandler.transmit(ApiMessage(username=user, text=message, event="user_action"))
         }
     }
 }

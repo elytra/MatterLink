@@ -6,10 +6,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 
-object ServerChatHelper {
+class ServerChatHelper {
     @SubscribeEvent
     fun onServerUpdate(event: TickEvent.ServerTickEvent) {
-        if(MessageHandler.rcvQueue.isNotEmpty())
+        if (MessageHandler.rcvQueue.isNotEmpty())
             CivilEngineering.logger.info("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
 
@@ -20,7 +20,7 @@ object ServerChatHelper {
             val message: String
 
             if (!text.isEmpty()) {
-                message = when(nextMessage.event) {
+                message = when (nextMessage.event) {
                     "user_action" -> "* $user $text"
                     else -> "<$user> $text"
                 }

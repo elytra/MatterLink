@@ -9,7 +9,7 @@ class ChatMessageHandler {
     @SubscribeEvent
     fun handleServerChatEvent(event: ServerChatEvent) {
         val message = event.message.trim { it <= ' ' }
-        if (!message.isEmpty())
-            MessageHandler.transmit(ApiMessage(event.username, message))
+        if (message.isNotBlank())
+            MessageHandler.transmit(ApiMessage(username = event.username, text = message))
     }
 }
