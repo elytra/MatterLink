@@ -9,7 +9,7 @@ import java.net.HttpURLConnection
  * @version 1.0
  */
 
-class CancellableConnectionFollowThread (val httpConnClosure: () -> HttpURLConnection, val mhandler: (String) -> Unit): Thread() {
+class CancellableConnectionFollowThread (httpConnClosure: () -> HttpURLConnection, private val mhandler: (String) -> Unit): Thread() {
     val cancelGuard = Object()
     var waitingOnNetwork = true
     var cancelled = false

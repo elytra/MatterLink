@@ -7,12 +7,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 
 object ServerChatHelper {
-    //public static ConcurrentLinkedQueue<ApiMessage> messages = new ConcurrentLinkedQueue();
-
     @SubscribeEvent
     fun onServerUpdate(event: TickEvent.ServerTickEvent) {
         if(MessageHandler.rcvQueue.isNotEmpty())
-            CivilEngineering.logger!!.info("incoming: " + MessageHandler.rcvQueue.toString())
+            CivilEngineering.logger.info("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
 
         if (nextMessage != null) {

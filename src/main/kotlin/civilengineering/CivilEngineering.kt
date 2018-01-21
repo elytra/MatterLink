@@ -41,7 +41,8 @@ object CivilEngineering {
     }
 
     var config: Configuration = Configuration()
-//    var messageNetworkThread = Thread(MessageHandler())
+
+    //create fake logger to get around Nullability
     var logger: Logger = SimpleLogger ("",
             Level.OFF,
             false,
@@ -56,9 +57,9 @@ object CivilEngineering {
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent) {
         logger = event.modLog
-        logger!!.info("loading logger")
+        logger.info("loading logger")
 
-        CivilEngineering.logger!!.info("Reading bridge blueprints...")
+        CivilEngineering.logger.info("Reading bridge blueprints...")
         val directory = event.modConfigurationDirectory
         config = Configuration(File(directory.path, "CivilEngineering.cfg"))
         Config.readConfig()
@@ -66,7 +67,7 @@ object CivilEngineering {
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
-        logger!!.info("Bridge building init.")
+        logger.info("Bridge building init.")
     }
 
     @Mod.EventHandler
@@ -81,7 +82,7 @@ object CivilEngineering {
     @Mod.EventHandler
     fun serverStarting(event: FMLServerStartingEvent) {
         event.registerServerCommand(BridgeCommand())
-        logger!!.info("Bridge building starting.")
+        logger.info("Bridge building starting.")
         MessageHandler.start()
 
         //maybe try registering them manually
@@ -92,7 +93,7 @@ object CivilEngineering {
 
     @Mod.EventHandler
     fun serverStopping(event: FMLServerStoppingEvent) {
-        logger!!.info("Bridge shutting down.")
+        logger.info("Bridge shutting down.")
         MessageHandler.stop()
     }
 }
