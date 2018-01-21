@@ -3,10 +3,8 @@ package civilengineering.eventhandlers
 import civilengineering.Config
 import civilengineering.bridge.ApiMessage
 import civilengineering.bridge.MessageHandler
-import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.event.entity.living.LivingDeathEvent
-import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 class DeathEventHandler {

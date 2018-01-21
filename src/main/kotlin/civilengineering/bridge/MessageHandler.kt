@@ -8,7 +8,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.ConcurrentLinkedQueue
 
-
 object MessageHandler {
 
     private fun createThread(): CancellableConnectionFollowThread {

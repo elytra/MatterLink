@@ -9,7 +9,7 @@ import java.net.HttpURLConnection
  * @version 1.0
  */
 
-class CancellableConnectionFollowThread (httpConnClosure: () -> HttpURLConnection, private val mhandler: (String) -> Unit): Thread() {
+class CancellableConnectionFollowThread(httpConnClosure: () -> HttpURLConnection, private val mhandler: (String) -> Unit) : Thread() {
     val cancelGuard = Object()
     var waitingOnNetwork = true
     var cancelled = false
@@ -22,7 +22,7 @@ class CancellableConnectionFollowThread (httpConnClosure: () -> HttpURLConnectio
             httpConn.requestMethod = "GET"
 
             InputStreamReader(httpConn.inputStream).useLines {
-                it.forEach{
+                it.forEach {
                     synchronized(cancelGuard) {
                         if (cancelled) return
                         waitingOnNetwork = false

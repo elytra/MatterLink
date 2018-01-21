@@ -12,16 +12,10 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.Marker
-import org.apache.logging.log4j.message.Message
-import org.apache.logging.log4j.message.MessageFactory
 import org.apache.logging.log4j.message.SimpleMessageFactory
 import org.apache.logging.log4j.simple.SimpleLogger
-import org.apache.logging.log4j.spi.AbstractLogger
 import org.apache.logging.log4j.util.PropertiesUtil
 import java.io.File
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatterBuilder
 import java.util.*
 
 const val MODID = "civilengineering"
@@ -37,13 +31,10 @@ const val VERSION = "0.0.1"
         modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter"
 )
 object CivilEngineering {
-    init {
-    }
-
     var config: Configuration = Configuration()
 
     //create fake logger to get around Nullability
-    var logger: Logger = SimpleLogger ("",
+    var logger: Logger = SimpleLogger("",
             Level.OFF,
             false,
             false,

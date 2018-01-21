@@ -1,6 +1,5 @@
 package civilengineering.command
 
-import civilengineering.CivilEngineering
 import civilengineering.*
 import civilengineering.CivilEngineering.logger
 import civilengineering.bridge.MessageHandler
