@@ -7,7 +7,6 @@ import civilengineering.eventhandlers.ChatMessageHandler
 import civilengineering.eventhandlers.DeathEventHandler
 import civilengineering.eventhandlers.UserActionHandler
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.common.config.Configuration
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
 import org.apache.logging.log4j.Level
@@ -15,7 +14,6 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.message.SimpleMessageFactory
 import org.apache.logging.log4j.simple.SimpleLogger
 import org.apache.logging.log4j.util.PropertiesUtil
-import java.io.File
 import java.util.*
 
 const val MODID = "civilengineering"
@@ -31,8 +29,6 @@ const val VERSION = "0.0.1"
         modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter"
 )
 object CivilEngineering {
-    var config: Configuration = Configuration()
-
     //create fake logger to get around Nullability
     var logger: Logger = SimpleLogger("",
             Level.OFF,
@@ -50,10 +46,7 @@ object CivilEngineering {
         logger = event.modLog
         logger.info("loading logger")
 
-        CivilEngineering.logger.info("Reading bridge blueprints...")
-        val directory = event.modConfigurationDirectory
-        config = Configuration(File(directory.path, "CivilEngineering.cfg"))
-        Config.readConfig()
+        CivilEngineeringConfig(event.modConfigurationDirectory)
     }
 
     @Mod.EventHandler
@@ -63,9 +56,6 @@ object CivilEngineering {
 
     @Mod.EventHandler
     fun postInit(event: FMLPostInitializationEvent) {
-        if (config.hasChanged()) {
-            config.save()
-        }
 //        MinecraftForge.EVENT_BUS.register(ServerChatHelper::class.java)
 
     }

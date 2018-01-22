@@ -1,12 +1,12 @@
 package civilengineering.bridge
 
-import civilengineering.Config
+import civilengineering.cfg
 import com.google.gson.Gson
 
 data class ApiMessage(
         val username: String = "",
         val text: String = "",
-        val gateway: String = Config.gateway,
+        val gateway: String = cfg!!.connect.gateway,
         val channel: String = "",
         val userid: String = "",
         val avatar: String = "",
@@ -17,15 +17,15 @@ data class ApiMessage(
         val id: String = ""
 //        val Extra: Any? = null
 ) {
-    fun encode(): String {
-        return gson.toJson(this)
-    }
-
     companion object {
         val gson = Gson()
 
         fun decode(json: String): ApiMessage {
             return gson.fromJson(json, ApiMessage::class.java)
         }
+    }
+
+    fun encode(): String {
+        return gson.toJson(this)
     }
 }
