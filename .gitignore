@@ -6,6 +6,7 @@
 *.iws
 .idea
 out
+build
 
 #eclipse
 .project
@@ -15,6 +16,9 @@ out
 *.launch
 org.*
 bin
+
+#gradle
+.gradle
 
 #runtime
 run
