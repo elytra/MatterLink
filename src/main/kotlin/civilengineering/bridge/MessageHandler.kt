@@ -1,24 +1,31 @@
 package civilengineering.bridge
 
 import civilengineering.CivilEngineering
-import civilengineering.Config
-import java.io.DataOutputStream
+import civilengineering.cfg
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.client.methods.HttpRequestBase
+import org.apache.http.entity.ContentType
+import org.apache.http.entity.StringEntity
+import org.apache.http.impl.client.HttpClients
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.concurrent.ConcurrentLinkedQueue
+
 
 object MessageHandler {
 
-    private fun createThread(): CancellableConnectionFollowThread {
+    fun HttpRequestBase.authorize() {
+        if (cfg!!.connect.authToken.isNotEmpty() && getHeaders("Authorization").isEmpty())
+            setHeader("Authorization", "Bearer " + cfg!!.connect.authToken)
+    }
+
+    private fun createThread(): HttpStreamConnection {
         CivilEngineering.logger.info("building bridge")
-        return CancellableConnectionFollowThread(
+        return HttpStreamConnection(
                 {
-                    CivilEngineering.logger.info("Connecting to bridge server @ " + Config.connectURL)
-                    val httpConn = URL(Config.connectURL + "/api/stream").openConnection() as HttpURLConnection
-                    if (Config.authToken.isNotBlank())
-                        httpConn.setRequestProperty("Authorization", "Bearer ${Config.authToken}")
-                    httpConn
+                    HttpGet(cfg!!.connect.url + "/api/stream").apply {
+                        authorize()
+                    }
                 },
                 {
                     rcvQueue.add(
@@ -29,9 +36,7 @@ object MessageHandler {
         )
     }
 
-    private var cancellableThread: CancellableConnectionFollowThread = createThread()
-
-    private var xmitQueue = ConcurrentLinkedQueue<ApiMessage>()
+    private var streamConnection: HttpStreamConnection = createThread()
 
     var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
 
@@ -43,16 +48,17 @@ object MessageHandler {
     fun stop() {
         CivilEngineering.logger.info("bridge closing")
 //        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
-        cancellableThread.abort()
+        streamConnection.close()
+
         CivilEngineering.logger.info("bridge closed")
     }
 
     fun start(): Boolean {
-        if (cancellableThread.cancelled) {
-            cancellableThread = createThread()
+        if (streamConnection.cancelled) {
+            streamConnection = createThread()
         }
-        if (!cancellableThread.isAlive) {
-            cancellableThread.start()
+        if (!streamConnection.isAlive) {
+            streamConnection.start()
 //            MessageHandler.transmit(ApiMessage(text="bridge connected", username="Server"))
             return true
         }
@@ -62,31 +68,16 @@ object MessageHandler {
     @Throws(IOException::class)
     private fun transmitMessage(message: ApiMessage) {
         //open a connection
-        val url = URL(Config.connectURL + "/api/message")
-        val urlConnection = url.openConnection()
-        val connection = urlConnection as HttpURLConnection
+        val client = HttpClients.createDefault()
+        val post = HttpPost(cfg!!.connect.url + "/api/message")
 
-        //configure the connection
-        connection.allowUserInteraction = false
-        connection.instanceFollowRedirects = true
-        connection.setRequestProperty("Content-Type", "application/json")
-        connection.requestMethod = "POST"
-        if (Config.authToken.isNotEmpty()) {
-            connection.setRequestProperty("Authorization", "Bearer " + Config.authToken)
-        }
+        post.entity = StringEntity(message.encode(), ContentType.APPLICATION_JSON)
+        post.authorize()
 
-        //encode the ApiMessage for sending
-        val json = message.encode()
-
-        //send the message
-        connection.doOutput = true
-        val post = DataOutputStream(connection.outputStream)
-        post.writeBytes(json)
-        post.flush()
-        post.close()
-
-        if (connection.responseCode != 200) {
-            CivilEngineering.logger.error("Server returned " + connection.responseCode)
+        val response = client.execute(post)
+        val code = response.statusLine.statusCode
+        if (code != 200) {
+            CivilEngineering.logger.error("Server returned $code for $post")
         }
     }
 }
