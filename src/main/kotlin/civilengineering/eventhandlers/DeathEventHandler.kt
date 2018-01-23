@@ -13,7 +13,8 @@ class DeathEventHandler {
         if (cfg!!.relay.deathEvents) {
             val entity = event.entityLiving
             if (entity is EntityPlayer) {
-                val message = entity.getCombatTracker().deathMessage.unformattedText
+                var message: String = entity.getCombatTracker().deathMessage.unformattedText
+                message = message[0].toString() + '\u200b' + message.substring(1) //antiping
                 MessageHandler.transmit(ApiMessage(username = "Server", text = message))
             }
         }
