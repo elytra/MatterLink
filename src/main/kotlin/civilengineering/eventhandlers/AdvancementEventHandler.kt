@@ -1,9 +1,6 @@
 package civilengineering.eventhandlers
 
-import civilengineering.Util.antiping
-import civilengineering.CivilEngineering
-import civilengineering.CivilEngineeringConfig
-import civilengineering.Util
+import civilengineering.util.Util.antiping
 import civilengineering.bridge.ApiMessage
 import civilengineering.bridge.MessageHandler
 import civilengineering.cfg

@@ -2,7 +2,7 @@ package civilengineering.eventhandlers
 
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.PlayerEvent
-import civilengineering.Util.antiping
+import civilengineering.util.Util.antiping
 import civilengineering.bridge.ApiMessage
 import civilengineering.bridge.MessageHandler
 import civilengineering.cfg
