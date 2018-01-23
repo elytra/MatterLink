@@ -3,9 +3,11 @@ package civilengineering
 import civilengineering.bridge.MessageHandler
 import civilengineering.bridge.ServerChatHelper
 import civilengineering.command.BridgeCommand
+import civilengineering.eventhandlers.AdvancementEventHandler
 import civilengineering.eventhandlers.ChatMessageHandler
 import civilengineering.eventhandlers.DeathEventHandler
 import civilengineering.eventhandlers.CommandEventHandler
+import net.minecraft.advancements.Advancement
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
@@ -50,12 +52,6 @@ object CivilEngineering {
     }
 
     @Mod.EventHandler
-    fun postInit(event: FMLPostInitializationEvent) {
-//        MinecraftForge.EVENT_BUS.register(ServerChatHelper::class.java)
-
-    }
-
-    @Mod.EventHandler
     fun serverStarting(event: FMLServerStartingEvent) {
         logger.debug("Registering bridge commands")
         event.registerServerCommand(BridgeCommand())
@@ -66,10 +62,13 @@ object CivilEngineering {
         MinecraftForge.EVENT_BUS.register(ChatMessageHandler())
         MinecraftForge.EVENT_BUS.register(DeathEventHandler())
         MinecraftForge.EVENT_BUS.register(CommandEventHandler())
+        MinecraftForge.EVENT_BUS.register(AdvancementEventHandler())
     }
 
     @Mod.EventHandler
     fun serverStopping(event: FMLServerStoppingEvent) {
         MessageHandler.stop()
     }
+
+
 }
