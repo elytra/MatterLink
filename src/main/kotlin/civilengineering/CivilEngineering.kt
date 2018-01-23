@@ -3,10 +3,7 @@ package civilengineering
 import civilengineering.bridge.MessageHandler
 import civilengineering.bridge.ServerChatHelper
 import civilengineering.command.BridgeCommand
-import civilengineering.eventhandlers.AdvancementEventHandler
-import civilengineering.eventhandlers.ChatMessageHandler
-import civilengineering.eventhandlers.DeathEventHandler
-import civilengineering.eventhandlers.CommandEventHandler
+import civilengineering.eventhandlers.*
 import net.minecraft.advancements.Advancement
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
@@ -63,6 +60,7 @@ object CivilEngineering {
         MinecraftForge.EVENT_BUS.register(DeathEventHandler())
         MinecraftForge.EVENT_BUS.register(CommandEventHandler())
         MinecraftForge.EVENT_BUS.register(AdvancementEventHandler())
+        MinecraftForge.EVENT_BUS.register(JoinLeaveHandler())
     }
 
     @Mod.EventHandler
