@@ -39,9 +39,9 @@ class BridgeCommand : CommandBase() {
         val cmd = args[0].toLowerCase()
         when (cmd) {
             "connect" -> if (MessageHandler.start()) {
-                logger.info("connected to matterbridge")
+                logger.info("Connected to matterbridge relay")
             } else {
-                logger.error("connection to matterbridge failed")
+                logger.error("Connection to matterbridge relay failed.")
             }
             "disconnect" -> MessageHandler.stop()
         }

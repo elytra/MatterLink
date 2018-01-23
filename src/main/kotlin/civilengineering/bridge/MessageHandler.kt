@@ -20,7 +20,7 @@ object MessageHandler {
     }
 
     private fun createThread(): HttpStreamConnection {
-        CivilEngineering.logger.info("building bridge")
+        CivilEngineering.logger.info("Attempting to open bridge connection.")
         return HttpStreamConnection(
                 {
                     HttpGet(cfg!!.connect.url + "/api/stream").apply {
@@ -31,7 +31,7 @@ object MessageHandler {
                     rcvQueue.add(
                             ApiMessage.decode(it)
                     )
-                    CivilEngineering.logger.info("received: " + it)
+                    CivilEngineering.logger.debug("Received: " + it)
                 }
         )
     }
@@ -41,16 +41,16 @@ object MessageHandler {
     var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
 
     fun transmit(msg: ApiMessage) {
-        CivilEngineering.logger.info("transmitting " + msg)
+        CivilEngineering.logger.debug("Transmitting: " + msg)
         transmitMessage(msg)
     }
 
     fun stop() {
-        CivilEngineering.logger.info("bridge closing")
+        CivilEngineering.logger.info("Closing bridge connection...")
 //        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
         streamConnection.close()
 
-        CivilEngineering.logger.info("bridge closed")
+        CivilEngineering.logger.info("Bridge connection closed!")
     }
 
     fun start(): Boolean {

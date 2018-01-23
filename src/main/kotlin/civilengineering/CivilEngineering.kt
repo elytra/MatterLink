@@ -18,7 +18,7 @@ import java.util.*
 
 const val MODID = "civilengineering"
 const val NAME = "Civil Engineering"
-const val VERSION = "0.0.1"
+const val VERSION = "0.1.1"
 
 @Mod(
         modid = MODID,
@@ -44,14 +44,9 @@ object CivilEngineering {
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent) {
         logger = event.modLog
-        logger.info("loading logger")
+        logger.info("Building bridge!")
 
         CivilEngineeringConfig(event.modConfigurationDirectory)
-    }
-
-    @Mod.EventHandler
-    fun init(event: FMLInitializationEvent) {
-        logger.info("Bridge building init.")
     }
 
     @Mod.EventHandler
@@ -62,8 +57,8 @@ object CivilEngineering {
 
     @Mod.EventHandler
     fun serverStarting(event: FMLServerStartingEvent) {
+        logger.debug("Registering bridge commands")
         event.registerServerCommand(BridgeCommand())
-        logger.info("Bridge building starting.")
         MessageHandler.start()
 
         //maybe try registering them manually
@@ -75,7 +70,6 @@ object CivilEngineering {
 
     @Mod.EventHandler
     fun serverStopping(event: FMLServerStoppingEvent) {
-        logger.info("Bridge shutting down.")
         MessageHandler.stop()
     }
 }
