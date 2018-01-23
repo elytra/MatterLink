@@ -42,7 +42,7 @@ object MessageHandler {
     var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
 
     fun transmit(msg: ApiMessage) {
-        if (connected) {
+        if (connected && streamConnection.isAlive) {
             CivilEngineering.logger.debug("Transmitting: " + msg)
             transmitMessage(msg)
         }
