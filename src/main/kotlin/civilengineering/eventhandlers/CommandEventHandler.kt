@@ -31,7 +31,10 @@ class CommandEventHandler {
             }
             message = message.trim { it <= ' ' }
 
-            MessageHandler.transmit(ApiMessage(event.sender.name,message))
+            MessageHandler.transmit(ApiMessage(
+                    username = event.sender.name,
+                    text = message
+            ))
         }
     }
 }
