@@ -18,10 +18,10 @@ class ServerChatHelper {
             val user = nextMessage.username
             val text = nextMessage.text.trim()
 
-            var message: String = ""
+            val message: String
 
             if (!text.isEmpty()) {
-                val section: Char = '\u00A7'
+                val section = '\u00A7'
                 val event = nextMessage.event
                 message = when (event) {
                     "user_action" -> "* $user $text"
