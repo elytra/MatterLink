@@ -2,7 +2,7 @@
   "modid": "civilengineering",
   "name": "Civil Engineering",
   "description": "Minecraft Server Matterbridge link",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "mcversion": "1.12.2",
   "authorList":["Arcanitor", "NikkyAi"],
   "credits": "Blame Nikky for talking me into this."
