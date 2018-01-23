@@ -13,7 +13,8 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 
 object MessageHandler {
-
+    private var connected = false
+    private var sendErrors = 0
     fun HttpRequestBase.authorize() {
         if (cfg!!.connect.authToken.isNotEmpty() && getHeaders("Authorization").isEmpty())
             setHeader("Authorization", "Bearer " + cfg!!.connect.authToken)
@@ -41,8 +42,10 @@ object MessageHandler {
     var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
 
     fun transmit(msg: ApiMessage) {
-        CivilEngineering.logger.debug("Transmitting: " + msg)
-        transmitMessage(msg)
+        if (connected) {
+            CivilEngineering.logger.debug("Transmitting: " + msg)
+            transmitMessage(msg)
+        }
     }
 
     fun stop() {
@@ -51,6 +54,7 @@ object MessageHandler {
         streamConnection.close()
 
         CivilEngineering.logger.info("Bridge connection closed!")
+        connected = false
     }
 
     fun start(): Boolean {
@@ -60,24 +64,34 @@ object MessageHandler {
         if (!streamConnection.isAlive) {
             streamConnection.start()
 //            MessageHandler.transmit(ApiMessage(text="bridge connected", username="Server"))
-            return true
+            connected = true
+            return connected
         }
-        return false
+        return connected
     }
 
-    @Throws(IOException::class)
     private fun transmitMessage(message: ApiMessage) {
-        //open a connection
-        val client = HttpClients.createDefault()
-        val post = HttpPost(cfg!!.connect.url + "/api/message")
+        try {
+            //open a connection
+            val client = HttpClients.createDefault()
+            val post = HttpPost(cfg!!.connect.url + "/api/message")
 
-        post.entity = StringEntity(message.encode(), ContentType.APPLICATION_JSON)
-        post.authorize()
+            post.entity = StringEntity(message.encode(), ContentType.APPLICATION_JSON)
+            post.authorize()
 
-        val response = client.execute(post)
-        val code = response.statusLine.statusCode
-        if (code != 200) {
-            CivilEngineering.logger.error("Server returned $code for $post")
+            val response = client.execute(post)
+            val code = response.statusLine.statusCode
+            if (code != 200) {
+                CivilEngineering.logger.error("Server returned $code for $post")
+            }
+            sendErrors = 0
+        } catch (e: IOException) {
+            CivilEngineering.logger.error("sending message caused $e")
+            sendErrors++
+            if(sendErrors > 5) {
+                CivilEngineering.logger.error("caught too many errors, closing bridge")
+                stop()
+            }
         }
     }
 }
