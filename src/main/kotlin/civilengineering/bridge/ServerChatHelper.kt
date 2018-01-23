@@ -1,6 +1,7 @@
 package civilengineering.bridge
 
 import civilengineering.CivilEngineering
+import civilengineering.cfg
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -13,7 +14,7 @@ class ServerChatHelper {
             CivilEngineering.logger.debug("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
 
-        if (nextMessage != null) {
+        if (nextMessage != null && nextMessage.gateway == cfg!!.connect.gateway) {
             val user = nextMessage.username
             val text = nextMessage.text.trim()
 
