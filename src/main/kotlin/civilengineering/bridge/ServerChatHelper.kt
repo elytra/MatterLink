@@ -35,8 +35,7 @@ class ServerChatHelper {
                         return
                     }
                 }
-                if (message.isNotEmpty())
-                    FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(message))
+                FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(message))
             }
         }
     }
