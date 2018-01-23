@@ -18,15 +18,22 @@ class ServerChatHelper {
             val user = nextMessage.username
             val text = nextMessage.text.trim()
 
-            val message: String
+            var message: String = ""
 
             if (!text.isEmpty()) {
                 val section: Char = '\u00A7'
-                message = when (nextMessage.event) {
+                val event = nextMessage.event
+                message = when (event) {
                     "user_action" -> "* $user $text"
                     "" -> "<$user> $text"
                     "join_leave" -> section.toString()+"6-- $user $text"
-                    else -> ""
+                    else -> {
+                        CivilEngineering.logger.debug("Threw out message with unhandled event: $event")
+                        CivilEngineering.logger.debug(" Message contents:")
+                        CivilEngineering.logger.debug(" User: $user")
+                        CivilEngineering.logger.debug(" Text: $text")
+                        return
+                    }
                 }
                 if (message.isNotEmpty())
                     FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(message))
