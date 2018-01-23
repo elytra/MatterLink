@@ -1,6 +1,6 @@
 package civilengineering.eventhandlers
 
-import civilengineering.Util
+import civilengineering.Util.antiping
 import civilengineering.bridge.ApiMessage
 import civilengineering.bridge.MessageHandler
 import civilengineering.cfg
@@ -15,7 +15,7 @@ class DeathEventHandler {
             val entity = event.entityLiving
             if (entity is EntityPlayer) {
                 var message: String = entity.getCombatTracker().deathMessage.unformattedText
-                MessageHandler.transmit(ApiMessage(username = "Server", text = Util.antiping(message)))
+                MessageHandler.transmit(ApiMessage(username = "Server", text = message.antiping()))
             }
         }
     }

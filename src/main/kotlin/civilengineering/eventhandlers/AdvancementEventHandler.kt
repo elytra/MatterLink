@@ -1,5 +1,6 @@
 package civilengineering.eventhandlers
 
+import civilengineering.Util.antiping
 import civilengineering.CivilEngineering
 import civilengineering.CivilEngineeringConfig
 import civilengineering.Util
@@ -13,10 +14,11 @@ class AdvancementEventHandler {
     @SubscribeEvent
     fun handleAdvancements(event: AdvancementEvent) {
         if(cfg!!.relay.advancements && event.advancement.display != null) {
-            val zwsp: Char = '\u200B'
-            var player: String = Util.antiping(event.entityPlayer.name)
-
-            MessageHandler.transmit(ApiMessage("Server",player+" has earned the advancement "+event.advancement.displayText.unformattedText))
+            val player = event.entityPlayer.name.antiping()
+            val content = event.advancement.displayText.unformattedText
+            MessageHandler.transmit(ApiMessage(username = "Server",
+                    text = "$player has earned the advancement $content"
+            ))
         }
     }
 }
