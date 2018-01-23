@@ -45,9 +45,9 @@ class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mh
         } catch (e: SocketException) {
 
         }
-        CivilEngineering.logger.info("closing stream")
+        CivilEngineering.logger.debug("closing stream")
         content.close()
-        CivilEngineering.logger.info("thread finished")
+        CivilEngineering.logger.debug("thread finished")
         return
     }
 
@@ -55,7 +55,6 @@ class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mh
         cancelled = true
         get.abort()
         join()
-        println("killed thread")
 
     }
 }

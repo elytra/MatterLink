@@ -10,7 +10,7 @@ class ServerChatHelper {
     @SubscribeEvent
     fun onServerUpdate(event: TickEvent.ServerTickEvent) {
         if (MessageHandler.rcvQueue.isNotEmpty())
-            CivilEngineering.logger.info("incoming: " + MessageHandler.rcvQueue.toString())
+            CivilEngineering.logger.debug("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
 
         if (nextMessage != null) {
