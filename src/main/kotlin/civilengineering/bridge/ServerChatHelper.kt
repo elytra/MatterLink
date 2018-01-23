@@ -2,6 +2,8 @@ package civilengineering.bridge
 
 import civilengineering.CivilEngineering
 import civilengineering.cfg
+import civilengineering.util.Color
+import civilengineering.util.color
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -17,6 +19,7 @@ class ServerChatHelper {
         if (nextMessage != null && nextMessage.gateway == cfg!!.connect.gateway) {
             val user = nextMessage.username
             val text = nextMessage.text.trim()
+            val chan = nextMessage.channel
 
             val message: String
 
@@ -26,7 +29,7 @@ class ServerChatHelper {
                 message = when (event) {
                     "user_action" -> "* $user $text"
                     "" -> "<$user> $text"
-                    "join_leave" -> section.toString()+"6-- $user $text"
+                    "join_leave" -> "-- $user $text $chan".color(Color.GOLD)
                     else -> {
                         CivilEngineering.logger.debug("Threw out message with unhandled event: $event")
                         CivilEngineering.logger.debug(" Message contents:")
