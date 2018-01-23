@@ -21,11 +21,15 @@ class ServerChatHelper {
             val message: String
 
             if (!text.isEmpty()) {
+                val section: Char = '\u00A7'
                 message = when (nextMessage.event) {
                     "user_action" -> "* $user $text"
-                    else -> "<$user> $text"
+                    "" -> "<$user> $text"
+                    "join_leave" -> section.toString()+"6-- $user $text"
+                    else -> ""
                 }
-                FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(message))
+                if (message.isNotEmpty())
+                    FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(message))
             }
         }
     }
