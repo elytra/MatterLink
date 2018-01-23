@@ -5,7 +5,7 @@ import civilengineering.bridge.ServerChatHelper
 import civilengineering.command.BridgeCommand
 import civilengineering.eventhandlers.ChatMessageHandler
 import civilengineering.eventhandlers.DeathEventHandler
-import civilengineering.eventhandlers.UserActionHandler
+import civilengineering.eventhandlers.CommandEventHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
@@ -65,7 +65,7 @@ object CivilEngineering {
         MinecraftForge.EVENT_BUS.register(ServerChatHelper())
         MinecraftForge.EVENT_BUS.register(ChatMessageHandler())
         MinecraftForge.EVENT_BUS.register(DeathEventHandler())
-        MinecraftForge.EVENT_BUS.register(UserActionHandler())
+        MinecraftForge.EVENT_BUS.register(CommandEventHandler())
     }
 
     @Mod.EventHandler
