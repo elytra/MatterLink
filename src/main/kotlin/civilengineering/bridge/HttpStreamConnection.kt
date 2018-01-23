@@ -27,11 +27,10 @@ class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mh
         try {
             while (!get.isAborted) {
                 val chars = content.read(buf)
-                CivilEngineering.logger.debug("incoming: $chars ")
                 if (chars > 0) {
                     buffer += String(buf.dropLast(buf.count() - chars).toByteArray())
 
-                    CivilEngineering.logger.info(buffer)
+                    CivilEngineering.logger.debug(buffer)
 
                     while (buffer.contains("\n")) {
                         val line = buffer.substringBefore("\n")
