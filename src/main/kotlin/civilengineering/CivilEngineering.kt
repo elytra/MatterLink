@@ -17,7 +17,7 @@ import java.util.*
 
 const val MODID = "civilengineering"
 const val NAME = "Civil Engineering"
-const val VERSION = "0.1.1"
+const val VERSION = "0.2.0"
 
 @Mod(
         modid = MODID,
