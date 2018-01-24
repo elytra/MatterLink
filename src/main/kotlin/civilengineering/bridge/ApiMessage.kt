@@ -1,7 +1,7 @@
 package civilengineering.bridge
 
 import civilengineering.cfg
-import civilengineering.util.antiping
+import civilengineering.antiping
 import com.google.gson.Gson
 
 data class ApiMessage(
