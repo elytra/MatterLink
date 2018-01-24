@@ -15,6 +15,15 @@ import java.util.concurrent.ConcurrentLinkedQueue
 object MessageHandler {
     private var connected = false
     private var sendErrors = 0
+    private var streamConnection: HttpStreamConnection
+    var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
+
+    init {
+        streamConnection = createThread()
+        streamConnection.start()
+        connected = true
+    }
+
     fun HttpRequestBase.authorize() {
         if (cfg!!.connect.authToken.isNotEmpty() && getHeaders("Authorization").isEmpty())
             setHeader("Authorization", "Bearer " + cfg!!.connect.authToken)
@@ -33,13 +42,13 @@ object MessageHandler {
                             ApiMessage.decode(it)
                     )
                     CivilEngineering.logger.debug("Received: " + it)
+                },
+                {
+                    CivilEngineering.logger.info("Bridge connection closed!")
+                    connected = false
                 }
         )
     }
-
-    private var streamConnection: HttpStreamConnection = createThread()
-
-    var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
 
     fun transmit(msg: ApiMessage) {
         if (connected && streamConnection.isAlive) {
@@ -52,15 +61,11 @@ object MessageHandler {
         CivilEngineering.logger.info("Closing bridge connection...")
 //        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
         streamConnection.close()
-
-        CivilEngineering.logger.info("Bridge connection closed!")
-        connected = false
     }
 
     fun start(): Boolean {
-        if (streamConnection.cancelled) {
+        if (!connected)
             streamConnection = createThread()
-        }
         if (!streamConnection.isAlive) {
             streamConnection.start()
 //            MessageHandler.transmit(ApiMessage(text="bridge connected", username="Server"))
@@ -88,7 +93,7 @@ object MessageHandler {
         } catch (e: IOException) {
             CivilEngineering.logger.error("sending message caused $e")
             sendErrors++
-            if(sendErrors > 5) {
+            if (sendErrors > 5) {
                 CivilEngineering.logger.error("caught too many errors, closing bridge")
                 stop()
             }

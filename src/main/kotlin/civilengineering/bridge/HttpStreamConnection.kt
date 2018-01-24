@@ -8,7 +8,7 @@ import java.net.SocketException
 
 val BUFFER_SIZE = 1000
 
-class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mhandler: (String) -> Unit) : Thread() {
+class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mhandler: (String) -> Unit, private val onClose: () -> Unit) : Thread() {
     private val client = HttpClients.createDefault()
     private var stream: InputStream? = null
 
@@ -42,11 +42,12 @@ class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mh
                 }
             }
         } catch (e: SocketException) {
-
+//            CivilEngineering.logger.error("Bridge Connection interrupted...")
         }
         CivilEngineering.logger.debug("closing stream")
         content.close()
         CivilEngineering.logger.debug("thread finished")
+        onClose()
         return
     }
 

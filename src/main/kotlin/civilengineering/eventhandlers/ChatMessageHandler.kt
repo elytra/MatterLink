@@ -8,8 +8,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 class ChatMessageHandler {
     @SubscribeEvent
     fun handleServerChatEvent(event: ServerChatEvent) {
-        val message = event.message.trim { it <= ' ' }
+        val message = event.message.trim()
         if (message.isNotBlank())
-            MessageHandler.transmit(ApiMessage(username = event.username, text = message))
+            MessageHandler.transmit(ApiMessage(
+                    username = event.username,
+                    text = message)
+            )
     }
 }

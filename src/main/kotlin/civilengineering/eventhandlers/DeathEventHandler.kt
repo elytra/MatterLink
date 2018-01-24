@@ -1,9 +1,9 @@
 package civilengineering.eventhandlers
 
-import civilengineering.util.Util.antiping
 import civilengineering.bridge.ApiMessage
 import civilengineering.bridge.MessageHandler
 import civilengineering.cfg
+import civilengineering.util.antiping
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -14,8 +14,12 @@ class DeathEventHandler {
         if (cfg!!.relay.deathEvents) {
             val entity = event.entityLiving
             if (entity is EntityPlayer) {
-                var message: String = entity.getCombatTracker().deathMessage.unformattedText
-                MessageHandler.transmit(ApiMessage(username = "Server", text = message.antiping()))
+                val message = entity.getCombatTracker().deathMessage.unformattedText
+                        .replace(entity.name, entity.name.antiping())
+                MessageHandler.transmit(ApiMessage(
+                        username = cfg!!.relay.systemUser,
+                        text = message
+                ))
             }
         }
     }
