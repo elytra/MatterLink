@@ -30,9 +30,10 @@ class CommandEventHandler {
                 message = message + " " + word
             }
             message = message.trim { it <= ' ' }
+            val name: String = if(event.sender.name.equals("@")) "CommandBlock" else event.sender.name
 
             MessageHandler.transmit(ApiMessage(
-                    username = event.sender.name,
+                    username = name,
                     text = message
             ))
         }
