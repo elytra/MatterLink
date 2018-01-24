@@ -44,7 +44,7 @@ class CivilEngineeringConfig(file: File) {
                         "systemUser",
                         CATEGORY_RELAY_OPTIONS,
                         "Server",
-                        "name of the server user"
+                        "Name of the server user (used by death and advancement messages and the /say command)"
                 ),
                 deathEvents = config.getBoolean(
                         "deathEvents",
@@ -56,7 +56,7 @@ class CivilEngineeringConfig(file: File) {
                         "advancements",
                         CATEGORY_RELAY_OPTIONS,
                         false,
-                        "Relay player advancements [NOT IMPLEMENTED]"
+                        "Relay player advancements"
                 ),
                 joinLeave = config.getBoolean(
                         "joinLeave",
@@ -66,26 +66,26 @@ class CivilEngineeringConfig(file: File) {
                 )
         )
 
-        config.addCustomCategoryComment(CATEGORY_FORMATTING, "Formatting options " +
-                "available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
+        config.addCustomCategoryComment(CATEGORY_FORMATTING, "Formatting options: " +
+                "Available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
         formatting = FormattingOptions(
                 chat = config.getString(
                         "chat",
                         CATEGORY_FORMATTING,
                         "<{username}> {text}",
-                        "generic chat event, just talking"
+                        "Generic chat event, just talking"
                 ),
                 joinLeave = config.getString(
                         "joinLeave",
                         CATEGORY_FORMATTING,
                         "§6-- {username} {text}",
-                        "leave and jon events from other gateways"
+                        "Join and leave events from other gateways"
                 ),
                 action = config.getString(
                         "action",
                         CATEGORY_FORMATTING,
                         "§5* {username} {text}",
-                        "/me sent by users from other gateways"
+                        "User actions (/me) sent by users from other gateways"
                 )
         )
 
