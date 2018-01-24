@@ -7,15 +7,24 @@ var cfg: CivilEngineeringConfig? = null
 
 class CivilEngineeringConfig(file: File) {
     private val CATEGORY_RELAY_OPTIONS = "relay"
+    private val CATEGORY_FORMATTING = "formatting"
     private val CATEGORY_CONNECTION = "connection"
 
     val relay: RelayOptions
     val connect: ConnectOptions
+    val formatting: FormattingOptions
 
     data class RelayOptions(
+            val systemUser: String,
             val deathEvents: Boolean,
             val advancements: Boolean,
             val joinLeave: Boolean
+    )
+
+    data class FormattingOptions(
+            val chat: String,
+            val joinLeave: String,
+            val action: String
     )
 
     data class ConnectOptions(
@@ -29,9 +38,14 @@ class CivilEngineeringConfig(file: File) {
         val config = Configuration(file.resolve("CivilEngineering.cfg"))
 
         config.addCustomCategoryComment(CATEGORY_RELAY_OPTIONS, "Relay options")
-        config.addCustomCategoryComment(CATEGORY_CONNECTION, "Connection settings")
-
         relay = RelayOptions(
+
+                systemUser = config.getString(
+                        "systemUser",
+                        CATEGORY_RELAY_OPTIONS,
+                        "Server",
+                        "name of the server user"
+                ),
                 deathEvents = config.getBoolean(
                         "deathEvents",
                         CATEGORY_RELAY_OPTIONS,
@@ -48,10 +62,34 @@ class CivilEngineeringConfig(file: File) {
                         "joinLeave",
                         CATEGORY_RELAY_OPTIONS,
                         false,
-                        "Relay when a player joins or leaves the game [NOT IMPLEMENTED]"
+                        "Relay when a player joins or leaves the game"
                 )
         )
 
+        config.addCustomCategoryComment(CATEGORY_FORMATTING, "Formatting options " +
+                "available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
+        formatting = FormattingOptions(
+                chat = config.getString(
+                        "chat",
+                        CATEGORY_FORMATTING,
+                        "<{username}> {text}",
+                        "generic chat event, just talking"
+                ),
+                joinLeave = config.getString(
+                        "joinLeave",
+                        CATEGORY_FORMATTING,
+                        "§6-- {username} {text}",
+                        "leave and jon events from other gateways"
+                ),
+                action = config.getString(
+                        "action",
+                        CATEGORY_FORMATTING,
+                        "§5* {username} {text}",
+                        "/me sent by users from other gateways"
+                )
+        )
+
+        config.addCustomCategoryComment(CATEGORY_CONNECTION, "Connection settings")
         connect = ConnectOptions(
                 url = config.getString(
                         "connectURL",

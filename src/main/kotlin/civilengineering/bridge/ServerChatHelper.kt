@@ -2,8 +2,6 @@ package civilengineering.bridge
 
 import civilengineering.CivilEngineering
 import civilengineering.cfg
-import civilengineering.util.Color
-import civilengineering.util.color
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -17,24 +15,21 @@ class ServerChatHelper {
         val nextMessage = MessageHandler.rcvQueue.poll()
 
         if (nextMessage != null && nextMessage.gateway == cfg!!.connect.gateway) {
-            val user = nextMessage.username
-            val text = nextMessage.text.trim()
-            val chan = nextMessage.channel
-
-            val message: String
-
-            if (!text.isEmpty()) {
+            if (!nextMessage.text.isBlank()) {
                 val section = '\u00A7'
-                val event = nextMessage.event
-                message = when (event) {
-                    "user_action" -> "* $user $text"
-                    "" -> "<$user> $text"
-                    "join_leave" -> "-- $user $text $chan".color(Color.GOLD)
+                val message = when (nextMessage.event) {
+                    "user_action" -> nextMessage.format(cfg!!.formatting.action)
+                    "" -> nextMessage.format(cfg!!.formatting.chat)
+                    "join_leave" -> nextMessage.format(cfg!!.formatting.joinLeave)
                     else -> {
+                        val user = nextMessage.username
+                        val text = nextMessage.text
+                        val json = nextMessage.encode()
                         CivilEngineering.logger.debug("Threw out message with unhandled event: $event")
                         CivilEngineering.logger.debug(" Message contents:")
                         CivilEngineering.logger.debug(" User: $user")
                         CivilEngineering.logger.debug(" Text: $text")
+                        CivilEngineering.logger.debug(" JSON: $json")
                         return
                     }
                 }
