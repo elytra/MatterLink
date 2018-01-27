@@ -1,7 +1,7 @@
-package civilengineering.eventhandlers
+package matterlink.eventhandlers
 
-import civilengineering.bridge.ApiMessage
-import civilengineering.bridge.MessageHandler
+import matterlink.bridge.ApiMessage
+import matterlink.bridge.MessageHandler
 import net.minecraftforge.event.ServerChatEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 

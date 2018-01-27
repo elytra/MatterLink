@@ -18,7 +18,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 
 version = "0.2.0"
-group = "civilengineering" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "matterlink" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CivilEngineering"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.

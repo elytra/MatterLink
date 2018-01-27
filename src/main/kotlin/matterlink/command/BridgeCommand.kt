@@ -1,8 +1,8 @@
-package civilengineering.command
+package matterlink.command
 
-import civilengineering.*
-import civilengineering.CivilEngineering.logger
-import civilengineering.bridge.MessageHandler
+import matterlink.*
+import matterlink.MatterLink.logger
+import matterlink.bridge.MessageHandler
 import com.google.common.collect.Lists
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender

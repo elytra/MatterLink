@@ -1,11 +1,11 @@
-package civilengineering
+package matterlink
 
 import net.minecraftforge.common.config.Configuration
 import java.io.File
 
-var cfg: CivilEngineeringConfig? = null
+var cfg: MatterLinkConfig? = null
 
-class CivilEngineeringConfig(file: File) {
+class MatterLinkConfig() {
     private val CATEGORY_RELAY_OPTIONS = "relay"
     private val CATEGORY_FORMATTING = "formatting"
     private val CATEGORY_CONNECTION = "connection"
@@ -34,8 +34,8 @@ class CivilEngineeringConfig(file: File) {
     )
 
     init {
-        CivilEngineering.logger.info("Reading bridge blueprints...")
-        val config = Configuration(file.resolve("CivilEngineering.cfg"))
+        MatterLink.logger.info("Reading bridge blueprints...")
+        val config = Configuration()
 
         config.addCustomCategoryComment(CATEGORY_RELAY_OPTIONS, "Relay options")
         relay = RelayOptions(
