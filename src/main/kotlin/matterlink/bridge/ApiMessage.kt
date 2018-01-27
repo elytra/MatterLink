@@ -1,7 +1,7 @@
-package civilengineering.bridge
+package matterlink.bridge
 
-import civilengineering.cfg
-import civilengineering.antiping
+import matterlink.cfg
+import matterlink.antiping
 import com.google.gson.Gson
 
 data class ApiMessage(

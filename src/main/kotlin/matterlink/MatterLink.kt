@@ -1,10 +1,9 @@
-package civilengineering
+package matterlink
 
-import civilengineering.bridge.MessageHandler
-import civilengineering.bridge.ServerChatHelper
-import civilengineering.command.BridgeCommand
-import civilengineering.eventhandlers.*
-import net.minecraft.advancements.Advancement
+import matterlink.bridge.MessageHandler
+import matterlink.bridge.ServerChatHelper
+import matterlink.command.BridgeCommand
+import matterlink.eventhandlers.*
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
@@ -15,8 +14,8 @@ import org.apache.logging.log4j.simple.SimpleLogger
 import org.apache.logging.log4j.util.PropertiesUtil
 import java.util.*
 
-const val MODID = "civilengineering"
-const val NAME = "Civil Engineering"
+const val MODID = "matterlink"
+const val NAME = "MatterLink"
 const val VERSION = "0.2.0"
 
 @Mod(
@@ -27,7 +26,7 @@ const val VERSION = "0.2.0"
         acceptableRemoteVersions = "*",
         modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter"
 )
-object CivilEngineering {
+object MatterLink {
     //create fake logger to get around Nullability
     var logger: Logger = SimpleLogger("",
             Level.OFF,
@@ -45,7 +44,7 @@ object CivilEngineering {
         logger = event.modLog
         logger.info("Building bridge!")
 
-        CivilEngineeringConfig(event.modConfigurationDirectory)
+        MatterLinkConfig()
     }
 
     @Mod.EventHandler

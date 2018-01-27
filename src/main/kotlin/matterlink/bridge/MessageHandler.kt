@@ -1,7 +1,7 @@
-package civilengineering.bridge
+package matterlink.bridge
 
-import civilengineering.CivilEngineering
-import civilengineering.cfg
+import matterlink.MatterLink
+import matterlink.cfg
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpRequestBase
@@ -30,7 +30,7 @@ object MessageHandler {
     }
 
     private fun createThread(): HttpStreamConnection {
-        CivilEngineering.logger.info("Attempting to open bridge connection.")
+        MatterLink.logger.info("Attempting to open bridge connection.")
         return HttpStreamConnection(
                 {
                     HttpGet(cfg!!.connect.url + "/api/stream").apply {
@@ -41,10 +41,10 @@ object MessageHandler {
                     rcvQueue.add(
                             ApiMessage.decode(it)
                     )
-                    CivilEngineering.logger.debug("Received: " + it)
+                    MatterLink.logger.debug("Received: " + it)
                 },
                 {
-                    CivilEngineering.logger.info("Bridge connection closed!")
+                    MatterLink.logger.info("Bridge connection closed!")
                     connected = false
                 }
         )
@@ -52,13 +52,13 @@ object MessageHandler {
 
     fun transmit(msg: ApiMessage) {
         if (connected && streamConnection.isAlive) {
-            CivilEngineering.logger.debug("Transmitting: " + msg)
+            MatterLink.logger.debug("Transmitting: " + msg)
             transmitMessage(msg)
         }
     }
 
     fun stop() {
-        CivilEngineering.logger.info("Closing bridge connection...")
+        MatterLink.logger.info("Closing bridge connection...")
 //        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
         streamConnection.close()
     }
@@ -87,14 +87,14 @@ object MessageHandler {
             val response = client.execute(post)
             val code = response.statusLine.statusCode
             if (code != 200) {
-                CivilEngineering.logger.error("Server returned $code for $post")
+                MatterLink.logger.error("Server returned $code for $post")
             }
             sendErrors = 0
         } catch (e: IOException) {
-            CivilEngineering.logger.error("sending message caused $e")
+            MatterLink.logger.error("sending message caused $e")
             sendErrors++
             if (sendErrors > 5) {
-                CivilEngineering.logger.error("caught too many errors, closing bridge")
+                MatterLink.logger.error("caught too many errors, closing bridge")
                 stop()
             }
         }

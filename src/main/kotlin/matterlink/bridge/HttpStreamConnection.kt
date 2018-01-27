@@ -1,6 +1,6 @@
-package civilengineering.bridge;
+package matterlink.bridge;
 
-import civilengineering.CivilEngineering
+import matterlink.MatterLink
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import java.io.InputStream
@@ -30,7 +30,7 @@ class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mh
                 if (chars > 0) {
                     buffer += String(buf.dropLast(buf.count() - chars).toByteArray())
 
-                    CivilEngineering.logger.debug(buffer)
+                    MatterLink.logger.debug(buffer)
 
                     while (buffer.contains("\n")) {
                         val line = buffer.substringBefore("\n")
@@ -42,11 +42,11 @@ class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mh
                 }
             }
         } catch (e: SocketException) {
-//            CivilEngineering.logger.error("Bridge Connection interrupted...")
+//            MatterLink.logger.error("Bridge Connection interrupted...")
         }
-        CivilEngineering.logger.debug("closing stream")
+        MatterLink.logger.debug("closing stream")
         content.close()
-        CivilEngineering.logger.debug("thread finished")
+        MatterLink.logger.debug("thread finished")
         onClose()
         return
     }

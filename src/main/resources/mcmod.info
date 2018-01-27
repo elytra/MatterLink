@@ -1,8 +1,8 @@
 [{
-  "modid": "civilengineering",
-  "name": "Civil Engineering",
+  "modid": "matterlink",
+  "name": "MatterLink",
   "description": "Minecraft Server Matterbridge link",
-  "version": "0.2.0",
+  "version": "1.0",
   "mcversion": "1.12.2",
   "authorList":["Arcanitor", "NikkyAi"],
   "credits": "Blame Nikky for talking me into this."
