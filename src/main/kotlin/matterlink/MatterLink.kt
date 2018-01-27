@@ -16,7 +16,7 @@ import java.util.*
 
 const val MODID = "matterlink"
 const val NAME = "MatterLink"
-const val VERSION = "0.2.0"
+const val VERSION = "@VERSION@"
 
 @Mod(
         modid = MODID,
