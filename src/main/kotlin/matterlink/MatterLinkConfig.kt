@@ -111,7 +111,7 @@ class MatterLinkConfig(file: File) {
                 url = config.getString(
                         "connectURL",
                         CATEGORY_CONNECTION,
-                        "localhost:4242",
+                        "http://localhost:4242",
                         "The URL or IP address of the bridge server"
                 ),
                 authToken = config.getString(
