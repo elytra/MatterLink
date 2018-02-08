@@ -37,7 +37,8 @@ class MatterLinkConfig(file: File) {
     )
 
     data class CommandOptions(
-            val prefix: String
+            val prefix: String,
+            val enable: Boolean
     )
 
     init {
@@ -75,6 +76,12 @@ class MatterLinkConfig(file: File) {
 
         config.addCustomCategoryComment(CATEGORY_COMMAND,"User commands")
         command = CommandOptions(
+                enable = config.getBoolean(
+                        "enable",
+                        CATEGORY_COMMAND,
+                        true,
+                        "Enable MC bridge commands"
+                ),
                 prefix = config.getString(
                         "commandPrefix",
                         CATEGORY_COMMAND,

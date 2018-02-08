@@ -11,6 +11,7 @@ class BridgeCommand(val name: String, command: (String) -> Boolean, val help: St
         private val commandMap: HashMap<String, BridgeCommand> = HashMap()
 
         fun handleCommand(input: String): Boolean {
+            if (!cfg!!.command.enable) return false
             if (input[0] != cfg!!.command.prefix[0] || input.length < 2) return false
 
             val cmd = input.substring(1).split(delimiters = ' ', ignoreCase = false, limit = 2)
