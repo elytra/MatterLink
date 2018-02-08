@@ -2,7 +2,9 @@ package matterlink
 
 import matterlink.bridge.MessageHandler
 import matterlink.bridge.ServerChatHelper
-import matterlink.bridge.command.Commands
+import matterlink.bridge.command.BridgeCommandRegistry
+import matterlink.bridge.command.HelpCommand
+import matterlink.bridge.command.PlayerListCommand
 import matterlink.command.CommandMatterlink
 import matterlink.eventhandlers.*
 import net.minecraftforge.common.MinecraftForge
@@ -40,8 +42,6 @@ object MatterLink {
             PropertiesUtil(Properties()),
             System.out)
 
-    val bridgeCommands = Commands
-
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent) {
         logger = event.modLog
@@ -49,7 +49,7 @@ object MatterLink {
 
         MatterLinkConfig(event.suggestedConfigurationFile)
 
-        bridgeCommands.register()
+        BridgeCommandRegistry.registerAll(PlayerListCommand, HelpCommand)
     }
 
     @Mod.EventHandler
