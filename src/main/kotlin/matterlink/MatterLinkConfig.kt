@@ -1,11 +1,11 @@
 package matterlink
 
 import net.minecraftforge.common.config.Configuration
-import java.util.regex.Pattern
+import java.io.File
 
 var cfg: MatterLinkConfig? = null
 
-class MatterLinkConfig() {
+class MatterLinkConfig(file: File) {
     private val CATEGORY_RELAY_OPTIONS = "relay"
     private val CATEGORY_FORMATTING = "formatting"
     private val CATEGORY_CONNECTION = "connection"
@@ -14,7 +14,7 @@ class MatterLinkConfig() {
     val relay: RelayOptions
     val connect: ConnectOptions
     val formatting: FormattingOptions
-    //val command: CommandOptions
+    val command: CommandOptions
 
     data class RelayOptions(
             val systemUser: String,
@@ -40,8 +40,8 @@ class MatterLinkConfig() {
     )
 
     init {
-        MatterLink.logger.info("Reading bridge blueprints...")
-        val config = Configuration()
+        MatterLink.logger.info("Reading bridge blueprints... from {}", file)
+        val config = Configuration(file)
 
         config.addCustomCategoryComment(CATEGORY_RELAY_OPTIONS, "Relay options")
         relay = RelayOptions(
@@ -72,7 +72,7 @@ class MatterLinkConfig() {
                 )
         )
 
-        /*config.addCustomCategoryComment(CATEGORY_COMMAND,"User commands")
+        config.addCustomCategoryComment(CATEGORY_COMMAND,"User commands")
         command = CommandOptions(
                 prefix = config.getString(
                         "commandPrefix",
@@ -81,7 +81,7 @@ class MatterLinkConfig() {
                         "Prefix for MC bridge commands. Accepts a single non-alphanumeric character."
                         //Pattern.compile("[^0-9A-Za-z/]")
                 )
-        )*/
+        )
 
         config.addCustomCategoryComment(CATEGORY_FORMATTING, "Formatting options: " +
                 "Available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
@@ -111,7 +111,7 @@ class MatterLinkConfig() {
                 url = config.getString(
                         "connectURL",
                         CATEGORY_CONNECTION,
-                        "http://example.com:1234",
+                        "localhost:4242",
                         "The URL or IP address of the bridge server"
                 ),
                 authToken = config.getString(

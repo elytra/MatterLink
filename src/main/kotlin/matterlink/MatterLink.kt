@@ -44,7 +44,7 @@ object MatterLink {
         logger = event.modLog
         logger.info("Building bridge!")
 
-        MatterLinkConfig()
+        MatterLinkConfig(event.suggestedConfigurationFile)
     }
 
     @Mod.EventHandler
