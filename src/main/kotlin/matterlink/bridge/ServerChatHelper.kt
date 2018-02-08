@@ -1,7 +1,6 @@
 package matterlink.bridge
 
 import matterlink.MatterLink
-import matterlink.bridge.command.BridgeCommand
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.cfg
 import net.minecraft.util.text.TextComponentString

@@ -48,7 +48,10 @@ object MatterLink {
         logger.info("Building bridge!")
 
         MatterLinkConfig(event.suggestedConfigurationFile)
+    }
 
+    @Mod.EventHandler
+    fun init(event: FMLInitializationEvent) {
         BridgeCommandRegistry.registerAll(PlayerListCommand, HelpCommand)
     }
 
