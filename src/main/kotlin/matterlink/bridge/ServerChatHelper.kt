@@ -19,7 +19,10 @@ class ServerChatHelper {
                 val section = '\u00A7'
                 val message = when (nextMessage.event) {
                     "user_action" -> nextMessage.format(cfg!!.formatting.action)
-                    "" -> nextMessage.format(cfg!!.formatting.chat)
+                    "" -> {
+                        BridgeCommand.handleCommand(nextMessage.text)
+                        nextMessage.format(cfg!!.formatting.chat)
+                    }
                     "join_leave" -> nextMessage.format(cfg!!.formatting.joinLeave)
                     else -> {
                         val user = nextMessage.username
