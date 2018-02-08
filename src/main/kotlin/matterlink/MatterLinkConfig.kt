@@ -78,7 +78,7 @@ class MatterLinkConfig(file: File) {
                 prefix = config.getString(
                         "commandPrefix",
                         CATEGORY_COMMAND,
-                        "!",
+                        "$",
                         "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)",
                         Pattern.compile("^[^0-9A-Za-z/]$")
                 )
