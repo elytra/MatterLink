@@ -2,6 +2,7 @@ package matterlink.bridge
 
 import matterlink.MatterLink
 import matterlink.bridge.command.BridgeCommand
+import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.cfg
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
@@ -21,7 +22,7 @@ class ServerChatHelper {
                 val message = when (nextMessage.event) {
                     "user_action" -> nextMessage.format(cfg!!.formatting.action)
                     "" -> {
-                        if (BridgeCommand.handleCommand(nextMessage.text)) return
+                        if (BridgeCommandRegistry.handleCommand(nextMessage.text)) return
                         nextMessage.format(cfg!!.formatting.chat)
                     }
                     "join_leave" -> nextMessage.format(cfg!!.formatting.joinLeave)

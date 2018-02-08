@@ -74,7 +74,7 @@ class MatterLinkConfig(file: File) {
                 )
         )
 
-        config.addCustomCategoryComment(CATEGORY_COMMAND,"User commands")
+        config.addCustomCategoryComment(CATEGORY_COMMAND, "User commands")
         command = CommandOptions(
                 enable = config.getBoolean(
                         "enable",
