@@ -1,6 +1,7 @@
 package matterlink.bridge
 
 import matterlink.MatterLink
+import matterlink.bridge.command.BridgeCommand
 import matterlink.cfg
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
