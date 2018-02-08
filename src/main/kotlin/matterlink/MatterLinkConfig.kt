@@ -1,7 +1,7 @@
 package matterlink
 
 import net.minecraftforge.common.config.Configuration
-import java.io.File
+import java.util.regex.Pattern
 
 var cfg: MatterLinkConfig? = null
 
@@ -9,10 +9,12 @@ class MatterLinkConfig() {
     private val CATEGORY_RELAY_OPTIONS = "relay"
     private val CATEGORY_FORMATTING = "formatting"
     private val CATEGORY_CONNECTION = "connection"
+    private val CATEGORY_COMMAND = "command"
 
     val relay: RelayOptions
     val connect: ConnectOptions
     val formatting: FormattingOptions
+    //val command: CommandOptions
 
     data class RelayOptions(
             val systemUser: String,
@@ -31,6 +33,10 @@ class MatterLinkConfig() {
             val url: String,
             val authToken: String,
             val gateway: String
+    )
+
+    data class CommandOptions(
+            val prefix: String
     )
 
     init {
@@ -65,6 +71,17 @@ class MatterLinkConfig() {
                         "Relay when a player joins or leaves the game"
                 )
         )
+
+        /*config.addCustomCategoryComment(CATEGORY_COMMAND,"User commands")
+        command = CommandOptions(
+                prefix = config.getString(
+                        "commandPrefix",
+                        CATEGORY_COMMAND,
+                        "!",
+                        "Prefix for MC bridge commands. Accepts a single non-alphanumeric character."
+                        //Pattern.compile("[^0-9A-Za-z/]")
+                )
+        )*/
 
         config.addCustomCategoryComment(CATEGORY_FORMATTING, "Formatting options: " +
                 "Available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
