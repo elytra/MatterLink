@@ -9,7 +9,7 @@ import net.minecraft.command.ICommandSender
 import net.minecraft.server.MinecraftServer
 
 
-class BridgeCommand : CommandBase() {
+class CommandMatterlink : CommandBase() {
     private val aliases: List<String>
 
     init {

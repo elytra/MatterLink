@@ -2,7 +2,7 @@ package matterlink
 
 import matterlink.bridge.MessageHandler
 import matterlink.bridge.ServerChatHelper
-import matterlink.command.BridgeCommand
+import matterlink.command.CommandMatterlink
 import matterlink.eventhandlers.*
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
@@ -50,7 +50,7 @@ object MatterLink {
     @Mod.EventHandler
     fun serverStarting(event: FMLServerStartingEvent) {
         logger.debug("Registering bridge commands")
-        event.registerServerCommand(BridgeCommand())
+        event.registerServerCommand(CommandMatterlink())
         MessageHandler.start()
 
         //maybe try registering them manually
