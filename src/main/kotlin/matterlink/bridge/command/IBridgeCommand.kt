@@ -1,7 +1,7 @@
 package matterlink.bridge.command
 
-interface BridgeCommand {
+interface IBridgeCommand {
     val name: String
-    fun command(args: String): Boolean
+    fun call(args: String): Boolean
     val help: String
 }
