@@ -21,7 +21,7 @@ class ServerChatHelper {
                 val message = when (nextMessage.event) {
                     "user_action" -> nextMessage.format(cfg!!.formatting.action)
                     "" -> {
-                        BridgeCommand.handleCommand(nextMessage.text)
+                        if (BridgeCommand.handleCommand(nextMessage.text)) return
                         nextMessage.format(cfg!!.formatting.chat)
                     }
                     "join_leave" -> nextMessage.format(cfg!!.formatting.joinLeave)
