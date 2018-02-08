@@ -2,6 +2,7 @@ package matterlink
 
 import net.minecraftforge.common.config.Configuration
 import java.io.File
+import java.util.regex.Pattern
 
 var cfg: MatterLinkConfig? = null
 
@@ -78,8 +79,8 @@ class MatterLinkConfig(file: File) {
                         "commandPrefix",
                         CATEGORY_COMMAND,
                         "!",
-                        "Prefix for MC bridge commands. Accepts a single non-alphanumeric character."
-                        //Pattern.compile("[^0-9A-Za-z/]")
+                        "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)",
+                        Pattern.compile("^[^0-9A-Za-z/]$")
                 )
         )
 
