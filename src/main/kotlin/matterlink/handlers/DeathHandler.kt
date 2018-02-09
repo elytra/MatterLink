@@ -1,12 +1,9 @@
 package matterlink.handlers
 
+import matterlink.antiping
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
 import matterlink.cfg
-import matterlink.antiping
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraftforge.event.entity.living.LivingDeathEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 object DeathHandler {
     fun handleDeath(player: String, deathMessage: String) {
