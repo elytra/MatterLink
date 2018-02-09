@@ -8,16 +8,23 @@ import java.net.SocketException
 
 val BUFFER_SIZE = 1000
 
-class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mhandler: (String) -> Unit, private val onClose: () -> Unit) : Thread() {
+class HttpStreamConnection(getClosure: () -> HttpGet, clearClosure: () -> HttpGet, private val mhandler: (String) -> Unit, private val onClose: () -> Unit, private val clear: Boolean = true) : Thread() {
     private val client = HttpClients.createDefault()
     private var stream: InputStream? = null
 
     val get = getClosure()
+    private val clearGet = clearClosure()
     var cancelled: Boolean = false
         private set
 
 
     override fun run() {
+        if(clear) {
+            val r = client.execute(clearGet)
+            r.entity.content.bufferedReader().forEachLine {
+                logger.debug("skipping $it")
+            }
+        }
         val response = client.execute(get)
         val content = response.entity.content.buffered()
         stream = content

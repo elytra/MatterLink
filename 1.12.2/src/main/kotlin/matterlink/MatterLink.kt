@@ -42,7 +42,7 @@ object MatterLink : IMatterLink() {
 
     @Mod.EventHandler
     fun serverAboutToStart(event: FMLServerAboutToStartEvent) {
-        MessageHandler.start()
+        MessageHandler.start(clear = true)
     }
 
     @Mod.EventHandler
@@ -50,12 +50,12 @@ object MatterLink : IMatterLink() {
         logger.debug("Registering server commands")
         event.registerServerCommand(CommandMatterlink())
 
-        MessageHandler.rcvQueue.clear()
+        connect()
     }
 
     @Mod.EventHandler
     fun serverStopping(event: FMLServerStoppingEvent) {
-        MessageHandler.stop()
+        disconnect()
     }
 
     //FORGE-DEPENDENT

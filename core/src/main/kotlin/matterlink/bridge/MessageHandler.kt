@@ -25,16 +25,21 @@ object MessageHandler {
         connected = true
     }
 
-    fun HttpRequestBase.authorize() {
+    private fun HttpRequestBase.authorize() {
         if (cfg!!.connect.authToken.isNotEmpty() && getHeaders("Authorization").isEmpty())
             setHeader("Authorization", "Bearer " + cfg!!.connect.authToken)
     }
 
-    private fun createThread(): HttpStreamConnection {
+    private fun createThread(clear: Boolean = true): HttpStreamConnection {
         logger.info("Attempting to open bridge connection.")
         return HttpStreamConnection(
                 {
                     HttpGet(cfg!!.connect.url + "/api/stream").apply {
+                        authorize()
+                    }
+                },
+                {
+                    HttpGet(cfg!!.connect.url + "/api/messages").apply {
                         authorize()
                     }
                 },
@@ -47,7 +52,8 @@ object MessageHandler {
                 {
                     logger.info("Bridge connection closed!")
                     connected = false
-                }
+                },
+                clear
         )
     }
 
@@ -64,9 +70,9 @@ object MessageHandler {
         streamConnection.close()
     }
 
-    fun start(): Boolean {
+    fun start(clear: Boolean = true): Boolean {
         if (!connected)
-            streamConnection = createThread()
+            streamConnection = createThread(clear)
         if (!streamConnection.isAlive) {
             streamConnection.start()
 //            MessageHandler.transmit(ApiMessage(text="bridge connected", username="Server"))

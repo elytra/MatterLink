@@ -4,6 +4,7 @@ import com.google.common.collect.Lists
 import matterlink.MODID
 import matterlink.bridge.MessageHandler
 import matterlink.bridge.ServerChatHandler
+import matterlink.instance
 import matterlink.logger
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
@@ -40,17 +41,10 @@ class CommandMatterlink : CommandBase() {
         val cmd = args[0].toLowerCase()
         when (cmd) {
             "connect" -> {
-                if (MessageHandler.start()) {
-                    MessageHandler.rcvQueue.clear()
-                    logger.info("Connected to matterbridge relay")
-                    ServerChatHandler.processMessages = true
-                } else {
-                    logger.error("Connection to matterbridge relay failed.")
-                }
+                instance.connect()
             }
             "disconnect" -> {
-                MessageHandler.stop()
-                ServerChatHandler.processMessages = false
+                instance.disconnect()
             }
         }
     }
