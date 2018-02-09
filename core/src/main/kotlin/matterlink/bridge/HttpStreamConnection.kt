@@ -1,6 +1,6 @@
 package matterlink.bridge;
 
-import matterlink.MatterLink
+import matterlink.logger
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import java.io.InputStream
@@ -30,7 +30,7 @@ class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mh
                 if (chars > 0) {
                     buffer += String(buf.dropLast(buf.count() - chars).toByteArray())
 
-                    MatterLink.logger.debug(buffer)
+                    logger.debug(buffer)
 
                     while (buffer.contains("\n")) {
                         val line = buffer.substringBefore("\n")
@@ -44,9 +44,9 @@ class HttpStreamConnection(private val getClosure: () -> HttpGet, private val mh
         } catch (e: SocketException) {
 //            MatterLink.logger.error("Bridge Connection interrupted...")
         }
-        MatterLink.logger.debug("closing stream")
+        logger.debug("closing stream")
         content.close()
-        MatterLink.logger.debug("thread finished")
+        logger.debug("thread finished")
         onClose()
         return
     }

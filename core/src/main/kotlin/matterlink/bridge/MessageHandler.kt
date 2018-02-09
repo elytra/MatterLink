@@ -1,7 +1,8 @@
 package matterlink.bridge
 
-import matterlink.MatterLink
+import matterlink.IMatterLink
 import matterlink.cfg
+import matterlink.logger
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpRequestBase
@@ -30,7 +31,7 @@ object MessageHandler {
     }
 
     private fun createThread(): HttpStreamConnection {
-        MatterLink.logger.info("Attempting to open bridge connection.")
+        logger.info("Attempting to open bridge connection.")
         return HttpStreamConnection(
                 {
                     HttpGet(cfg!!.connect.url + "/api/stream").apply {
@@ -41,10 +42,10 @@ object MessageHandler {
                     rcvQueue.add(
                             ApiMessage.decode(it)
                     )
-                    MatterLink.logger.debug("Received: " + it)
+                    logger.debug("Received: " + it)
                 },
                 {
-                    MatterLink.logger.info("Bridge connection closed!")
+                    logger.info("Bridge connection closed!")
                     connected = false
                 }
         )
@@ -52,13 +53,13 @@ object MessageHandler {
 
     fun transmit(msg: ApiMessage) {
         if (connected && streamConnection.isAlive) {
-            MatterLink.logger.debug("Transmitting: " + msg)
+            logger.debug("Transmitting: " + msg)
             transmitMessage(msg)
         }
     }
 
     fun stop() {
-        MatterLink.logger.info("Closing bridge connection...")
+        logger.info("Closing bridge connection...")
 //        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
         streamConnection.close()
     }
@@ -87,14 +88,14 @@ object MessageHandler {
             val response = client.execute(post)
             val code = response.statusLine.statusCode
             if (code != 200) {
-                MatterLink.logger.error("Server returned $code for $post")
+                logger.error("Server returned $code for $post")
             }
             sendErrors = 0
         } catch (e: IOException) {
-            MatterLink.logger.error("sending message caused $e")
+            logger.error("sending message caused $e")
             sendErrors++
             if (sendErrors > 5) {
-                MatterLink.logger.error("caught too many errors, closing bridge")
+                logger.error("caught too many errors, closing bridge")
                 stop()
             }
         }

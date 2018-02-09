@@ -1,6 +1,5 @@
 package matterlink
 
-
 private const val ZWSP: Char = '\u200b'
 
 //Inserts a zero-width space at index 1 in the string'

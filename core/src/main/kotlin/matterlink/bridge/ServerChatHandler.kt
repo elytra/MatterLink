@@ -1,6 +1,7 @@
 package matterlink.bridge
 
-import matterlink.MatterLink
+import matterlink.logger
+import matterlink.instance
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.cfg
 
@@ -13,7 +14,7 @@ object ServerChatHandler {
     fun writeIncomingToChat() {
         if (!processMessages) return
         if (MessageHandler.rcvQueue.isNotEmpty())
-            MatterLink.logger.debug("incoming: " + MessageHandler.rcvQueue.toString())
+            logger.debug("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
 
         if (nextMessage != null && nextMessage.gateway == cfg!!.connect.gateway) {
@@ -30,15 +31,15 @@ object ServerChatHandler {
                         val user = nextMessage.username
                         val text = nextMessage.text
                         val json = nextMessage.encode()
-                        MatterLink.logger.debug("Threw out message with unhandled event: ${nextMessage.event}")
-                        MatterLink.logger.debug(" Message contents:")
-                        MatterLink.logger.debug(" User: $user")
-                        MatterLink.logger.debug(" Text: $text")
-                        MatterLink.logger.debug(" JSON: $json")
+                        logger.debug("Threw out message with unhandled event: ${nextMessage.event}")
+                        logger.debug(" Message contents:")
+                        logger.debug(" User: $user")
+                        logger.debug(" Text: $text")
+                        logger.debug(" JSON: $json")
                         return
                     }
                 }
-                MatterLink.wrappedSendToPlayers(message)
+                instance.wrappedSendToPlayers(message)
             }
         }
     }

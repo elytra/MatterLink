@@ -1,7 +1,9 @@
 package matterlink.bridge.command
 
-import matterlink.MatterLink
+import matterlink.IMatterLink
 import matterlink.cfg
+import matterlink.logger
+import java.util.*
 
 object BridgeCommandRegistry {
 
@@ -22,7 +24,7 @@ object BridgeCommandRegistry {
 
     fun register(cmd: IBridgeCommand): Boolean {
         if (cmd.name.isBlank() || commandMap.containsKey(cmd.name)) {
-            MatterLink.logger.error("Failed to register command: '${cmd.name}'")
+            logger.error("Failed to register command: '${cmd.name}'")
             return false
         }
         commandMap[cmd.name] = cmd

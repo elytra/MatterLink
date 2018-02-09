@@ -4,45 +4,9 @@ import net.minecraftforge.common.config.Configuration
 import java.io.File
 import java.util.regex.Pattern
 
-var cfg: MatterLinkConfig? = null
-
-class MatterLinkConfig(file: File) {
-    private val CATEGORY_RELAY_OPTIONS = "relay"
-    private val CATEGORY_FORMATTING = "formatting"
-    private val CATEGORY_CONNECTION = "connection"
-    private val CATEGORY_COMMAND = "command"
-
-    val relay: RelayOptions
-    val connect: ConnectOptions
-    val formatting: FormattingOptions
-    val command: CommandOptions
-
-    data class RelayOptions(
-            val systemUser: String,
-            val deathEvents: Boolean,
-            val advancements: Boolean,
-            val joinLeave: Boolean
-    )
-
-    data class FormattingOptions(
-            val chat: String,
-            val joinLeave: String,
-            val action: String
-    )
-
-    data class ConnectOptions(
-            val url: String,
-            val authToken: String,
-            val gateway: String
-    )
-
-    data class CommandOptions(
-            val prefix: String,
-            val enable: Boolean
-    )
-
+class MatterLinkConfig(file: File) : IMatterLinkConfig() {
     init {
-        MatterLink.logger.info("Reading bridge blueprints... from {}", file)
+        logger.info("Reading bridge blueprints... from {}", file)
         val config = Configuration(file)
 
         config.addCustomCategoryComment(CATEGORY_RELAY_OPTIONS, "Relay options")
@@ -51,25 +15,25 @@ class MatterLinkConfig(file: File) {
                 systemUser = config.getString(
                         "systemUser",
                         CATEGORY_RELAY_OPTIONS,
-                        "Server",
+                        relay.systemUser,
                         "Name of the server user (used by death and advancement messages and the /say command)"
                 ),
                 deathEvents = config.getBoolean(
                         "deathEvents",
                         CATEGORY_RELAY_OPTIONS,
-                        false,
+                        relay.deathEvents,
                         "Relay player death messages"
                 ),
                 advancements = config.getBoolean(
                         "advancements",
                         CATEGORY_RELAY_OPTIONS,
-                        false,
+                        relay.advancements,
                         "Relay player advancements"
                 ),
                 joinLeave = config.getBoolean(
                         "joinLeave",
                         CATEGORY_RELAY_OPTIONS,
-                        false,
+                        relay.joinLeave,
                         "Relay when a player joins or leaves the game"
                 )
         )
@@ -79,13 +43,13 @@ class MatterLinkConfig(file: File) {
                 enable = config.getBoolean(
                         "enable",
                         CATEGORY_COMMAND,
-                        true,
+                        command.enable,
                         "Enable MC bridge commands"
                 ),
                 prefix = config.getString(
-                        "commandPrefix",
+                        "prefix",
                         CATEGORY_COMMAND,
-                        "$",
+                        command.prefix,
                         "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)",
                         Pattern.compile("^[^0-9A-Za-z/]$")
                 )
@@ -97,19 +61,19 @@ class MatterLinkConfig(file: File) {
                 chat = config.getString(
                         "chat",
                         CATEGORY_FORMATTING,
-                        "<{username}> {text}",
+                        formatting.chat,
                         "Generic chat event, just talking"
                 ),
                 joinLeave = config.getString(
                         "joinLeave",
                         CATEGORY_FORMATTING,
-                        "§6-- {username} {text}",
+                        formatting.joinLeave,
                         "Join and leave events from other gateways"
                 ),
                 action = config.getString(
                         "action",
                         CATEGORY_FORMATTING,
-                        "§5* {username} {text}",
+                        formatting.action,
                         "User actions (/me) sent by users from other gateways"
                 )
         )
@@ -119,19 +83,19 @@ class MatterLinkConfig(file: File) {
                 url = config.getString(
                         "connectURL",
                         CATEGORY_CONNECTION,
-                        "http://localhost:4242",
+                        connect.url,
                         "The URL or IP address of the bridge server"
                 ),
                 authToken = config.getString(
                         "authToken",
                         CATEGORY_CONNECTION,
-                        "",
+                        connect.authToken,
                         "Auth token used to connect to the bridge server"
                 ),
                 gateway = config.getString(
                         "gateway",
                         CATEGORY_CONNECTION,
-                        "minecraft",
+                        connect.gateway,
                         "MatterBridge gateway"
                 )
         )

@@ -2,9 +2,9 @@ package matterlink.command
 
 import com.google.common.collect.Lists
 import matterlink.MODID
-import matterlink.MatterLink.logger
 import matterlink.bridge.MessageHandler
 import matterlink.bridge.ServerChatHandler
+import matterlink.logger
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.server.MinecraftServer
@@ -39,12 +39,14 @@ class CommandMatterlink : CommandBase() {
 
         val cmd = args[0].toLowerCase()
         when (cmd) {
-            "connect" -> if (MessageHandler.start()) {
-                MessageHandler.rcvQueue.clear()
-                logger.info("Connected to matterbridge relay")
-                ServerChatHandler.processMessages = true
-            } else {
-                logger.error("Connection to matterbridge relay failed.")
+            "connect" -> {
+                if (MessageHandler.start()) {
+                    MessageHandler.rcvQueue.clear()
+                    logger.info("Connected to matterbridge relay")
+                    ServerChatHandler.processMessages = true
+                } else {
+                    logger.error("Connection to matterbridge relay failed.")
+                }
             }
             "disconnect" -> {
                 MessageHandler.stop()

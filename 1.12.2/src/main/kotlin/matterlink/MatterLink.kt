@@ -5,18 +5,10 @@ import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.HelpCommand
 import matterlink.bridge.command.PlayerListCommand
 import matterlink.command.CommandMatterlink
-import matterlink.handlers.*
 import net.minecraft.util.text.TextComponentString
-import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.message.SimpleMessageFactory
-import org.apache.logging.log4j.simple.SimpleLogger
-import org.apache.logging.log4j.util.PropertiesUtil
-import java.util.*
 
 const val MODID = "matterlink"
 const val NAME = "MatterLink"
@@ -30,18 +22,10 @@ const val VERSION = "@VERSION@"
         acceptableRemoteVersions = "*",
         modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter"
 )
-object MatterLink {
-    //create fake logger to get around Nullability
-    var logger: Logger = SimpleLogger("",
-            Level.OFF,
-            false,
-            false,
-            false,
-            false,
-            "",
-            SimpleMessageFactory(),
-            PropertiesUtil(Properties()),
-            System.out)
+object MatterLink : IMatterLink() {
+    init {
+        instance = this
+    }
 
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent) {
@@ -75,12 +59,12 @@ object MatterLink {
     }
 
     //FORGE-DEPENDENT
-    fun wrappedSendToPlayers(msg: String) {
+    override fun wrappedSendToPlayers(msg: String) {
         FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(msg))
     }
 
     //FORGE-DEPENDENT
-    fun wrappedPlayerList(): Array<String> {
+    override fun wrappedPlayerList(): Array<String> {
         return FMLCommonHandler.instance().minecraftServerInstance.playerList.onlinePlayerNames
     }
     
