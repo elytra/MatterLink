@@ -8,9 +8,11 @@ import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 
-class ServerChatHelper {
-    @SubscribeEvent
-    fun onServerUpdate(event: TickEvent.ServerTickEvent) {
+object ServerChatHandler {
+    /**
+     * This method must be called every server tick with no arguments.
+     */
+    fun writeIncomingToChat() {
         if (MessageHandler.rcvQueue.isNotEmpty())
             MatterLink.logger.debug("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
@@ -29,7 +31,7 @@ class ServerChatHelper {
                         val user = nextMessage.username
                         val text = nextMessage.text
                         val json = nextMessage.encode()
-                        MatterLink.logger.debug("Threw out message with unhandled event: $event")
+                        MatterLink.logger.debug("Threw out message with unhandled event: ${nextMessage.event}")
                         MatterLink.logger.debug(" Message contents:")
                         MatterLink.logger.debug(" User: $user")
                         MatterLink.logger.debug(" Text: $text")

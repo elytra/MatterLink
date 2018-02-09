@@ -4,6 +4,9 @@ import matterlink.cfg
 import matterlink.antiping
 import com.google.gson.Gson
 
+const val USER_ACTION: String = "user_action"
+const val JOIN_LEAVE: String = "join_leave"
+
 data class ApiMessage(
         val username: String = cfg!!.relay.systemUser,
         val text: String = "",
@@ -18,6 +21,8 @@ data class ApiMessage(
         val id: String = ""
 //        val Extra: Any? = null
 ) {
+
+
     companion object {
         val gson = Gson()
 

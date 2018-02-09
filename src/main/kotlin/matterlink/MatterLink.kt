@@ -1,13 +1,14 @@
 package matterlink
 
 import matterlink.bridge.MessageHandler
-import matterlink.bridge.ServerChatHelper
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.HelpCommand
 import matterlink.bridge.command.PlayerListCommand
 import matterlink.command.CommandMatterlink
-import matterlink.eventhandlers.*
+import matterlink.handlers.*
+import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
 import org.apache.logging.log4j.Level
@@ -60,14 +61,6 @@ object MatterLink {
         logger.debug("Registering server commands")
         event.registerServerCommand(CommandMatterlink())
         MessageHandler.start()
-
-        //maybe try registering them manually
-        MinecraftForge.EVENT_BUS.register(ServerChatHelper())
-        MinecraftForge.EVENT_BUS.register(ChatMessageHandler())
-        MinecraftForge.EVENT_BUS.register(DeathEventHandler())
-        MinecraftForge.EVENT_BUS.register(CommandEventHandler())
-        MinecraftForge.EVENT_BUS.register(AdvancementEventHandler())
-        MinecraftForge.EVENT_BUS.register(JoinLeaveHandler())
     }
 
     @Mod.EventHandler
@@ -75,5 +68,9 @@ object MatterLink {
         MessageHandler.stop()
     }
 
+    //FORGE-DEPENDENT
+    fun writeToServerChat(msg: String) {
+        FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(msg))
+    }
 
 }

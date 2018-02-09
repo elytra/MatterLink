@@ -1,33 +1,32 @@
-package matterlink.eventhandlers
+package matterlink.handlers
 
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
 import matterlink.cfg
 import matterlink.antiping
+import matterlink.bridge.JOIN_LEAVE
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.PlayerEvent
 
-class JoinLeaveHandler {
-    @SubscribeEvent
-    fun handleJoinEvent(event: PlayerEvent.PlayerLoggedInEvent) {
+object JoinLeaveHandler {
+    fun handleJoin(player: String) {
         if (cfg!!.relay.joinLeave) {
-            val player: String = event.player.name.antiping()
+            val user = player.antiping()
             MessageHandler.transmit(ApiMessage(
                     username = cfg!!.relay.systemUser,
-                    text = "$player has connected to the server.",
-                    event = "join_leave"
+                    text = "$user has connected to the server.",
+                    event = JOIN_LEAVE
             ))
         }
     }
 
-    @SubscribeEvent
-    fun handleLeaveEvent(event: PlayerEvent.PlayerLoggedOutEvent) {
+    fun handleLeave(player: String) {
         if (cfg!!.relay.joinLeave) {
-            val player = event.player.name.antiping()
+            val user = player.antiping()
             MessageHandler.transmit(ApiMessage(
                     username = cfg!!.relay.systemUser,
-                    text = "$player has disconnected from the server.",
-                    event = "join_leave"
+                    text = "$user has disconnected from the server.",
+                    event = JOIN_LEAVE
             ))
         }
     }
