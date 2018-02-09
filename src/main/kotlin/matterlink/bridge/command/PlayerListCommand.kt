@@ -1,10 +1,10 @@
 package matterlink.bridge.command
 
+import matterlink.MatterLink
 import matterlink.antiping
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
 import matterlink.cfg
-import net.minecraftforge.fml.common.FMLCommonHandler
 
 object PlayerListCommand : IBridgeCommand {
     override val name: String = "players"
@@ -14,7 +14,7 @@ object PlayerListCommand : IBridgeCommand {
 
         MessageHandler.transmit(ApiMessage(
                 username = cfg!!.relay.systemUser,
-                text = FMLCommonHandler.instance().minecraftServerInstance.playerList.onlinePlayerNames.joinToString(" ") { it.antiping() }
+                text = MatterLink.wrappedPlayerList().joinToString(" ") { it.antiping() }
         ))
 
         return true

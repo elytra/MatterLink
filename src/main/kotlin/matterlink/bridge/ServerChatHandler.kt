@@ -3,10 +3,6 @@ package matterlink.bridge
 import matterlink.MatterLink
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.cfg
-import net.minecraft.util.text.TextComponentString
-import net.minecraftforge.fml.common.FMLCommonHandler
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
 
 object ServerChatHandler {
     /**
@@ -39,7 +35,7 @@ object ServerChatHandler {
                         return
                     }
                 }
-                FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(message))
+                MatterLink.wrappedSendToPlayers(message)
             }
         }
     }

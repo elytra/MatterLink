@@ -56,6 +56,7 @@ object MatterLink {
         BridgeCommandRegistry.registerAll(PlayerListCommand, HelpCommand)
     }
 
+
     @Mod.EventHandler
     fun serverStarting(event: FMLServerStartingEvent) {
         logger.debug("Registering server commands")
@@ -69,8 +70,13 @@ object MatterLink {
     }
 
     //FORGE-DEPENDENT
-    fun writeToServerChat(msg: String) {
+    fun wrappedSendToPlayers(msg: String) {
         FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(msg))
     }
 
+    //FORGE-DEPENDENT
+    fun wrappedPlayerList(): Array<String> {
+        return FMLCommonHandler.instance().minecraftServerInstance.playerList.onlinePlayerNames
+    }
+    
 }

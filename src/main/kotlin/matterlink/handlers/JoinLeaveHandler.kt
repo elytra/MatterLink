@@ -1,12 +1,10 @@
 package matterlink.handlers
 
+import matterlink.antiping
 import matterlink.bridge.ApiMessage
+import matterlink.bridge.JOIN_LEAVE
 import matterlink.bridge.MessageHandler
 import matterlink.cfg
-import matterlink.antiping
-import matterlink.bridge.JOIN_LEAVE
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.PlayerEvent
 
 object JoinLeaveHandler {
     fun handleJoin(player: String) {
