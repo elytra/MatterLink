@@ -26,3 +26,7 @@ requires api section to be setup along these lines
 
 values you need to remember are obviously the IP, port and token
 MatterLInk will need them in the configuration
+
+## Downloads
+
+https://ci.elytradev.com/job/elytra/job/MatterLink/job/master/

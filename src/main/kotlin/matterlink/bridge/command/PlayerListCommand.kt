@@ -11,10 +11,13 @@ object PlayerListCommand : IBridgeCommand {
     override val help: String = "Lists online players."
     override fun call(args: String): Boolean {
         if (args.isNotBlank()) return false
-
+        val playerList = FMLCommonHandler.instance().minecraftServerInstance.playerList.onlinePlayerNames
         MessageHandler.transmit(ApiMessage(
                 username = cfg!!.relay.systemUser,
-                text = MatterLink.wrappedPlayerList().joinToString(" ") { it.antiping() }
+                text = when {
+                    playerList.isNotEmpty() -> "players: " + playerList.joinToString(" ") { it.antiping() }
+                    else -> "No Players online"
+                }
         ))
 
         return true
