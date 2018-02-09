@@ -5,10 +5,13 @@ import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.cfg
 
 object ServerChatHandler {
+    var processMessages: Boolean = true
+
     /**
      * This method must be called every server tick with no arguments.
      */
     fun writeIncomingToChat() {
+        if (!processMessages) return
         if (MessageHandler.rcvQueue.isNotEmpty())
             MatterLink.logger.debug("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()

@@ -56,12 +56,17 @@ object MatterLink {
         BridgeCommandRegistry.registerAll(PlayerListCommand, HelpCommand)
     }
 
+    @Mod.EventHandler
+    fun serverAboutToStart(event: FMLServerAboutToStartEvent) {
+        MessageHandler.start()
+    }
 
     @Mod.EventHandler
     fun serverStarting(event: FMLServerStartingEvent) {
         logger.debug("Registering server commands")
         event.registerServerCommand(CommandMatterlink())
-        MessageHandler.start()
+
+        MessageHandler.rcvQueue.clear()
     }
 
     @Mod.EventHandler
