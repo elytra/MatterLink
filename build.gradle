@@ -8,20 +8,22 @@ subprojects {
     apply plugin: "kotlin"
     apply plugin: "idea"
 
-    if (name != "core") {
-        idea {
-            module {
-                excludeDirs += [file("run")]
-            }
+    idea {
+        module {
+            excludeDirs += [file("run")]
         }
+    }
 
+    if (name != "core") {
         repositories {
             jcenter()
             maven {
+                name = "unascribed"
                 url = 'http://unascribed.com/maven/releases'
             }
             maven {
-                url "http://maven.shadowfacts.net/"
+                name = "shadowfacts"
+                url = "http://maven.shadowfacts.net/"
             }
         }
 
