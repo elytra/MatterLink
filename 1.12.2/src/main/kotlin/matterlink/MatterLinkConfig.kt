@@ -57,26 +57,45 @@ class MatterLinkConfig(file: File) : IMatterLinkConfig() {
                 )
         )
 
-        config.addCustomCategoryComment(CATEGORY_FORMATTING, "Formatting options: " +
+        config.addCustomCategoryComment(CATEGORY_FORMATTING_INCOMING, "Gateway -> Server" +
+                "Formatting options: " +
                 "Available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
         formatting = FormattingOptions(
                 chat = config.getString(
                         "chat",
-                        CATEGORY_FORMATTING,
+                        CATEGORY_FORMATTING_INCOMING,
                         formatting.chat,
                         "Generic chat event, just talking"
                 ),
                 joinLeave = config.getString(
                         "joinLeave",
-                        CATEGORY_FORMATTING,
+                        CATEGORY_FORMATTING_INCOMING,
                         formatting.joinLeave,
                         "Join and leave events from other gateways"
                 ),
                 action = config.getString(
                         "action",
-                        CATEGORY_FORMATTING,
+                        CATEGORY_FORMATTING_INCOMING,
                         formatting.action,
                         "User actions (/me) sent by users from other gateways"
+                )
+        )
+
+        config.addCustomCategoryComment(CATEGORY_FORMATTING_JOIN_LEAVE, "Server -> Gateway" +
+                "Formatting options: " +
+                "Available variables: {username}, {username:antiping}")
+        formattingJoinLeave = FormattingJoinLeave(
+                joinServer = config.getString(
+                        "joinServer",
+                        CATEGORY_FORMATTING_JOIN_LEAVE,
+                        formattingJoinLeave.joinServer,
+                        "user join message sent to other gateways, available variables: {username}, {username:antiping}"
+                ),
+                leaveServer = config.getString(
+                        "leaveServer",
+                        CATEGORY_FORMATTING_JOIN_LEAVE,
+                        formattingJoinLeave.leaveServer,
+                        "user leave message sent to other gateways, available variables: {username}, {username:antiping}"
                 )
         )
 
