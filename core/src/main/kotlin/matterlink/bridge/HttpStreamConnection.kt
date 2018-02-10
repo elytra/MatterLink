@@ -1,5 +1,6 @@
 package matterlink.bridge;
 
+import matterlink.instance
 import matterlink.logger
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
@@ -19,7 +20,8 @@ class HttpStreamConnection(getClosure: () -> HttpGet, clearClosure: () -> HttpGe
 
 
     override fun run() {
-        if(clear) {
+        instance.interrupted = false
+        if (clear) {
             val r = client.execute(clearGet)
             r.entity.content.bufferedReader().forEachLine {
                 logger.debug("skipping $it")
@@ -49,7 +51,11 @@ class HttpStreamConnection(getClosure: () -> HttpGet, clearClosure: () -> HttpGe
                 }
             }
         } catch (e: SocketException) {
-//            MatterLink.logger.error("Bridge Connection interrupted...")
+            if (!cancelled) {
+                logger.error("Bridge Connection interrupted...")
+                instance.interrupted = true
+                //TODO: mark connection as interrupted and try to reconnect
+            }
         }
         logger.debug("closing stream")
         content.close()

@@ -10,7 +10,8 @@ object ServerChatHandler {
     /**
      * This method must be called every server tick with no arguments.
      */
-    fun writeIncomingToChat() {
+    fun writeIncomingToChat(tick: Int) {
+        instance.reconnect(tick)
         if (MessageHandler.rcvQueue.isNotEmpty())
             logger.debug("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
