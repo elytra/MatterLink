@@ -1,7 +1,7 @@
 package matterlink.bridge
 
 import matterlink.config.cfg
-import matterlink.logger
+//import matterlink.logger
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpRequestBase
@@ -30,7 +30,7 @@ object MessageHandler {
     }
 
     private fun createThread(clear: Boolean = true): HttpStreamConnection {
-        logger.info("Attempting to open bridge connection.")
+        println("Attempting to open bridge connection.")
         return HttpStreamConnection(
                 {
                     HttpGet(cfg!!.connect.url + "/api/stream").apply {
@@ -46,10 +46,10 @@ object MessageHandler {
                     rcvQueue.add(
                             ApiMessage.decode(it)
                     )
-                    logger.debug("Received: " + it)
+//                    println("Received: " + it)
                 },
                 {
-                    logger.info("Bridge connection closed!")
+                    println("Bridge connection closed!")
                     connected = false
                 },
                 clear
@@ -58,13 +58,13 @@ object MessageHandler {
 
     fun transmit(msg: ApiMessage) {
         if (connected && streamConnection.isAlive) {
-            logger.debug("Transmitting: " + msg)
+            println("Transmitting: " + msg)
             transmitMessage(msg)
         }
     }
 
     fun stop() {
-        logger.info("Closing bridge connection...")
+        println("Closing bridge connection...")
 //        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
         streamConnection.close()
     }
@@ -93,14 +93,14 @@ object MessageHandler {
             val response = client.execute(post)
             val code = response.statusLine.statusCode
             if (code != 200) {
-                logger.error("Server returned $code for $post")
+                System.err.println("Server returned $code for $post")
             }
             sendErrors = 0
         } catch (e: IOException) {
-            logger.error("sending message caused $e")
+            System.err.println("sending message caused $e")
             sendErrors++
             if (sendErrors > 5) {
-                logger.error("caught too many errors, closing bridge")
+                System.err.println("caught too many errors, closing bridge")
                 stop()
             }
         }

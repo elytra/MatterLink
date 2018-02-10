@@ -45,7 +45,7 @@ shadowJar {
 
 minecraft {
     version = mc_version + "-" + forge_version
-    runDir = "../run"
+    runDir = "run"
 
     mappings = mcp_mappings
 

@@ -9,10 +9,13 @@ import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
+import org.apache.logging.log4j.Logger
 
 const val MODID = "matterlink"
 const val NAME = "MatterLink"
 const val VERSION = "@VERSION@"
+
+lateinit var logger: Logger
 
 @Mod(
         modid = MODID,
