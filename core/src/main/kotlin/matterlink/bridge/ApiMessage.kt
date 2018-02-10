@@ -3,6 +3,7 @@ package matterlink.bridge
 import matterlink.config.cfg
 import matterlink.antiping
 import com.google.gson.Gson
+import matterlink.mapFormat
 
 const val USER_ACTION: String = "user_action"
 const val JOIN_LEAVE: String = "join_leave"
@@ -36,20 +37,16 @@ data class ApiMessage(
     }
 
     fun format(fmt: String): String {
-        var result = fmt
-        result = result.helpFormat("{username}", username)
-        result = result.helpFormat("{text}", text)
-        result = result.helpFormat("{gateway}", gateway)
-        result = result.helpFormat("{channel}", channel)
-        result = result.helpFormat("{protocol}", protocol)
-        result = result.helpFormat("{username:antiping}", username.antiping())
-        return result
-    }
+        return fmt.mapFormat(
+                mapOf(
+                        "{username}" to username,
+                        "{text}" to text,
+                        "{gateway}" to gateway,
+                        "{channel}" to channel,
+                        "{protocol}" to protocol,
+                        "{username:antiping}" to username.antiping()
+                )
+        )
 
-    private fun String.helpFormat(name: String, value: String): String {
-        if (this.contains(name)) {
-            return this.replace(name, value)
-        }
-        return this
     }
 }
