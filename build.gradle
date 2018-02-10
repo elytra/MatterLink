@@ -1,17 +1,15 @@
 buildscript {
-    ext.kotlin_version = '1.2.21'
     repositories {
         jcenter()
         maven { url = "http://files.minecraftforge.net/maven" }
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.20"
+    id "org.jetbrains.kotlin.jvm" version '1.2.21'
     id "com.github.johnrengelman.shadow" version "1.2.4"
     id 'idea'
 }
