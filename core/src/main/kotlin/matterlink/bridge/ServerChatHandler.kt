@@ -1,6 +1,6 @@
 package matterlink.bridge
 
-import matterlink.logger
+//import matterlink.logger
 import matterlink.instance
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.config.cfg
@@ -10,9 +10,10 @@ object ServerChatHandler {
     /**
      * This method must be called every server tick with no arguments.
      */
-    fun writeIncomingToChat() {
+    fun writeIncomingToChat(tick: Int) {
+        instance.reconnect(tick)
         if (MessageHandler.rcvQueue.isNotEmpty())
-            logger.debug("incoming: " + MessageHandler.rcvQueue.toString())
+            println("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
 
         if (nextMessage != null && nextMessage.gateway == cfg!!.connect.gateway) {
@@ -29,11 +30,11 @@ object ServerChatHandler {
                         val user = nextMessage.username
                         val text = nextMessage.text
                         val json = nextMessage.encode()
-                        logger.debug("Threw out message with unhandled event: ${nextMessage.event}")
-                        logger.debug(" Message contents:")
-                        logger.debug(" User: $user")
-                        logger.debug(" Text: $text")
-                        logger.debug(" JSON: $json")
+                        println("Threw out message with unhandled event: ${nextMessage.event}")
+                        println(" Message contents:")
+                        println(" User: $user")
+                        println(" Text: $text")
+                        println(" JSON: $json")
                         return
                     }
                 }

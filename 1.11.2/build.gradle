@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
     }
 }
 
@@ -83,6 +83,7 @@ sourceJar {
         exclude 'mcmod.info'
     }
 }
+
 
 reobf {
     shadowJar { mappingType = 'SEARGE' }

@@ -12,7 +12,7 @@ import net.minecraft.tileentity.TileEntityCommandBlock
 import net.minecraftforge.event.CommandEvent
 import net.minecraftforge.event.ServerChatEvent
 import net.minecraftforge.event.entity.living.LivingDeathEvent
-import net.minecraftforge.event.entity.player.AdvancementEvent
+import net.minecraftforge.event.entity.player.AchievementEvent
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -26,10 +26,9 @@ object EventWrapper {
     //MC-VERSION & FORGE DEPENDENT
     @SubscribeEvent
     @JvmStatic
-    fun progressEvent(e: AdvancementEvent) {
-        if (e.advancement.display == null) return
+    fun progressEvent(e: AchievementEvent) {
         val name = e.entityPlayer.name
-        val text = "has made the advancement ${e.advancement.displayText.unformattedText}"
+        val text = "has earned the achievement ${e.achievement.statName.unformattedText}"
         ProgressHandler.handleProgress(name, text)
     }
 
