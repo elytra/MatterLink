@@ -73,6 +73,17 @@ processResources {
 
 }
 
+sourceJar {
+    classifier 'sources'
+    // copy all the minecraftforge specific classes
+    from sourceSets.main.allSource
+
+    // copy everything else except the mcmod.info
+    from (project(":core").sourceSets.main.allSource) {
+        exclude 'mcmod.info'
+    }
+}
+
 reobf {
     shadowJar { mappingType = 'SEARGE' }
 }

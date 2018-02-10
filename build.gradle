@@ -8,7 +8,7 @@ subprojects {
     apply plugin: "kotlin"
     apply plugin: "idea"
 
-    if(name != "core") {
+    if (name != "core") {
         idea {
             module {
                 excludeDirs += [file("run")]
@@ -24,5 +24,6 @@ subprojects {
                 url "http://maven.shadowfacts.net/"
             }
         }
+
     }
 }
