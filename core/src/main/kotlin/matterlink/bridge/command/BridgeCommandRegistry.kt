@@ -1,7 +1,6 @@
 package matterlink.bridge.command
 
-import matterlink.IMatterLink
-import matterlink.cfg
+import matterlink.config.cfg
 import matterlink.logger
 import java.util.*
 

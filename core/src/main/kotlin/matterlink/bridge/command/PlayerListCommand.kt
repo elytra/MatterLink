@@ -4,7 +4,7 @@ import matterlink.instance
 import matterlink.antiping
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
-import matterlink.cfg
+import matterlink.config.cfg
 
 object PlayerListCommand : IBridgeCommand {
     override val name: String = "players"

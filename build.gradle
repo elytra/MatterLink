@@ -1,16 +1,109 @@
+buildscript {
+    ext.kotlin_version = '1.2.21'
+    repositories {
+        jcenter()
+        maven { url = "http://files.minecraftforge.net/maven" }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
 plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.2.20"
+    id "com.github.johnrengelman.shadow" version "1.2.4"
     id 'idea'
 }
 
 subprojects {
+    apply plugin: "kotlin"
     apply plugin: 'idea'
-
-    group = 'matterlink'
-    version = '1.1.1'
 
     idea {
         module {
             excludeDirs += [file("run")]
         }
+    }
+
+    if(name != "core") {
+        apply plugin: 'net.minecraftforge.gradle.forge'
+        apply plugin: 'com.github.johnrengelman.shadow'
+
+        version = mc_version + "-" + mod_version
+
+        archivesBaseName = "MatterLink"
+
+        sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+        compileJava {
+            sourceCompatibility = targetCompatibility = '1.8'
+        }
+
+        minecraft {
+            version = mc_version + "-" + forge_version
+            runDir = "run"
+
+            mappings = mcp_mappings
+
+            replaceIn 'MatterLink.kt'
+            replace '@VERSION@', mod_version
+        }
+
+        processResources {
+            // this will ensure that this task is redone when the versions change.
+            inputs.property "version", project.version
+            inputs.property "mcversion", project.minecraft.version
+
+            // replace stuff in mcmod.info, nothing else
+            from(project(":core").sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
+
+                // replace version and mcversion
+                expand 'version':project.version, 'mcversion':project.minecraft.version
+            }
+
+            // copy everything else except the mcmod.info
+            from(project(":core").sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
+
+        repositories {
+            jcenter()
+            maven {
+                url = 'http://unascribed.com/maven/releases'
+            }
+            maven {
+                url "http://maven.shadowfacts.net/"
+            }
+        }
+
+        dependencies {
+            compile project(':core')
+            compile group: "net.shadowfacts", name: "Forgelin", version: "1.6.0"
+        }
+
+        shadowJar {
+            classifier ''
+            // configurations = [project.configurations.shadow]
+
+            relocate "org.apache.http", "matterlink.repack.org.apache.http"
+            relocate "org.apache.commons.logging", "matterlink.repack.org.apache.commons.logging"
+            dependencies {
+                include(project(":core"))
+                include(dependency("org.apache.httpcomponents:httpclient:4.3.3"))
+                include(dependency("org.apache.httpcomponents:httpcore:4.3.2"))
+                include(dependency('commons-logging:commons-logging:1.1.3'))
+            }
+
+            exclude 'dummyThing'
+        }
+
+
+        reobf {
+            shadowJar { mappingType = 'SEARGE' }
+        }
+
+        tasks.reobfShadowJar.mustRunAfter shadowJar
     }
 }

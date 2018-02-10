@@ -1,7 +1,6 @@
 package matterlink.bridge
 
-import matterlink.IMatterLink
-import matterlink.cfg
+import matterlink.config.cfg
 import matterlink.logger
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost

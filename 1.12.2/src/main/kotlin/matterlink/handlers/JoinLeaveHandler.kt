@@ -4,7 +4,7 @@ import matterlink.antiping
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.JOIN_LEAVE
 import matterlink.bridge.MessageHandler
-import matterlink.cfg
+import matterlink.config.cfg
 
 object JoinLeaveHandler {
     fun handleJoin(player: String) {

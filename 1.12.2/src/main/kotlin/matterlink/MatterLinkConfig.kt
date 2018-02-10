@@ -1,5 +1,7 @@
 package matterlink
 
+import matterlink.config.IMatterLinkConfig
+import matterlink.config.cfg
 import net.minecraftforge.common.config.Configuration
 import java.io.File
 import java.util.regex.Pattern

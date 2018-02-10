@@ -2,6 +2,7 @@ package matterlink
 
 import matterlink.bridge.ServerChatHandler
 import matterlink.bridge.USER_ACTION
+import matterlink.config.cfg
 import matterlink.handlers.*
 import net.minecraft.command.server.CommandBroadcast
 import net.minecraft.command.server.CommandEmote

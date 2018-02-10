@@ -2,7 +2,7 @@ package matterlink.bridge.command
 
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
-import matterlink.cfg
+import matterlink.config.cfg
 
 object HelpCommand : IBridgeCommand {
     override val name: String = "help"

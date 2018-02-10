@@ -3,7 +3,7 @@ package matterlink.bridge
 import matterlink.logger
 import matterlink.instance
 import matterlink.bridge.command.BridgeCommandRegistry
-import matterlink.cfg
+import matterlink.config.cfg
 
 object ServerChatHandler {
 

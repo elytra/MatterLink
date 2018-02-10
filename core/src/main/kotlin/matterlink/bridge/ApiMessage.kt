@@ -1,6 +1,6 @@
 package matterlink.bridge
 
-import matterlink.cfg
+import matterlink.config.cfg
 import matterlink.antiping
 import com.google.gson.Gson
 

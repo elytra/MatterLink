@@ -1,4 +1,4 @@
-package matterlink
+package matterlink.config
 
 var cfg: IMatterLinkConfig? = null
 

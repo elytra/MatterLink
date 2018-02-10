@@ -3,7 +3,7 @@ package matterlink.handlers
 import matterlink.antiping
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
-import matterlink.cfg
+import matterlink.config.cfg
 
 object DeathHandler {
     fun handleDeath(player: String, deathMessage: String) {
