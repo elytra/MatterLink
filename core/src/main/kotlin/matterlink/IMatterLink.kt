@@ -21,11 +21,11 @@ abstract class IMatterLink {
 
     abstract fun log(level: String, formatString: String, vararg data: Any)
 
-    fun fatal(formatString: String, vararg data: Any) = log(Level.FATAL.name, formatString, *data)
-    fun error(formatString: String, vararg data: Any) = log(Level.ERROR.name, formatString, *data)
-    fun warn(formatString: String, vararg data: Any) = log(Level.WARN.name, formatString, *data)
-    fun info(formatString: String, vararg data: Any) = log(Level.INFO.name, formatString, *data)
-    fun debug(formatString: String, vararg data: Any) = log(Level.DEBUG.name, formatString, *data)
-    fun trace(formatString: String, vararg data: Any) = log(Level.TRACE.name, formatString, *data)
+    fun fatal(formatString: String, vararg data: Any) = log("^FATAL", formatString, *data)
+    fun error(formatString: String, vararg data: Any) = log("ERROR", formatString, *data)
+    fun warn(formatString: String, vararg data: Any) = log("WARN", formatString, *data)
+    fun info(formatString: String, vararg data: Any) = log("INFO", formatString, *data)
+    fun debug(formatString: String, vararg data: Any) = log("DEBUG", formatString, *data)
+    fun trace(formatString: String, vararg data: Any) = log("TRACE", formatString, *data)
 
 }
