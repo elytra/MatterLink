@@ -5,7 +5,7 @@ pipeline {
 	        steps {
 	            sh './gradlew :1.10.2:setupCiWorkspace'
 	            sh './gradlew :1.10.2:clean'
-	            sh './gradlew :1.10.2:build'
+	            sh './gradlew :1.10.2:build -Pbuild_number=${BUILD_NUMBER}'
 	            archive '1.10.2/build/libs/*jar'
 	        }
 	    }
@@ -13,7 +13,7 @@ pipeline {
 	        steps {
 	            sh './gradlew :1.11.2:setupCiWorkspace'
 	            sh './gradlew :1.11.2:clean'
-	            sh './gradlew :1.11.2:build'
+	            sh './gradlew :1.11.2:build -Pbuild_number=${BUILD_NUMBER}'
 	            archive '1.11.2/build/libs/*jar'
 	        }
 	    }
@@ -21,7 +21,7 @@ pipeline {
 	        steps {
 	            sh './gradlew :1.12.2:setupCiWorkspace'
 	            sh './gradlew :1.12.2:clean'
-	            sh './gradlew :1.12.2:build'
+	            sh './gradlew :1.12.2:build -Pbuild_number=${BUILD_NUMBER}'
 	            archive '1.12.2/build/libs/*jar'
 	        }
 	    }

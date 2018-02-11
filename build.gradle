@@ -8,6 +8,12 @@ subprojects {
     apply plugin: "kotlin"
     apply plugin: "idea"
 
+    if (project.hasProperty('build_number')) {
+        mod_version += "-build-$build_number"
+    } else if(!project.hasProperty('release')) {
+        mod_version += "-dev"
+    }
+
     idea {
         module {
             excludeDirs += [file("run")]
