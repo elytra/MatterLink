@@ -4,6 +4,8 @@
   "description": "Minecraft Server Matterbridge link",
   "version": "${version}",
   "mcversion": "${mcversion}",
+  "url": "https://github.com/elytra/MatterLink",
   "authorList":["Arcanitor", "NikkyAi"],
-  "credits": "Blame Nikky for talking me into this."
+  "credits": "Blame Nikky for talking me into this.",
+  "dependencies": ["forgelin"]
 }]

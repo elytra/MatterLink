@@ -1,39 +1,31 @@
 package matterlink
 
 import matterlink.bridge.MessageHandler
-//import org.apache.logging.log4j.Logger
 
 lateinit var instance: IMatterLink
-//lateinit var logger: Logger
 
 abstract class IMatterLink {
-    var interrupted: Boolean = false
+//    var interrupted: Boolean = false
 
     abstract fun wrappedSendToPlayers(msg: String)
 
     abstract fun wrappedPlayerList(): Array<String>
 
     fun connect() {
-        if (MessageHandler.start(clear = true)) {
-            println("Connected to matterbridge relay")
-        } else {
-            System.err.println("Connection to matterbridge relay failed.")
-        }
+        MessageHandler.start(clear = true)
     }
 
-    fun disconnect  () {
+    fun disconnect() {
         MessageHandler.stop()
     }
 
+    abstract fun log(level: String, formatString: String, vararg data: Any)
 
-    fun reconnect(tick: Int) {
-        if(tick % 20 == 0  && interrupted) {
-            println("Trying to reconnect")
-            if (MessageHandler.start(clear = false)) {
-                println("Reconnected to matterbridge relay")
-            } else {
-                System.err.println("Reconnection to matterbridge relay failed.")
-            }
-        }
-    }
+    fun fatal(formatString: String, vararg data: Any) = log(Level.FATAL.name, formatString, *data)
+    fun error(formatString: String, vararg data: Any) = log(Level.ERROR.name, formatString, *data)
+    fun warn(formatString: String, vararg data: Any) = log(Level.WARN.name, formatString, *data)
+    fun info(formatString: String, vararg data: Any) = log(Level.INFO.name, formatString, *data)
+    fun debug(formatString: String, vararg data: Any) = log(Level.DEBUG.name, formatString, *data)
+    fun trace(formatString: String, vararg data: Any) = log(Level.TRACE.name, formatString, *data)
+
 }

@@ -2,7 +2,7 @@ package matterlink.handlers
 
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
-//import matterlink.logger
+import matterlink.instance
 
 object ChatHandler {
     fun handleChat(user: String, msg: String) {
@@ -12,7 +12,7 @@ object ChatHandler {
                     username = user,
                     text = message
             ))
-            else -> println("WARN: dropped blank message by '$user'")
+            else -> instance.warn("WARN: dropped blank message by '$user'")
         }
     }
 }

@@ -1,7 +1,6 @@
 package matterlink.bridge;
 
 import matterlink.instance
-//import matterlink.logger
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import java.io.InputStream
@@ -9,7 +8,13 @@ import java.net.SocketException
 
 val BUFFER_SIZE = 1000
 
-class HttpStreamConnection(getClosure: () -> HttpGet, clearClosure: () -> HttpGet, private val mhandler: (String) -> Unit, private val onClose: () -> Unit, private val clear: Boolean = true) : Thread() {
+class HttpStreamConnection(getClosure: () -> HttpGet,
+                           clearClosure: () -> HttpGet,
+                           private val mhandler: (String) -> Unit,
+                           private val onClose: () -> Unit,
+                           private val setSuccess: (Boolean) -> Unit,
+                           private val clear: Boolean = true
+) : Thread() {
     private val client = HttpClients.createDefault()
     private var stream: InputStream? = null
 
@@ -18,28 +23,36 @@ class HttpStreamConnection(getClosure: () -> HttpGet, clearClosure: () -> HttpGe
     var cancelled: Boolean = false
         private set
 
-
     override fun run() {
-        instance.interrupted = false
+
         if (clear) {
             val r = client.execute(clearGet)
             r.entity.content.bufferedReader().forEachLine {
-                println("DEBUG: skipping $it")
+                instance.debug("skipping $it")
             }
         }
-        val response = client.execute(get)
-        val content = response.entity.content.buffered()
-        stream = content
-        //val reader = content.bufferedReader()
-        var buffer = ""
-        val buf = ByteArray(BUFFER_SIZE)
         try {
+            val response = client.execute(get)
+            if (response.statusLine.statusCode != 200) {
+                instance.error("Bridge Connection rejected... status code ${response.statusLine.statusCode}")
+                setSuccess(false) //TODO: pass message
+                onClose()
+                return
+            } else {
+                setSuccess(true) //TODO: pass message
+            }
+
+            val content = response.entity.content.buffered()
+            stream = content
+            var buffer = ""
+            val buf = ByteArray(BUFFER_SIZE)
+            instance.info("initialized buffer")
             while (!get.isAborted) {
                 val chars = content.read(buf)
                 if (chars > 0) {
                     buffer += String(buf.dropLast(buf.count() - chars).toByteArray())
 
-                    println("DEBUG: " + buffer)
+                    instance.debug(buffer)
 
                     while (buffer.contains("\n")) {
                         val line = buffer.substringBefore("\n")
@@ -50,17 +63,20 @@ class HttpStreamConnection(getClosure: () -> HttpGet, clearClosure: () -> HttpGe
                     break
                 }
             }
+
+            instance.debug("closing stream")
+            content.close()
+
         } catch (e: SocketException) {
+            instance.info("error {}", e)
             if (!cancelled) {
-                System.err.println("Bridge Connection interrupted...")
-                instance.interrupted = true
-                //TODO: mark connection as interrupted and try to reconnect
+                instance.error("Bridge Connection interrupted...")
+                setSuccess(false)
             }
+        } finally {
+            instance.debug("thread finished")
+            onClose()
         }
-        println("DEBUG: closing stream")
-        content.close()
-        println("DEBUG: thread finished")
-        onClose()
         return
     }
 

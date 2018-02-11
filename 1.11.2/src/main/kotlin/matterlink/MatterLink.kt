@@ -1,5 +1,6 @@
 package matterlink
 
+import jline.internal.Log
 import matterlink.bridge.MessageHandler
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.HelpCommand
@@ -9,6 +10,7 @@ import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
+import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
 
 const val MODID = "matterlink"
@@ -70,5 +72,7 @@ object MatterLink : IMatterLink() {
     override fun wrappedPlayerList(): Array<String> {
         return FMLCommonHandler.instance().minecraftServerInstance.playerList.onlinePlayerNames
     }
-    
+
+    override fun log(level: String, formatString: String, vararg data: Any) =
+            logger.log(Level.toLevel(level, Level.INFO),formatString, *data)
 }

@@ -1,7 +1,7 @@
 package matterlink.bridge
 
 import matterlink.config.cfg
-//import matterlink.logger
+import matterlink.instance
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpRequestBase
@@ -9,11 +9,15 @@ import org.apache.http.entity.ContentType
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 import java.io.IOException
+import java.net.SocketException
 import java.util.concurrent.ConcurrentLinkedQueue
 
 
 object MessageHandler {
-    private var connected = false
+    var connected = false
+    private var connecting = false
+    private var enabled = true
+    private var connectErrors = 0
     private var sendErrors = 0
     private var streamConnection: HttpStreamConnection
     var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
@@ -30,7 +34,7 @@ object MessageHandler {
     }
 
     private fun createThread(clear: Boolean = true): HttpStreamConnection {
-        println("Attempting to open bridge connection.")
+        instance.info("Attempting to open bridge connection.")
         return HttpStreamConnection(
                 {
                     HttpGet(cfg!!.connect.url + "/api/stream").apply {
@@ -46,11 +50,23 @@ object MessageHandler {
                     rcvQueue.add(
                             ApiMessage.decode(it)
                     )
-//                    println("Received: " + it)
+                    instance.debug("Received: " + it)
                 },
                 {
-                    println("Bridge connection closed!")
+                    instance.warn("Bridge connection closed!")
                     connected = false
+                    connecting = false
+                },
+                { success ->
+                    connecting = false
+                    if (success) {
+                        instance.info("connected successfully")
+                        connectErrors = 0
+                        connected = true
+                    } else {
+                        connectErrors++
+                        connected = false
+                    }
                 },
                 clear
         )
@@ -58,27 +74,32 @@ object MessageHandler {
 
     fun transmit(msg: ApiMessage) {
         if (connected && streamConnection.isAlive) {
-            println("Transmitting: " + msg)
+            instance.debug("Transmitting: " + msg)
             transmitMessage(msg)
         }
     }
 
     fun stop() {
-        println("Closing bridge connection...")
+        enabled = false
+        instance.info("Closing bridge connection...")
 //        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
-        streamConnection.close()
+        try {
+            streamConnection.close()
+        } catch(e: SocketException) {
+            instance.error("exception: $e")
+        }
     }
 
-    fun start(clear: Boolean = true): Boolean {
+    fun start(clear: Boolean = true) {
+        enabled = true
         if (!connected)
             streamConnection = createThread(clear)
         if (!streamConnection.isAlive) {
+            connecting = true
             streamConnection.start()
 //            MessageHandler.transmit(ApiMessage(text="bridge connected", username="Server"))
-            connected = true
-            return connected
         }
-        return connected
+
     }
 
     private fun transmitMessage(message: ApiMessage) {
@@ -93,16 +114,35 @@ object MessageHandler {
             val response = client.execute(post)
             val code = response.statusLine.statusCode
             if (code != 200) {
-                System.err.println("Server returned $code for $post")
+                instance.error("Server returned $code for $post")
+                sendErrors++
+                if (sendErrors > 5) {
+                    instance.error("caught too many errors, closing bridge")
+                    stop()
+                }
             }
             sendErrors = 0
         } catch (e: IOException) {
-            System.err.println("sending message caused $e")
+            instance.error("sending message caused $e")
             sendErrors++
             if (sendErrors > 5) {
-                System.err.println("caught too many errors, closing bridge")
+                instance.error("caught too many errors, closing bridge")
                 stop()
             }
+        }
+    }
+
+    fun checkConnection(tick: Int) {
+        if (enabled && tick % 20 == 0 && !MessageHandler.connected && !connecting) {
+
+            if (connectErrors > 5) {
+                instance.fatal("caught too many errors, closing bridge")
+                stop()
+                return
+            }
+
+            instance.info("Trying to reconnect")
+            MessageHandler.start(clear = false)
         }
     }
 }
