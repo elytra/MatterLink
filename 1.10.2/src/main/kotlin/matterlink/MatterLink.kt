@@ -65,7 +65,7 @@ object MatterLink : IMatterLink() {
 
     //FORGE-DEPENDENT
     override fun wrappedSendToPlayers(msg: String) {
-        FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(msg))
+        FMLCommonHandler.instance().minecraftServerInstance.playerList.sendChatMsg(TextComponentString(msg))
     }
 
     //FORGE-DEPENDENT

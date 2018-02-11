@@ -1,6 +1,14 @@
 pipeline {
     agent any
 	stages {
+	    stage("1.10.2") {
+	        steps {
+	            sh './gradlew :1.10.2:setupCiWorkspace'
+	            sh './gradlew :1.10.2:clean'
+	            sh './gradlew :1.10.2:build'
+	            archive '1.10.2/build/libs/*jar'
+	        }
+	    }
 	    stage("1.11.2") {
 	        steps {
 	            sh './gradlew :1.11.2:setupCiWorkspace'

@@ -1,2 +1,2 @@
 rootProject.name = 'MatterLink'
-include 'core', '1.12.2', '1.11.2'
+include 'core', '1.12.2', '1.11.2', '1.10.2'

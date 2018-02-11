@@ -85,7 +85,7 @@ object MessageHandler {
 //        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
         try {
             streamConnection.close()
-        } catch(e: SocketException) {
+        } catch (e: SocketException) {
             instance.error("exception: $e")
         }
     }
@@ -97,7 +97,11 @@ object MessageHandler {
         if (!streamConnection.isAlive) {
             connecting = true
             streamConnection.start()
+
 //            MessageHandler.transmit(ApiMessage(text="bridge connected", username="Server"))
+        }
+        if (streamConnection.isAlive) {
+            instance.info("Bridge Connection opened")
         }
 
     }
