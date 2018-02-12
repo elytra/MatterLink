@@ -1,8 +1,8 @@
 plugins {
     id "org.jetbrains.kotlin.jvm" version '1.2.21'
+    id 'com.matthewprenger.cursegradle' version '1.0.10'
     id 'idea'
 }
-
 
 subprojects {
     apply plugin: "kotlin"
@@ -21,6 +21,7 @@ subprojects {
     }
 
     if (name != "core") {
+
         repositories {
             jcenter()
             maven {
@@ -32,6 +33,21 @@ subprojects {
                 url = "http://maven.shadowfacts.net/"
             }
         }
+
+        apply plugin: 'com.matthewprenger.cursegradle'
+        curseforge {
+            if (project.hasProperty('CURSEFORGE_API_TOKEN') && project.hasProperty('release')) {
+                apiKey = CURSEFORGE_API_TOKEN
+            }
+            project {
+                id = '287323'
+                releaseType = 'beta'
+                relations {
+                    requiredLibrary 'shadowfacts-forgelin'
+                }
+            }
+        }
+
 
     }
 }

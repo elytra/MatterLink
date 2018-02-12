@@ -31,7 +31,7 @@ requires api section to be setup along these lines
 
 https://github.com/elytra/MatterLink/releases
 
-https://ci.elytradev.com/job/elytra/job/MatterLink/job/master/
+https://ci.elytradev.com/job/elytra/job/MatterLink/job/master/lastSuccessfulBuild/
 
 ## Dependencies
 
