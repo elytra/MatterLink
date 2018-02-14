@@ -9,8 +9,8 @@ import matterlink.mapFormat
 
 object JoinLeaveHandler {
     fun handleJoin(player: String) {
-        if (cfg!!.relay.joinLeave) {
-            val msg = cfg!!.formattingJoinLeave.joinServer.mapFormat(
+        if (cfg!!.joinLeave.showJoin) {
+            val msg = cfg!!.joinLeave.joinServer.mapFormat(
                     mapOf(
                             "{username}" to player,
                             "{username:antiping}" to player.antiping()
@@ -25,8 +25,8 @@ object JoinLeaveHandler {
     }
 
     fun handleLeave(player: String) {
-        if (cfg!!.relay.joinLeave) {
-            val msg = cfg!!.formattingJoinLeave.leaveServer.mapFormat(
+        if (cfg!!.joinLeave.showLeave) {
+            val msg = cfg!!.joinLeave.leaveServer.mapFormat(
                     mapOf(
                             "{username}" to player,
                             "{username:antiping}" to player.antiping()

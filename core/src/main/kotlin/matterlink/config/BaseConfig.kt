@@ -1,17 +1,15 @@
 package matterlink.config
 
-import matterlink.instance
 import java.util.regex.Pattern
 
 var cfg: BaseConfig? = null
-
 
 
 abstract class BaseConfig {
     companion object {
         private val CATEGORY_RELAY_OPTIONS = "relay"
         private val CATEGORY_FORMATTING_INCOMING = "formatting"
-        private val CATEGORY_FORMATTING_JOIN_LEAVE = "formatting_join_leave"
+        private val CATEGORY_JOIN_LEAVE = "join_leave"
         private val CATEGORY_CONNECTION = "connection"
         private val CATEGORY_COMMAND = "command"
         private val CATEGORY_DEATH = "death"
@@ -20,15 +18,13 @@ abstract class BaseConfig {
     var relay: RelayOptions = RelayOptions()
     var connect: ConnectOptions = ConnectOptions()
     var formatting: FormattingOptions = FormattingOptions()
-    var formattingJoinLeave: FormattingJoinLeave = FormattingJoinLeave()
+    var joinLeave: FormattingJoinLeave = FormattingJoinLeave()
     var command: CommandOptions = CommandOptions()
     var death: DeathOptions = DeathOptions()
 
     data class RelayOptions(
             var systemUser: String = "Server",
-            var deathEvents: Boolean = true,
-            var advancements: Boolean = true,
-            var joinLeave: Boolean = true
+            var advancements: Boolean = true
     )
 
     data class FormattingOptions(
@@ -38,6 +34,8 @@ abstract class BaseConfig {
     )
 
     data class FormattingJoinLeave(
+            var showJoin: Boolean = true,
+            var showLeave: Boolean = true,
             var joinServer: String = "{username:antiping} has connected to the server",
             var leaveServer: String = "{username:antiping} has disconnected from the server"
     )
@@ -54,6 +52,7 @@ abstract class BaseConfig {
     )
 
     data class DeathOptions(
+            var showDeath: Boolean = true,
             var showDamageType: Boolean = true,
             var damageTypeMapping: Map<String, String> = mapOf(
                     "inFire" to "\uD83D\uDD25", //🔥
@@ -107,23 +106,11 @@ abstract class BaseConfig {
                         relay.systemUser,
                         "Name of the server user (used by death and advancement messages and the /say command)"
                 ),
-                deathEvents = getBoolean(
-                        "deathEvents",
-                        category,
-                        relay.deathEvents,
-                        "Relay player death messages"
-                ),
                 advancements = getBoolean(
                         "advancements",
                         category,
                         relay.advancements,
                         "Relay player advancements"
-                ),
-                joinLeave = getBoolean(
-                        "joinLeave",
-                        category,
-                        relay.joinLeave,
-                        "Relay when a player joins or leaves the game"
                 )
         )
 
@@ -170,21 +157,35 @@ abstract class BaseConfig {
                 )
         )
 
-        category = CATEGORY_FORMATTING_JOIN_LEAVE
-        addCustomCategoryComment(CATEGORY_FORMATTING_JOIN_LEAVE, "Server -> Gateway" +
+        category = CATEGORY_JOIN_LEAVE
+        addCustomCategoryComment(CATEGORY_JOIN_LEAVE, "Server -> Gateway" +
                 "Formatting options: " +
                 "Available variables: {username}, {username:antiping}")
-        formattingJoinLeave = FormattingJoinLeave(
+        joinLeave = FormattingJoinLeave(
+
+                showJoin = getBoolean(
+                        "showJoin",
+                        category,
+                        joinLeave.showJoin,
+                        "Relay when a player joins the game"
+                ),
+
+                showLeave = getBoolean(
+                        "showLeave",
+                        category,
+                        joinLeave.showLeave,
+                        "Relay when a player leaves the game"
+                ),
                 joinServer = getString(
                         "joinServer",
                         category,
-                        formattingJoinLeave.joinServer,
+                        joinLeave.joinServer,
                         "user join message sent to other gateways, available variables: {username}, {username:antiping}"
                 ),
                 leaveServer = getString(
                         "leaveServer",
                         category,
-                        formattingJoinLeave.leaveServer,
+                        joinLeave.leaveServer,
                         "user leave message sent to other gateways, available variables: {username}, {username:antiping}"
                 )
         )
@@ -214,6 +215,12 @@ abstract class BaseConfig {
         category = CATEGORY_DEATH
         addCustomCategoryComment(category, "Death message settings")
         death = DeathOptions(
+                showDeath = getBoolean(
+                        "showDeath",
+                        category,
+                        death.showDeath,
+                        "Relay player death messages"
+                ),
                 showDamageType = getBoolean(
                         "showDamageType",
                         category,
@@ -224,11 +231,12 @@ abstract class BaseConfig {
                         "damageTypeMapping",
                         category,
                         death.damageTypeMapping.map { entry ->
-                            "${entry.key}=${entry.value}" }
+                            "${entry.key}=${entry.value}"
+                        }
                                 .toTypedArray(),
                         "Damage type mapping for everything else, " +
                                 "\nseperate value and key with '=', " +
-                                "\nseperate multiple values with spaces"
+                                "\nseperate multiple values with spaces\n"
                 ).associate {
                     val key = it.substringBefore('=')
                     val value = it.substringAfter('=')
