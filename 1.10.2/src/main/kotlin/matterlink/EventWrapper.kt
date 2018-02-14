@@ -69,7 +69,8 @@ object EventWrapper {
         if (e.entityLiving is EntityPlayer) {
             DeathHandler.handleDeath(
                     e.entityLiving.name,
-                    e.entityLiving.combatTracker.deathMessage.unformattedText
+                    e.entityLiving.combatTracker.deathMessage.unformattedText,
+                    damageType = e.source.damageType
             )
         }
     }

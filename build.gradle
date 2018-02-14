@@ -42,8 +42,15 @@ subprojects {
             project {
                 id = '287323'
                 releaseType = 'beta'
+                if(project.hasProperty('changelog')) {
+                    changelogType = "markdown"
+                    changelog = File(changelog)
+                }
                 relations {
                     requiredLibrary 'shadowfacts-forgelin'
+                }
+                mainArtifact(jar) {
+                    displayName = "MatterLink $project.version"
                 }
             }
         }

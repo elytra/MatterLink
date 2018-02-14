@@ -14,11 +14,11 @@ class MatterLinkConfig(file: File) : BaseConfig() {
                 getBoolean = config::getBoolean,
                 getString = config::getString,
                 getStringValidated = config::getString,
+                getStringList = config::getStringList,
                 addCustomCategoryComment = config::addCustomCategoryComment
         )
 
         if (config.hasChanged()) config.save()
-
         cfg = this
     }
 }

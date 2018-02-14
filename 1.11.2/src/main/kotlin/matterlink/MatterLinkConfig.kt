@@ -14,6 +14,7 @@ class MatterLinkConfig(file: File) : BaseConfig() {
                 getBoolean = config::getBoolean,
                 getString = config::getString,
                 getStringValidated = config::getString,
+                getStringList = config::getStringList,
                 addCustomCategoryComment = config::addCustomCategoryComment
         )
 

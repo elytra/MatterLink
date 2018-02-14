@@ -14,6 +14,7 @@ abstract class BaseConfig {
         private val CATEGORY_FORMATTING_JOIN_LEAVE = "formatting_join_leave"
         private val CATEGORY_CONNECTION = "connection"
         private val CATEGORY_COMMAND = "command"
+        private val CATEGORY_DEATH = "death"
     }
 
     var relay: RelayOptions = RelayOptions()
@@ -21,6 +22,7 @@ abstract class BaseConfig {
     var formatting: FormattingOptions = FormattingOptions()
     var formattingJoinLeave: FormattingJoinLeave = FormattingJoinLeave()
     var command: CommandOptions = CommandOptions()
+    var death: DeathOptions = DeathOptions()
 
     data class RelayOptions(
             var systemUser: String = "Server",
@@ -51,11 +53,50 @@ abstract class BaseConfig {
             var enable: Boolean = true
     )
 
+    data class DeathOptions(
+            var showDamageType: Boolean = true,
+            var damageTypeMapping: Map<String, String> = mapOf(
+                    "inFire" to "\uD83D\uDD25", //🔥
+                    "lightningBolt" to "\uD83C\uDF29", //🌩
+                    "onFire" to "\uD83D\uDD25", //🔥
+                    "lava" to "\uD83D\uDD25", //🔥
+                    "hotFloor" to "♨️",
+                    "inWall" to "",
+                    "cramming" to "",
+                    "drown" to "\uD83C\uDF0A", //🌊
+                    "starve" to "\uD83D\uDC80", //💀
+                    "cactus" to "\uD83C\uDF35", //🌵
+                    "fall" to "\u2BEF️", //⯯️
+                    "flyIntoWall" to "\uD83D\uDCA8", //💨
+                    "outOfWorld" to "\u2734", //✴
+                    "generic" to "\uD83D\uDC7B", //👻
+                    "magic" to "✨ ⚚",
+                    "indirectMagic" to "✨ ⚚",
+                    "wither" to "\uD83D\uDD71", //🕱
+                    "anvil" to "",
+                    "fallingBlock" to "",
+                    "dragonBreath" to "\uD83D\uDC32", //🐲
+                    "fireworks" to "\uD83C\uDF86", //🎆
+
+                    "mob" to "\uD83D\uDC80", //💀
+                    "player" to "\uD83D\uDDE1", //🗡
+                    "arrow" to "\uD83C\uDFF9", //🏹
+                    "thrown" to "彡°",
+                    "thorns" to "\uD83C\uDF39", //🌹
+                    "explosion" to "\uD83D\uDCA3 \uD83D\uDCA5", //💣 💥
+                    "explosion.player" to "\uD83D\uDCA3 \uD83D\uDCA5", //💣 💥
+
+                    "electrocut" to "⚡",
+                    "radiation" to "☢"
+            )
+    )
+
     protected fun load(
             getBoolean: (key: String, category: String, default: Boolean, comment: String) -> Boolean,
             getString: (key: String, category: String, default: String, comment: String) -> String,
             getStringValidated: (key: String, category: String, default: String, comment: String, pattern: Pattern) -> String,
-            addCustomCategoryComment: (key: String, comment: String) -> Unit
+            addCustomCategoryComment: (key: String, comment: String) -> Unit,
+            getStringList: (name: String, category: String, defaultValues: Array<String>, comment: String) -> Array<String>
     ) {
         var category = CATEGORY_RELAY_OPTIONS
         addCustomCategoryComment(CATEGORY_RELAY_OPTIONS, "Relay options")
@@ -169,6 +210,30 @@ abstract class BaseConfig {
                         connect.gateway,
                         "MatterBridge gateway"
                 )
+        )
+        category = CATEGORY_DEATH
+        addCustomCategoryComment(category, "Death message settings")
+        death = DeathOptions(
+                showDamageType = getBoolean(
+                        "showDamageType",
+                        category,
+                        death.showDamageType,
+                        "Enable Damage type symbols on death messages"
+                ),
+                damageTypeMapping = getStringList(
+                        "damageTypeMapping",
+                        category,
+                        death.damageTypeMapping.map { entry ->
+                            "${entry.key}=${entry.value}" }
+                                .toTypedArray(),
+                        "Damage type mapping for everything else, " +
+                                "\nseperate value and key with '=', " +
+                                "\nseperate multiple values with spaces"
+                ).associate {
+                    val key = it.substringBefore('=')
+                    val value = it.substringAfter('=')
+                    Pair(key, value)
+                }
         )
     }
 }
