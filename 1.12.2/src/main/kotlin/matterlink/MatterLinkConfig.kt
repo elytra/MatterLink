@@ -5,7 +5,7 @@ import matterlink.config.cfg
 import net.minecraftforge.common.config.Configuration
 import java.io.File
 
-class MatterLinkConfig(file: File) : BaseConfig() {
+class MatterLinkConfig(file: File) : BaseConfig(file) {
     init {
         logger.info("Reading bridge blueprints... from {}", file)
         val config = Configuration(file)

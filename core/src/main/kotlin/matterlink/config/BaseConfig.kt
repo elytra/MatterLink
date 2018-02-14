@@ -1,11 +1,11 @@
 package matterlink.config
 
+import java.io.File
 import java.util.regex.Pattern
 
 var cfg: BaseConfig? = null
 
-
-abstract class BaseConfig {
+abstract class BaseConfig(val file : File) {
     companion object {
         private val CATEGORY_RELAY_OPTIONS = "relay"
         private val CATEGORY_FORMATTING_INCOMING = "formatting"
@@ -13,6 +13,10 @@ abstract class BaseConfig {
         private val CATEGORY_CONNECTION = "connection"
         private val CATEGORY_COMMAND = "command"
         private val CATEGORY_DEATH = "death"
+
+        fun reload() {
+            cfg = cfg!!.javaClass.getConstructor(cfg!!.file.javaClass).newInstance(cfg!!.file)
+        }
     }
 
     var relay: RelayOptions = RelayOptions()

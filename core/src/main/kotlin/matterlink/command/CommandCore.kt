@@ -1,5 +1,7 @@
 package matterlink.command
 
+import matterlink.bridge.MessageHandler
+import matterlink.config.BaseConfig
 import matterlink.instance
 
 object CommandCore {
@@ -10,7 +12,7 @@ object CommandCore {
     fun execute(args : Array<String>) : String {
         val cmd = args[0].toLowerCase()
 
-        val reply : String = when (cmd) {
+        return when (cmd) {
             "connect" -> {
                 instance.connect()
                 "Bridge connected!"
@@ -20,15 +22,15 @@ object CommandCore {
                 "Bridge disconnected!"
             }
             "reload" -> {
-
+                if (MessageHandler.connected) instance.disconnect()
+                BaseConfig.reload()
+                if (!MessageHandler.connected) instance.connect()
                 "Bridge config reloaded!"
             }
             else -> {
                 "Invalid arguments for command!"
             }
         }
-
-        return reply
     }
 
 }
