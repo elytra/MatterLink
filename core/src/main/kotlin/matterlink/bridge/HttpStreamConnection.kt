@@ -39,6 +39,7 @@ class HttpStreamConnection(getClosure: () -> HttpGet,
                 onClose()
                 return
             } else {
+                instance.debug("Bridge Connection accepted")
                 setSuccess(true) //TODO: pass message
             }
 

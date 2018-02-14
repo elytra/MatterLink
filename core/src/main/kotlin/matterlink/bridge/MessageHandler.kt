@@ -73,7 +73,7 @@ object MessageHandler {
     }
 
     fun transmit(msg: ApiMessage) {
-        if (connected && streamConnection.isAlive) {
+        if ((connected || connecting) && streamConnection.isAlive) {
             instance.debug("Transmitting: " + msg)
             transmitMessage(msg)
         }
