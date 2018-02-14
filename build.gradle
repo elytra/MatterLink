@@ -34,6 +34,8 @@ subprojects {
             }
         }
 
+        version = mc_version + "-" + mod_version
+        
         apply plugin: 'com.matthewprenger.cursegradle'
         curseforge {
             if (project.hasProperty('CURSEFORGE_API_TOKEN') && project.hasProperty('release')) {
@@ -50,7 +52,7 @@ subprojects {
                     requiredLibrary 'shadowfacts-forgelin'
                 }
                 mainArtifact(jar) {
-                    displayName = "MatterLink $project.version"
+                    displayName = "MatterLink $version"
                 }
             }
         }
