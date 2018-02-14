@@ -35,7 +35,7 @@ subprojects {
         }
 
         version = mc_version + "-" + mod_version
-        
+
         apply plugin: 'com.matthewprenger.cursegradle'
         curseforge {
             if (project.hasProperty('CURSEFORGE_API_TOKEN') && project.hasProperty('release')) {
@@ -44,9 +44,10 @@ subprojects {
             project {
                 id = '287323'
                 releaseType = 'beta'
-                if(project.hasProperty('changelog')) {
+                if(project.hasProperty('changelog_file')) {
+                    println("changelog = $changelog_file")
                     changelogType = "markdown"
-                    changelog = changelog
+                    changelog = file(changelog_file)
                 }
                 relations {
                     requiredLibrary 'shadowfacts-forgelin'
