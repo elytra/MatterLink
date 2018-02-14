@@ -23,4 +23,8 @@ class MatterLinkConfig(file: File) : BaseConfig(file) {
 
         cfg = this
     }
+
+    override fun reload(file: File) {
+        MatterLinkConfig(file)
+    }
 }

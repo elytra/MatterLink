@@ -21,4 +21,8 @@ class MatterLinkConfig(file: File) : BaseConfig(file) {
         if (config.hasChanged()) config.save()
         cfg = this
     }
+
+    override fun reload(file: File) {
+        MatterLinkConfig(file)
+    }
 }

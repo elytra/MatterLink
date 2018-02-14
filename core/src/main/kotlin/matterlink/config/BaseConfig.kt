@@ -14,6 +14,7 @@ abstract class BaseConfig(val file : File) {
         private val CATEGORY_COMMAND = "command"
         private val CATEGORY_DEATH = "death"
 
+        @Deprecated("Use BaseConfig.loadConfig(file : File) instead")
         fun reload() {
             cfg = cfg!!.javaClass.getConstructor(cfg!!.file.javaClass).newInstance(cfg!!.file)
         }
@@ -257,4 +258,6 @@ abstract class BaseConfig(val file : File) {
                 }
         )
     }
+
+    abstract fun reload(file : File)
 }
