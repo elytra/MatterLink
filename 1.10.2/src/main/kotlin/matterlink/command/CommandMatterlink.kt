@@ -24,7 +24,6 @@ class CommandMatterlink : CommandBase() {
         if (args.isEmpty()) {
             throw WrongUsageException("Invalid command! Valid uses: ${this.getUsage(sender)}")
         }
-        //TODO: check if sender is OP or test if normal users cannot send this
 
         val reply = CommandCore.execute(args)
 
