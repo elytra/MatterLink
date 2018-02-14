@@ -44,7 +44,7 @@ subprojects {
                 releaseType = 'beta'
                 if(project.hasProperty('changelog')) {
                     changelogType = "markdown"
-                    changelog = File(changelog)
+                    changelog = changelog
                 }
                 relations {
                     requiredLibrary 'shadowfacts-forgelin'
