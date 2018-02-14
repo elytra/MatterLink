@@ -1,6 +1,7 @@
 package matterlink
 
 import matterlink.bridge.MessageHandler
+import matterlink.config.cfg
 
 lateinit var instance: IMatterLink
 
@@ -25,7 +26,14 @@ abstract class IMatterLink {
     fun error(formatString: String, vararg data: Any) = log("ERROR", formatString, *data)
     fun warn(formatString: String, vararg data: Any) = log("WARN", formatString, *data)
     fun info(formatString: String, vararg data: Any) = log("INFO", formatString, *data)
-    fun debug(formatString: String, vararg data: Any) = log("DEBUG", formatString, *data)
-    fun trace(formatString: String, vararg data: Any) = log("TRACE", formatString, *data)
+    fun debug(formatString: String, vararg data: Any) {
+        if (cfg!!.relay.logLevel == "DEBUG" || cfg!!.relay.logLevel == "TRACE")
+            log("INFO", "DEBUG: " + formatString.replace("\n", "\nDEBUG: "), *data)
+    }
+
+    fun trace(formatString: String, vararg data: Any) {
+        if (cfg!!.relay.logLevel == "TRACE")
+            log("INFO", "TRACE: " + formatString.replace("\n", "\nTRACE: "), *data)
+    }
 
 }

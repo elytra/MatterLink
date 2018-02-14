@@ -50,7 +50,7 @@ object MessageHandler {
                     rcvQueue.add(
                             ApiMessage.decode(it)
                     )
-                    instance.debug("Received: " + it)
+//                    instance.debug("Received: " + it)
                 },
                 {
                     instance.warn("Bridge connection closed!")

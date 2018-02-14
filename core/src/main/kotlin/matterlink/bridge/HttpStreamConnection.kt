@@ -52,7 +52,7 @@ class HttpStreamConnection(getClosure: () -> HttpGet,
                 if (chars > 0) {
                     buffer += String(buf.dropLast(buf.count() - chars).toByteArray())
 
-                    instance.debug(buffer)
+                    instance.trace(buffer)
 
                     while (buffer.contains("\n")) {
                         val line = buffer.substringBefore("\n")

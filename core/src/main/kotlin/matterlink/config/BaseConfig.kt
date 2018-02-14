@@ -24,7 +24,8 @@ abstract class BaseConfig {
 
     data class RelayOptions(
             var systemUser: String = "Server",
-            var advancements: Boolean = true
+            var advancements: Boolean = true,
+            var logLevel: String = "INFO"
     )
 
     data class FormattingOptions(
@@ -94,6 +95,7 @@ abstract class BaseConfig {
             getBoolean: (key: String, category: String, default: Boolean, comment: String) -> Boolean,
             getString: (key: String, category: String, default: String, comment: String) -> String,
             getStringValidated: (key: String, category: String, default: String, comment: String, pattern: Pattern) -> String,
+            getStringValidValues: (key: String, category: String, default: String, comment: String, validValues: Array<String>) -> String,
             addCustomCategoryComment: (key: String, comment: String) -> Unit,
             getStringList: (name: String, category: String, defaultValues: Array<String>, comment: String) -> Array<String>
     ) {
@@ -111,6 +113,13 @@ abstract class BaseConfig {
                         category,
                         relay.advancements,
                         "Relay player advancements"
+                ),
+                logLevel = getStringValidValues(
+                        "logLevel",
+                        category,
+                        relay.logLevel,
+                        "MatterLink log level",
+                        arrayOf("INFO", "DEBUG", "TRACE")
                 )
         )
 
