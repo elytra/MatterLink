@@ -36,4 +36,21 @@ abstract class IMatterLink {
             log("INFO", "TRACE: " + formatString.replace("\n", "\nTRACE: "), *data)
     }
 
+    /**
+     * in milliseconds
+     */
+    var serverStartTime : Long = 0
+    fun getUptimeInSeconds() : Int {
+        return ((System.currentTimeMillis() - serverStartTime) / 1000).toInt()
+    }
+
+    fun getUptimeAsString() : String {
+        val total = this.getUptimeInSeconds()
+        val sec = total % 60
+        val min = (total/60)%60
+        val hr = (total/3600)%24
+        val day = total/86400
+
+        return "${day}d${hr}hr${min}m${sec}s"
+    }
 }

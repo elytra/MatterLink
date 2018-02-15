@@ -1,6 +1,5 @@
 package matterlink
 
-import matterlink.bridge.MessageHandler
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.HelpCommand
 import matterlink.bridge.command.PlayerListCommand
@@ -53,7 +52,7 @@ object MatterLink : IMatterLink() {
     fun serverStarting(event: FMLServerStartingEvent) {
         logger.debug("Registering server commands")
         event.registerServerCommand(CommandMatterlink())
-
+        serverStartTime = System.currentTimeMillis()
         connect()
     }
 
@@ -74,4 +73,5 @@ object MatterLink : IMatterLink() {
 
     override fun log(level: String, formatString: String, vararg data: Any) =
             logger.log(Level.toLevel(level, Level.INFO),formatString, *data)
+
 }
