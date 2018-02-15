@@ -35,13 +35,13 @@ help:       Lists all commands with no arguments,
 players:    Lists online players
 uptime:     Print server uptime
 ```
-* Edit config settings without restarting the server!
+* Edit and reload the config file without restarting the server!
 ```
 /config <connect|disconnect|reload>
 Connect or disconnect the bridge, 
 or cycle the connection and reload the config file
 ```
-* Pass through commands to MC! Fully configurable. 
+* Pass through commands to MineCraft! Fully configurable. 
 ```
 # MC commands that can be executed through the bridge
 # Separate bridge command and MC command with '=', 
