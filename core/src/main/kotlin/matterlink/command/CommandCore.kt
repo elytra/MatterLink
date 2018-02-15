@@ -1,7 +1,6 @@
 package matterlink.command
 
 import matterlink.bridge.MessageHandler
-import matterlink.config.BaseConfig
 import matterlink.config.cfg
 import matterlink.instance
 
@@ -24,7 +23,7 @@ object CommandCore {
             }
             "reload" -> {
                 if (MessageHandler.connected) instance.disconnect()
-                cfg!!.reload(cfg!!.file)
+                cfg = cfg!!.load()
                 if (!MessageHandler.connected) instance.connect()
                 "Bridge config reloaded!"
             }

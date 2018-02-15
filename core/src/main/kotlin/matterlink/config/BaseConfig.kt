@@ -1,11 +1,10 @@
 package matterlink.config
 
-import java.io.File
 import java.util.regex.Pattern
 
 var cfg: BaseConfig? = null
 
-abstract class BaseConfig(val file : File) {
+abstract class BaseConfig {
     companion object {
         private val CATEGORY_RELAY_OPTIONS = "relay"
         private val CATEGORY_FORMATTING_INCOMING = "formatting"
@@ -14,9 +13,8 @@ abstract class BaseConfig(val file : File) {
         private val CATEGORY_COMMAND = "command"
         private val CATEGORY_DEATH = "death"
 
-        @Deprecated("Use BaseConfig.loadConfig(file : File) instead")
         fun reload() {
-            cfg = cfg!!.javaClass.getConstructor(cfg!!.file.javaClass).newInstance(cfg!!.file)
+            cfg = cfg!!.load()
         }
     }
 
@@ -259,5 +257,5 @@ abstract class BaseConfig(val file : File) {
         )
     }
 
-    abstract fun reload(file : File)
+    abstract fun load(): BaseConfig
 }

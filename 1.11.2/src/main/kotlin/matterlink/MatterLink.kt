@@ -6,6 +6,7 @@ import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.HelpCommand
 import matterlink.bridge.command.PlayerListCommand
 import matterlink.command.CommandMatterlink
+import matterlink.config.cfg
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
@@ -37,7 +38,7 @@ object MatterLink : IMatterLink() {
         logger = event.modLog
         logger.info("Building bridge!")
 
-        MatterLinkConfig(event.suggestedConfigurationFile)
+        cfg = MatterLinkConfig(event.suggestedConfigurationFile)
     }
 
     @Mod.EventHandler
