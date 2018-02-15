@@ -98,3 +98,4 @@ gradle-app.setting
 
 run/
 *.tmp
+**/gen/

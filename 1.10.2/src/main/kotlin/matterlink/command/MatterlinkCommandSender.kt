@@ -34,7 +34,7 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
     }
 
     override fun getEntityWorld(): World {
-        return FMLCommonHandler.instance().minecraftServerInstance.getWorld(0)
+        return FMLCommonHandler.instance().minecraftServerInstance.worldServerForDimension(0)
     }
 
     override fun canUseCommand(permLevel: Int, commandName: String?): Boolean {

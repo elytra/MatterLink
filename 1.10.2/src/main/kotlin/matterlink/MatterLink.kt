@@ -1,10 +1,5 @@
 package matterlink
 
-import jline.internal.Log
-import matterlink.bridge.MessageHandler
-import matterlink.bridge.command.BridgeCommandRegistry
-import matterlink.bridge.command.HelpCommand
-import matterlink.bridge.command.PlayerListCommand
 import matterlink.command.CommandMatterlink
 import matterlink.command.IMinecraftCommandSender
 import matterlink.command.MatterlinkCommandSender
@@ -16,10 +11,6 @@ import net.minecraftforge.fml.common.event.*
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
 
-const val MODID = "matterlink"
-const val NAME = "MatterLink"
-const val VERSION = "@VERSION@"
-
 lateinit var logger: Logger
 
 @Mod(
@@ -29,7 +20,7 @@ lateinit var logger: Logger
         useMetadata = true,
         acceptableRemoteVersions = "*",
         modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter",
-        dependencies = "required-after:forgelin@[@FORGELIN-VERSION@,);required-after:forge@[@FORGE-VERSION@,);"
+        dependencies = DEPENDENCIES
 )
 object MatterLink : IMatterLink() {
     init {

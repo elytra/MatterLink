@@ -47,16 +47,28 @@ minecraft {
     runDir = "run"
 
     mappings = project.mcp_mappings
+}
 
-    replaceIn 'MatterLink.kt'
-    replace '@VERSION@', project.mod_version
-    replace '@FORGELIN-VERSION@', project.forgelin_version
-    replace '@FORGE-VERSION@', project.forge_version
+compileKotlin.doFirst {
+    def target = "src/main/kotlin/matterlink/gen"
+    copy {
+        from("../src/templates/kotlin/matterlink/Constants.kt")
+        into(target)
+    }
+    ant.replaceregexp(match:'@VERSION@', replace: project.mod_version, flags:'g', byline:true) {
+        fileset(dir: target, includes: 'Constants.kt')
+    }
+    ant.replaceregexp(match:'@FORGELIN-VERSION@', replace: project.forgelin_version, flags:'g', byline:true) {
+        fileset(dir: target, includes: 'Constants.kt')
+    }
+    ant.replaceregexp(match:'@FORGE-VERSION@', replace: project.forge_version, flags:'g', byline:true) {
+        fileset(dir: target, includes: 'Constants.kt')
+    }
 }
 
 processResources {
     // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
+    inputs.property "version", project.mod_version
     inputs.property "mcversion", project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
@@ -64,7 +76,7 @@ processResources {
         include 'mcmod.info'
 
         // replace version and mcversion
-        expand 'version': project.version, 'mcversion': project.minecraft.version
+        expand 'version': project.mod_version, 'mcversion': project.minecraft.version
     }
 
     // copy everything else except the mcmod.info

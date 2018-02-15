@@ -48,7 +48,7 @@ minecraft {
 
     mappings = project.mcp_mappings
 
-    replaceIn 'MatterLink.kt'
+    replaceIn 'Constants.kt'
     replace '@VERSION@', project.mod_version
     replace '@FORGELIN-VERSION@', project.forgelin_version
     replace '@FORGE-VERSION@', project.forge_version
@@ -56,7 +56,7 @@ minecraft {
 
 processResources {
     // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
+    inputs.property "version", project.mod_version
     inputs.property "mcversion", project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
@@ -64,7 +64,7 @@ processResources {
         include 'mcmod.info'
 
         // replace version and mcversion
-        expand 'version': project.version, 'mcversion': project.minecraft.version
+        expand 'version': project.mod_version, 'mcversion': project.minecraft.version
     }
 
     // copy everything else except the mcmod.info
