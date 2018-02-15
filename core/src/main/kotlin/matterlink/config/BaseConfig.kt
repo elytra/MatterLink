@@ -52,7 +52,10 @@ abstract class BaseConfig {
 
     data class CommandOptions(
             var prefix: String = "$",
-            var enable: Boolean = true
+            var enable: Boolean = true,
+            var commandMapping: Map<String, String> = mapOf(
+                    "tps" to "forge tps"
+            )
     )
 
     data class DeathOptions(
@@ -141,7 +144,21 @@ abstract class BaseConfig {
                         command.prefix,
                         "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)",
                         Pattern.compile("^[^0-9A-Za-z/]$")
-                )
+                ),
+                commandMapping = getStringList(
+                        "commandMapping",
+                        category,
+                        command.commandMapping.map { entry ->
+                            "${entry.key}=${entry.value}"
+                        }
+                                .toTypedArray(),
+                        "MC commands that can be executed through the bridge" +
+                                "\nSeparate bridge command and MC command with '='."
+                ).associate {
+                    val key = it.substringBefore('=')
+                    val value = it.substringAfter('=')
+                    Pair(key, value)
+                }
         )
 
         category = CATEGORY_FORMATTING_INCOMING
@@ -247,8 +264,8 @@ abstract class BaseConfig {
                         }
                                 .toTypedArray(),
                         "Damage type mapping for everything else, " +
-                                "\nseperate value and key with '=', " +
-                                "\nseperate multiple values with spaces\n"
+                                "\nseparate value and key with '=', " +
+                                "\nseparate multiple values with spaces\n"
                 ).associate {
                     val key = it.substringBefore('=')
                     val value = it.substringAfter('=')
