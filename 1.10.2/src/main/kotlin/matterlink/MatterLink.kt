@@ -43,7 +43,7 @@ object MatterLink : IMatterLink() {
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
-        BridgeCommandRegistry.registerAll(PlayerListCommand, HelpCommand)
+        this.registerBridgeCommands()
     }
 
     @Mod.EventHandler

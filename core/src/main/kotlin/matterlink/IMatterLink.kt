@@ -1,6 +1,10 @@
 package matterlink
 
 import matterlink.bridge.MessageHandler
+import matterlink.bridge.command.BridgeCommandRegistry
+import matterlink.bridge.command.HelpCommand
+import matterlink.bridge.command.PlayerListCommand
+import matterlink.bridge.command.UptimeCommand
 import matterlink.config.cfg
 
 lateinit var instance: IMatterLink
@@ -52,5 +56,9 @@ abstract class IMatterLink {
         val day = total/86400
 
         return "${day}d${hr}hr${min}m${sec}s"
+    }
+
+    fun registerBridgeCommands() {
+        BridgeCommandRegistry.registerAll(HelpCommand,PlayerListCommand,UptimeCommand)
     }
 }
