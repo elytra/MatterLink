@@ -5,12 +5,15 @@ import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.HelpCommand
 import matterlink.bridge.command.PlayerListCommand
 import matterlink.bridge.command.UptimeCommand
+import matterlink.command.IMinecraftCommandSender
 import matterlink.config.cfg
 
 lateinit var instance: IMatterLink
 
 abstract class IMatterLink {
 //    var interrupted: Boolean = false
+    abstract var commandSender: IMinecraftCommandSender
+
 
     abstract fun wrappedSendToPlayers(msg: String)
 

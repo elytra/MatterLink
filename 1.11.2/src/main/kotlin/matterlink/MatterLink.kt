@@ -6,6 +6,8 @@ import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.HelpCommand
 import matterlink.bridge.command.PlayerListCommand
 import matterlink.command.CommandMatterlink
+import matterlink.command.IMinecraftCommandSender
+import matterlink.command.MatterlinkCommandSender
 import matterlink.config.cfg
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
@@ -77,4 +79,6 @@ object MatterLink : IMatterLink() {
 
     override fun log(level: String, formatString: String, vararg data: Any) =
             logger.log(Level.toLevel(level, Level.INFO),formatString, *data)
+
+    override var commandSender: IMinecraftCommandSender = MatterlinkCommandSender
 }
