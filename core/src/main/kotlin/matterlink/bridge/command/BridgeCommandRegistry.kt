@@ -44,4 +44,12 @@ object BridgeCommandRegistry {
 
     val commandList: String
         get() = commandMap.keys.joinToString(separator = ", ")
+
+    fun reloadCommands() {
+        commandMap.clear()
+        registerAll(HelpCommand,PlayerListCommand,UptimeCommand)
+        for (key : String in cfg!!.command.commandMapping.keys) {
+            register(PassthroughCommand(key, cfg!!.command.commandMapping.get(key)!!))
+        }
+    }
 }
