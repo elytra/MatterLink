@@ -62,6 +62,6 @@ abstract class IMatterLink {
     }
 
     fun registerBridgeCommands() {
-        BridgeCommandRegistry.registerAll(HelpCommand,PlayerListCommand,UptimeCommand)
+        BridgeCommandRegistry.reloadCommands()
     }
 }
