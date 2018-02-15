@@ -3,9 +3,14 @@ package matterlink.command
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
 import matterlink.config.cfg
+import net.minecraft.command.CommandResultStats
 import net.minecraft.command.ICommandSender
+import net.minecraft.entity.Entity
 import net.minecraft.server.MinecraftServer
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3d
 import net.minecraft.util.text.ITextComponent
+import net.minecraft.util.text.TextComponentString
 import net.minecraft.world.World
 import net.minecraftforge.fml.common.FMLCommonHandler
 import javax.annotation.Nonnull
@@ -18,6 +23,10 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
                 this,
                 cmdString
         )
+    }
+
+    override fun getDisplayName(): ITextComponent {
+        return TextComponentString("MatterLink")
     }
 
     override fun getName(): String {
@@ -48,4 +57,13 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
     override fun sendCommandFeedback(): Boolean {
         return true
     }
+
+    //WtfMojangWhy
+    override fun getPosition(): BlockPos = BlockPos.ORIGIN
+
+    override fun setCommandStat(type: CommandResultStats.Type?, amount: Int) {}
+
+    override fun getPositionVector(): Vec3d = Vec3d.ZERO
+
+    override fun getCommandSenderEntity(): Entity? = null
 }
