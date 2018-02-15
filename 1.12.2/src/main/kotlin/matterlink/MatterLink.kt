@@ -24,7 +24,8 @@ lateinit var logger: Logger
         serverSideOnly = true,
         useMetadata = true,
         acceptableRemoteVersions = "*",
-        modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter"
+        modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter",
+        dependencies = "required-after:forgelin@[@FORGELIN-VERSION@,);required-after:forge@[@FORGE-VERSION@,);"
 )
 object MatterLink : IMatterLink() {
     init {
