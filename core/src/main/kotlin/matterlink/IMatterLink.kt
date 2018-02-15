@@ -58,7 +58,7 @@ abstract class IMatterLink {
         val hr = (total/3600)%24
         val day = total/86400
 
-        return "${day}d${hr}hr${min}m${sec}s"
+        return "${day}d ${hr}hr ${min}m ${sec}s"
     }
 
     fun registerBridgeCommands() {
