@@ -52,7 +52,7 @@ minecraft {
 compileKotlin.doFirst {
     def target = "src/main/kotlin/matterlink/gen"
     copy {
-        from("../src/templates/kotlin/matterlink/Constants.kt")
+        from("src/templates/kotlin/matterlink/Constants.kt")
         into(target)
     }
     ant.replaceregexp(match:'@VERSION@', replace: project.mod_version, flags:'g', byline:true) {
