@@ -11,9 +11,11 @@ import matterlink.config.cfg
 lateinit var instance: IMatterLink
 
 abstract class IMatterLink {
-//    var interrupted: Boolean = false
-    abstract var commandSender: IMinecraftCommandSender
+    abstract val mcVersion : String
+    abstract val modVersion : String
 
+    abstract var commandSender: IMinecraftCommandSender
+    //var interrupted: Boolean = false
 
     abstract fun wrappedSendToPlayers(msg: String)
 

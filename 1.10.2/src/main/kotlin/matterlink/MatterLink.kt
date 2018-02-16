@@ -4,6 +4,7 @@ import matterlink.command.CommandMatterlink
 import matterlink.command.IMinecraftCommandSender
 import matterlink.command.MatterlinkCommandSender
 import matterlink.config.cfg
+import matterlink.update.UpdateChecker
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
@@ -51,6 +52,7 @@ object MatterLink : IMatterLink() {
         event.registerServerCommand(CommandMatterlink())
         serverStartTime = System.currentTimeMillis()
         connect()
+        Thread(UpdateChecker()).start()
     }
 
     @Mod.EventHandler
@@ -72,4 +74,7 @@ object MatterLink : IMatterLink() {
             logger.log(Level.toLevel(level, Level.INFO),formatString, *data)
 
     override var commandSender: IMinecraftCommandSender = MatterlinkCommandSender
+
+    override val mcVersion: String = "1.10.2"
+    override val modVersion: String = VERSION
 }
