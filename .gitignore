@@ -96,6 +96,7 @@ gradle-app.setting
 
 ### MatterLink ###
 
+classes/
 run/
 *.tmp
 **/gen/

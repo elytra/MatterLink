@@ -22,16 +22,14 @@ class UpdateChecker : Runnable {
 
         instance.info("Checking for new versions...")
 
-        val apiUpdateList: List<CurseFile>
-
         val client: HttpClient = HttpClients.createDefault()
-        val response: HttpResponse = client.execute(HttpGet("https://cursemeta.nikky.moe/api/addon/287323/files"))
-        apiUpdateList = if (200 == response.statusLine.statusCode) { //HTTP 200 OK
+        val response: HttpResponse = client.execute(HttpGet("http://bit.ly/matterlinkfiles"))
+        val apiUpdateList = if (200 == response.statusLine.statusCode) { //HTTP 200 OK
             val buffer: BufferedReader = response.entity.content.bufferedReader()
 
             //put all of the buffer content onto the string
             val content = buffer.readText()
-            instance.debug("updateData: $content")
+            instance.trace("updateData: $content")
 
             gson.fromJson(content, Array<CurseFile>::class.java)
                     .filter {
@@ -47,7 +45,6 @@ class UpdateChecker : Runnable {
         val possibleUpdates = mutableListOf<CurseFile>()
         apiUpdateList.forEach {
             instance.debug(it.toString())
-            //TODO: fix this if we ever release jars that support multiple versions
             val version = it.fileName.substringAfter("-")
             if(version > currentModVersion)
             {
