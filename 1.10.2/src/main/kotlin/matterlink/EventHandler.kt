@@ -27,38 +27,41 @@ object EventHandler {
     @SubscribeEvent
     @JvmStatic
     fun progressEvent(e: AchievementEvent) {
-        val name = e.entityPlayer.name
-        val text = "has earned the achievement ${e.achievement.statName.unformattedText}"
-        ProgressHandler.handleProgress(name, text)
+        ProgressHandler.handleProgress(
+                name = e.entityPlayer.name,
+                display = e.achievement.statName.unformattedText,
+                type = "achievement"
+        )
     }
 
     //FORGE-DEPENDENT
     @SubscribeEvent
     @JvmStatic
     fun chatEvent(e: ServerChatEvent) {
-        val user = e.username
-        val msg = e.message
-        ChatProcessor.sendToBridge(user, msg,"")
+        ChatProcessor.sendToBridge(
+                user = e.username,
+                msg = e.message,
+                event = ""
+        )
     }
 
     //FORGE-DEPENDENT
     @SubscribeEvent
     @JvmStatic
     fun commandEvent(e: CommandEvent) {
-        val sender =
-                when {
-                    e.sender is EntityPlayer -> e.sender.name
-                    e.sender is DedicatedServer -> cfg.relay.systemUser
-                    e.sender is TileEntityCommandBlock -> "CommandBlock"
-                    else -> return
-                }
+        val sender = when {
+            e.sender is EntityPlayer -> e.sender.name
+            e.sender is DedicatedServer -> cfg.relay.systemUser
+            e.sender is TileEntityCommandBlock -> "CommandBlock"
+            else -> return
+        }
         val args = e.parameters.joinToString(" ")
         val type = when {
             e.command is CommandEmote -> USER_ACTION
             e.command is CommandBroadcast -> ""
             else -> return
         }
-        ChatProcessor.sendToBridge(sender, args, type)
+        ChatProcessor.sendToBridge(user = sender, msg = args, event = type)
 
     }
 
@@ -68,8 +71,8 @@ object EventHandler {
     fun deathEvent(e: LivingDeathEvent) {
         if (e.entityLiving is EntityPlayer) {
             DeathHandler.handleDeath(
-                    e.entityLiving.name,
-                    e.entityLiving.combatTracker.deathMessage.unformattedText,
+                    player = e.entityLiving.name,
+                    deathMessage = e.entityLiving.combatTracker.deathMessage.unformattedText,
                     damageType = e.source.damageType
             )
         }

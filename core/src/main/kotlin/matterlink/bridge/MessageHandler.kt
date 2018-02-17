@@ -111,8 +111,9 @@ object MessageHandler {
             //open a connection
             val client = HttpClients.createDefault()
             val post = HttpPost(cfg.connect.url + "/api/message")
-
-            post.entity = StringEntity(message.encode(), ContentType.APPLICATION_JSON)
+            val json = message.encode()
+            instance.trace("Transmitting $json")
+            post.entity = StringEntity(json, ContentType.APPLICATION_JSON)
             post.authorize()
 
             val response = client.execute(post)

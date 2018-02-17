@@ -10,7 +10,8 @@ object ChatProcessor {
         when {
             message.isNotBlank() -> MessageHandler.transmit(ApiMessage(
                     username = user,
-                    text = message
+                    text = message,
+                    event = event
             ))
             else -> instance.warn("WARN: dropped blank message by '$user'")
         }
