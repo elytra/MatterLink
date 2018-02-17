@@ -29,8 +29,8 @@ object EventHandler {
     fun progressEvent(e: AchievementEvent) {
         ProgressHandler.handleProgress(
                 name = e.entityPlayer.name,
-                display = e.achievement.statName.unformattedText,
-                type = "achievement"
+                message = "has earned the achievement",
+                display = e.achievement.statName.unformattedText
         )
     }
 

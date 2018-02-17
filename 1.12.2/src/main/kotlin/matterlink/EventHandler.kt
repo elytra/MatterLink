@@ -30,8 +30,8 @@ object EventHandler {
         if (e.advancement.display == null) return
         ProgressHandler.handleProgress(
                 name = e.entityPlayer.name,
-                display = e.advancement.displayText.unformattedText,
-                type = "advancement"
+                message = "has made the advancement",
+                display = e.advancement.displayText.unformattedText
         )
     }
 
