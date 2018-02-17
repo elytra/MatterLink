@@ -22,16 +22,14 @@ class UpdateChecker : Runnable {
 
         instance.info("Checking for new versions...")
 
-        val apiUpdateList: List<CurseFile>
-
         val client: HttpClient = HttpClients.createDefault()
-        val response: HttpResponse = client.execute(HttpGet("https://cursemeta.nikky.moe/api/addon/287323/files"))
-        apiUpdateList = if (200 == response.statusLine.statusCode) { //HTTP 200 OK
+        val response: HttpResponse = client.execute(HttpGet("http://bit.ly/matterlinkfiles"))
+        val apiUpdateList = if (200 == response.statusLine.statusCode) { //HTTP 200 OK
             val buffer: BufferedReader = response.entity.content.bufferedReader()
 
             //put all of the buffer content onto the string
             val content = buffer.readText()
-            instance.debug("updateData: $content")
+            instance.trace("updateData: $content")
 
             gson.fromJson(content, Array<CurseFile>::class.java)
                     .filter {
@@ -47,7 +45,6 @@ class UpdateChecker : Runnable {
         val possibleUpdates = mutableListOf<CurseFile>()
         apiUpdateList.forEach {
             instance.debug(it.toString())
-            //TODO: fix this if we ever release jars that support multiple versions
             val version = it.fileName.substringAfter("-")
             if(version > currentModVersion)
             {
@@ -58,8 +55,9 @@ class UpdateChecker : Runnable {
         val latest= possibleUpdates[0]
 
         possibleUpdates.sortByDescending { it.fileName.substringAfter(" ") }
-        val version = if(possibleUpdates.count() == 1) "version" else "versions"
-        instance.info("Matterlink out of date! You are {} $version behind", possibleUpdates.count())
+        val count = possibleUpdates.count()
+        val version = if(count == 1) "version" else "versions"
+        instance.info("Matterlink out of date! You are $count $version behind")
         possibleUpdates.forEach {
             instance.info("version: {} download: {}", it.fileName, it.downloadURL)
         }
@@ -67,7 +65,7 @@ class UpdateChecker : Runnable {
         instance.warn("Mod out of date! New $version available at ${latest.downloadURL}")
         MessageHandler.transmit(ApiMessage(
                 username = cfg.relay.systemUser,
-                text = "Matterlink out of date! You are {} $version behind! Please download new version from ${latest.downloadURL}"
+                text = "Matterlink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}"
         ))
     }
 
