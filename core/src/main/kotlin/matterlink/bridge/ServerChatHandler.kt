@@ -15,15 +15,15 @@ object ServerChatHandler {
             instance.debug("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
 
-        if (nextMessage != null && nextMessage.gateway == cfg!!.connect.gateway) {
+        if (nextMessage != null && nextMessage.gateway == cfg.connect.gateway) {
             if (!nextMessage.text.isBlank()) {
                 val message = when (nextMessage.event) {
-                    "user_action" -> nextMessage.format(cfg!!.formatting.action)
+                    "user_action" -> nextMessage.format(cfg.formatting.action)
                     "" -> {
                         if (BridgeCommandRegistry.handleCommand(nextMessage.text)) return
-                        nextMessage.format(cfg!!.formatting.chat)
+                        nextMessage.format(cfg.formatting.chat)
                     }
-                    "join_leave" -> nextMessage.format(cfg!!.formatting.joinLeave)
+                    "join_leave" -> nextMessage.format(cfg.formatting.joinLeave)
                     else -> {
                         val user = nextMessage.username
                         val text = nextMessage.text

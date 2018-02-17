@@ -8,10 +8,10 @@ import matterlink.config.cfg
 object ProgressHandler {
 
     fun handleProgress(name: String, text: String) {
-        if (!cfg!!.relay.advancements) return
+        if (!cfg.relay.advancements) return
         val usr = name.antiping()
         MessageHandler.transmit(ApiMessage(
-                username = cfg!!.relay.systemUser,
+                username = cfg.relay.systemUser,
                 text = "$usr $text"
         ))
     }

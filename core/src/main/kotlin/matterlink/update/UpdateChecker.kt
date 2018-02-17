@@ -10,64 +10,65 @@ import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import java.io.BufferedReader
-import java.util.regex.Pattern
 
 class UpdateChecker : Runnable {
+
     override fun run() {
+        val gson = Gson()
+
+        val currentModVersion = instance.modVersion
+        val currentMCVersion = instance.mcVersion
+        val currentVersion = currentMCVersion + "-" + currentModVersion
+
         instance.info("Checking for new versions...")
 
-        val ApiUpdateList : Array<ApiUpdate>
+        val apiUpdateList: List<CurseFile>
 
-        val client : HttpClient = HttpClients.createDefault()
-        val response : HttpResponse = client.execute(HttpGet("https://cursemeta.nikky.moe/api/addon/287323/files"))
-        if (200 == response.statusLine.statusCode) { //HTTP 200 OK
-            val buffer : BufferedReader = response.entity.content.bufferedReader()
+        val client: HttpClient = HttpClients.createDefault()
+        val response: HttpResponse = client.execute(HttpGet("https://cursemeta.nikky.moe/api/addon/287323/files"))
+        apiUpdateList = if (200 == response.statusLine.statusCode) { //HTTP 200 OK
+            val buffer: BufferedReader = response.entity.content.bufferedReader()
 
             //put all of the buffer content onto the string
-            var content : String = ""
-            var line : String? = buffer.readLine()
-            while (line != null) {
-                instance.debug(line)
-                content += line
-                line = buffer.readLine()
-            }
+            val content = buffer.readText()
             instance.debug("updateData: $content")
 
-            val gson = Gson()
-            ApiUpdateList = gson.fromJson<Array<ApiUpdate>>(content,Array<ApiUpdate>::class.java)
+            gson.fromJson(content, Array<CurseFile>::class.java)
+                    .filter {
+                        it.gameVersion.contains(currentMCVersion)
+                    }
+                    .sortedByDescending { it.fileName.substringAfterLast(" ") }
+
         } else {
             instance.error("Could not check for updates!")
             return
         }
 
-        val possibleUpdates = HashMap<String,ApiUpdate>()
-        var maxVersion : String = ""
-        ApiUpdateList.forEach {
+        val possibleUpdates = mutableListOf<CurseFile>()
+        apiUpdateList.forEach {
+            instance.debug(it.toString())
             //TODO: fix this if we ever release jars that support multiple versions
-            if (it.gameVersion[0] == instance.mcVersion) {
-                if (Pattern.matches("[mM]atter[lL]ink \\d+\\.\\d+\\.\\d+-\\d+\\.\\d+\\.?\\d*",it.fileName)                        ) {
-                    val version : String = it.fileName.split("-")[1]
-                    instance.debug(version)
-                    possibleUpdates.set(version,it)
-                    if (version.compareTo(maxVersion)>0 || maxVersion.equals("")) maxVersion = version
-                }
+            val version = it.fileName.substringAfter("-")
+            if(version > currentModVersion)
+            {
+                possibleUpdates += it
             }
         }
+        if(possibleUpdates.isEmpty()) return
+        val latest= possibleUpdates[0]
 
-        if (maxVersion.isEmpty()) return
-
-        if (maxVersion.compareTo(instance.modVersion)<0) {
-            val latest : ApiUpdate? = possibleUpdates[maxVersion]
-            if (latest != null) {
-                instance.warn("Mod out of date! New version available at ${latest.downloadURL}")
-                MessageHandler.transmit(ApiMessage(
-                        username = cfg!!.relay.systemUser,
-                        text = "Matterlink out of date! Please download new version from ${latest.downloadURL}"
-                ))
-            } else {
-                instance.fatal("Severe error in update checker!")
-            }
+        possibleUpdates.sortByDescending { it.fileName.substringAfter(" ") }
+        val version = if(possibleUpdates.count() == 1) "version" else "versions"
+        instance.info("Matterlink out of date! You are {} $version behind", possibleUpdates.count())
+        possibleUpdates.forEach {
+            instance.info("version: {} download: {}", it.fileName, it.downloadURL)
         }
+
+        instance.warn("Mod out of date! New $version available at ${latest.downloadURL}")
+        MessageHandler.transmit(ApiMessage(
+                username = cfg.relay.systemUser,
+                text = "Matterlink out of date! You are {} $version behind! Please download new version from ${latest.downloadURL}"
+        ))
     }
 
 }

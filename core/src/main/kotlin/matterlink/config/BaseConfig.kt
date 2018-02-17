@@ -2,7 +2,7 @@ package matterlink.config
 
 import java.util.regex.Pattern
 
-var cfg: BaseConfig? = null
+lateinit var cfg: BaseConfig
 
 abstract class BaseConfig {
     companion object {
@@ -12,18 +12,20 @@ abstract class BaseConfig {
         private val CATEGORY_CONNECTION = "connection"
         private val CATEGORY_COMMAND = "command"
         private val CATEGORY_DEATH = "death"
+        private val CATEGORY_UPDATE = "update"
 
         fun reload() {
-            cfg = cfg!!.load()
+            cfg = cfg.load()
         }
     }
 
-    var relay: RelayOptions = RelayOptions()
-    var connect: ConnectOptions = ConnectOptions()
-    var formatting: FormattingOptions = FormattingOptions()
-    var joinLeave: FormattingJoinLeave = FormattingJoinLeave()
-    var command: CommandOptions = CommandOptions()
-    var death: DeathOptions = DeathOptions()
+    var relay = RelayOptions()
+    var connect = ConnectOptions()
+    var formatting = FormattingOptions()
+    var joinLeave = FormattingJoinLeave()
+    var command = CommandOptions()
+    var death = DeathOptions()
+    var update = UpdateOptions()
 
     data class RelayOptions(
             var systemUser: String = "Server",
@@ -56,6 +58,10 @@ abstract class BaseConfig {
             var commandMapping: Map<String, String> = mapOf(
                     "tps" to "forge tps"
             )
+    )
+
+    data class UpdateOptions(
+            var enable: Boolean = true
     )
 
     data class DeathOptions(
@@ -271,6 +277,18 @@ abstract class BaseConfig {
                     val value = it.substringAfter('=')
                     Pair(key, value)
                 }
+        )
+
+
+        category = CATEGORY_UPDATE
+        addCustomCategoryComment(category, "Update Settings")
+        update = UpdateOptions(
+                enable = getBoolean(
+                        "enable",
+                        category,
+                        update.enable,
+                        "Enable Update checking"
+                )
         )
     }
 

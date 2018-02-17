@@ -13,7 +13,7 @@ object PlayerListCommand : IBridgeCommand {
         if (args.isNotBlank()) return false
         val playerList = instance.wrappedPlayerList()
         MessageHandler.transmit(ApiMessage(
-                username = cfg!!.relay.systemUser,
+                username = cfg.relay.systemUser,
                 text = when {
                     playerList.isNotEmpty() -> "players: " + playerList.joinToString(" ") { it.antiping() }
                     else -> "No Players online"

@@ -24,7 +24,7 @@ object CommandCore {
             }
             "reload" -> {
                 if (MessageHandler.connected) instance.disconnect()
-                cfg = cfg!!.load()
+                cfg = cfg.load()
                 BridgeCommandRegistry.reloadCommands()
                 if (!MessageHandler.connected) instance.connect()
                 "Bridge config reloaded!"

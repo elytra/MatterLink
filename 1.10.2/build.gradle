@@ -56,7 +56,10 @@ compileKotlin.doFirst {
         from("src/templates/kotlin/matterlink/Constants.kt")
         into(target)
     }
-    ant.replaceregexp(match:'@VERSION@', replace: project.mod_version, flags:'g', byline:true) {
+    ant.replaceregexp(match:'@MODVERSION@', replace: project.mod_version, flags:'g', byline:true) {
+        fileset(dir: target, includes: 'Constants.kt')
+    }
+    ant.replaceregexp(match:'@MCVERSION@', replace: project.mc_version, flags:'g', byline:true) {
         fileset(dir: target, includes: 'Constants.kt')
     }
     ant.replaceregexp(match:'@FORGELIN-VERSION@', replace: project.forgelin_version, flags:'g', byline:true) {

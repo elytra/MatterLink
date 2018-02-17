@@ -9,9 +9,9 @@ const val USER_ACTION: String = "user_action"
 const val JOIN_LEAVE: String = "join_leave"
 
 data class ApiMessage(
-        val username: String = cfg!!.relay.systemUser,
+        val username: String = cfg.relay.systemUser,
         val text: String = "",
-        val gateway: String = cfg!!.connect.gateway,
+        val gateway: String = cfg.connect.gateway,
         val channel: String = "",
         val userid: String = "",
         val avatar: String = "",

@@ -15,7 +15,7 @@ object HelpCommand : IBridgeCommand {
                     .joinToString(separator = "\n") { "$it: ${ BridgeCommandRegistry.getHelpString(it) }" }
         }
         MessageHandler.transmit(ApiMessage(
-                username = cfg!!.relay.systemUser,
+                username = cfg.relay.systemUser,
                 text = msg
         ))
         return true

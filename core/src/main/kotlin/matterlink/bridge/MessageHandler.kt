@@ -29,20 +29,20 @@ object MessageHandler {
     }
 
     private fun HttpRequestBase.authorize() {
-        if (cfg!!.connect.authToken.isNotEmpty() && getHeaders("Authorization").isEmpty())
-            setHeader("Authorization", "Bearer " + cfg!!.connect.authToken)
+        if (cfg.connect.authToken.isNotEmpty() && getHeaders("Authorization").isEmpty())
+            setHeader("Authorization", "Bearer " + cfg.connect.authToken)
     }
 
     private fun createThread(clear: Boolean = true): HttpStreamConnection {
         instance.info("Attempting to open bridge connection.")
         return HttpStreamConnection(
                 {
-                    HttpGet(cfg!!.connect.url + "/api/stream").apply {
+                    HttpGet(cfg.connect.url + "/api/stream").apply {
                         authorize()
                     }
                 },
                 {
-                    HttpGet(cfg!!.connect.url + "/api/messages").apply {
+                    HttpGet(cfg.connect.url + "/api/messages").apply {
                         authorize()
                     }
                 },
@@ -110,7 +110,7 @@ object MessageHandler {
         try {
             //open a connection
             val client = HttpClients.createDefault()
-            val post = HttpPost(cfg!!.connect.url + "/api/message")
+            val post = HttpPost(cfg.connect.url + "/api/message")
 
             post.entity = StringEntity(message.encode(), ContentType.APPLICATION_JSON)
             post.authorize()

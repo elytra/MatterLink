@@ -9,8 +9,8 @@ object BridgeCommandRegistry {
     private val commandMap: HashMap<String, IBridgeCommand> = HashMap()
 
     fun handleCommand(input: String): Boolean {
-        if (!cfg!!.command.enable) return false
-        if (input[0] != cfg!!.command.prefix[0] || input.length < 2) return false
+        if (!cfg.command.enable) return false
+        if (input[0] != cfg.command.prefix[0] || input.length < 2) return false
 
         val cmd = input.substring(1).split(' ', ignoreCase = false, limit = 2)
         val args = if (cmd.size == 2)
@@ -48,8 +48,8 @@ object BridgeCommandRegistry {
     fun reloadCommands() {
         commandMap.clear()
         registerAll(HelpCommand,PlayerListCommand,UptimeCommand)
-        for (key : String in cfg!!.command.commandMapping.keys) {
-            register(PassthroughCommand(key, cfg!!.command.commandMapping.get(key)!!))
+        for ((key, value) in cfg.command.commandMapping) {
+            register(PassthroughCommand(key, value))
         }
     }
 }

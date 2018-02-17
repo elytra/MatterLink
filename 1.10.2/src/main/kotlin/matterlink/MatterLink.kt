@@ -16,7 +16,7 @@ lateinit var logger: Logger
 
 @Mod(
         modid = MODID,
-        name = NAME, version = VERSION,
+        name = NAME, version = MODVERSION,
         serverSideOnly = true,
         useMetadata = true,
         acceptableRemoteVersions = "*",
@@ -52,7 +52,6 @@ object MatterLink : IMatterLink() {
         event.registerServerCommand(CommandMatterlink())
         serverStartTime = System.currentTimeMillis()
         connect()
-        Thread(UpdateChecker()).start()
     }
 
     @Mod.EventHandler
@@ -75,6 +74,6 @@ object MatterLink : IMatterLink() {
 
     override var commandSender: IMinecraftCommandSender = MatterlinkCommandSender
 
-    override val mcVersion: String = "1.10.2"
-    override val modVersion: String = VERSION
+    override val mcVersion: String =  MCVERSION
+    override val modVersion: String = MODVERSION
 }

@@ -12,7 +12,7 @@ object UptimeCommand : IBridgeCommand {
     override fun call(args: String): Boolean {
         if (args.isNotBlank()) return false
         MessageHandler.transmit(ApiMessage(
-                username = cfg!!.relay.systemUser,
+                username = cfg.relay.systemUser,
                 text = instance.getUptimeAsString()
         ))
         return true

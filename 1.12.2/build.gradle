@@ -49,7 +49,8 @@ minecraft {
     mappings = project.mcp_mappings
 
     replaceIn 'Constants.kt'
-    replace '@VERSION@', project.mod_version
+    replace '@MODVERSION@', project.mod_version
+    replace '@MCVERSION@', project.mc_version
     replace '@FORGELIN-VERSION@', project.forgelin_version
     replace '@FORGE-VERSION@', project.forge_version
 }
