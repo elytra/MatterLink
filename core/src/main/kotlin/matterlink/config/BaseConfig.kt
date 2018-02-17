@@ -49,7 +49,8 @@ abstract class BaseConfig {
     data class ConnectOptions(
             var url: String = "http://localhost:4242",
             var authToken: String = "",
-            var gateway: String = "minecraft"
+            var gateway: String = "minecraft",
+            var enable: Boolean = true
     )
 
     data class CommandOptions(
@@ -245,6 +246,12 @@ abstract class BaseConfig {
                         category,
                         connect.gateway,
                         "MatterBridge gateway"
+                ),
+                enable = getBoolean(
+                        "enable",
+                        category,
+                        connect.enable,
+                        "Enable the relay, it will not work if it is not enabled"
                 )
         )
         category = CATEGORY_DEATH

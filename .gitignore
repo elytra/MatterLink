@@ -100,3 +100,6 @@ classes/
 run/
 *.tmp
 **/gen/
+
+\.floo
+\.flooignore

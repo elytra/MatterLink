@@ -1,27 +1,65 @@
-package matterlink.bridge;
+package matterlink.bridge
 
+import matterlink.config.cfg
 import matterlink.instance
 import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpRequestBase
 import org.apache.http.impl.client.HttpClients
 import java.io.InputStream
 import java.net.SocketException
+import java.util.concurrent.ConcurrentLinkedQueue
 
-val BUFFER_SIZE = 1000
+const val BUFFER_SIZE = 1000
 
-class HttpStreamConnection(getClosure: () -> HttpGet,
-                           clearClosure: () -> HttpGet,
-                           private val mhandler: (String) -> Unit,
-                           private val onClose: () -> Unit,
-                           private val setSuccess: (Boolean) -> Unit,
+/**
+ * adds the correct headers for MatterBridge authorization
+ */
+fun HttpRequestBase.authorize() {
+    if (cfg.connect.authToken.isNotEmpty() && getHeaders("Authorization").isEmpty())
+        setHeader("Authorization", "Bearer " + cfg.connect.authToken)
+}
+
+class HttpStreamConnection(private val rcvQueue: ConcurrentLinkedQueue<ApiMessage>,
                            private val clear: Boolean = true
 ) : Thread() {
+    var connected = false
+    var connecting = false
+    var enabled = true
+    var connectErrors = 0
+
+    init {
+        name = "MsgRcvThread"
+    }
+
+    private fun onClose() {
+        instance.warn("Bridge connection closed!")
+        connected = false
+        connecting = false
+    }
+
+    private fun setSuccess(success: Boolean) {
+        connecting = false
+        if (success) {
+            instance.info("connected successfully")
+            connectErrors = 0
+            connected = true
+        } else {
+            connectErrors++
+            connected = false
+        }
+    }
+
     private val client = HttpClients.createDefault()
     private var stream: InputStream? = null
 
-    val get = getClosure()
-    private val clearGet = clearClosure()
-    var cancelled: Boolean = false
-        private set
+    val get = HttpGet(cfg.connect.url + "/api/stream").apply {
+        authorize()
+    }
+    private val clearGet = HttpGet(cfg.connect.url + "/api/messages").apply {
+        authorize()
+    }
+    
+    private var cancelled: Boolean = false
 
     override fun run() {
 
@@ -58,7 +96,11 @@ class HttpStreamConnection(getClosure: () -> HttpGet,
                     while (buffer.contains("\n")) {
                         val line = buffer.substringBefore("\n")
                         buffer = buffer.substringAfter("\n")
-                        mhandler(line)
+
+                        rcvQueue.add(
+                                ApiMessage.decode(line)
+                        )
+
                     }
                 } else if (chars < 0) {
                     break
@@ -81,10 +123,29 @@ class HttpStreamConnection(getClosure: () -> HttpGet,
         return
     }
 
-    fun close() {
-        cancelled = true
-        get.abort()
-        join()
+    fun open() {
+        enabled = true
+        if (!isAlive && cfg.connect.enable) {
+            connecting = true
+            super.start()
+//            MessageHandler.transmit(ApiMessage(text="bridge connected", username="Server"))
+        }
+        if (isAlive) {
+            instance.info("Bridge Connection opened")
+        }
+    }
 
+
+    fun close() {
+        instance.info("Closing bridge connection...")
+//        MessageHandler.transmit(ApiMessage(text="bridge closing", username="Server"))
+        try {
+            enabled = false
+            cancelled = true
+            get.abort()
+            join()
+        } catch (e: SocketException) {
+            instance.error("exception: $e")
+        }
     }
 }
