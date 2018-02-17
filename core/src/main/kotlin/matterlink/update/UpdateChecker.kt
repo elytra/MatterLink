@@ -55,8 +55,9 @@ class UpdateChecker : Runnable {
         val latest= possibleUpdates[0]
 
         possibleUpdates.sortByDescending { it.fileName.substringAfter(" ") }
-        val version = if(possibleUpdates.count() == 1) "version" else "versions"
-        instance.info("Matterlink out of date! You are {} $version behind", possibleUpdates.count())
+        val count = possibleUpdates.count()
+        val version = if(count == 1) "version" else "versions"
+        instance.info("Matterlink out of date! You are $count $version behind")
         possibleUpdates.forEach {
             instance.info("version: {} download: {}", it.fileName, it.downloadURL)
         }
@@ -64,7 +65,7 @@ class UpdateChecker : Runnable {
         instance.warn("Mod out of date! New $version available at ${latest.downloadURL}")
         MessageHandler.transmit(ApiMessage(
                 username = cfg.relay.systemUser,
-                text = "Matterlink out of date! You are {} $version behind! Please download new version from ${latest.downloadURL}"
+                text = "Matterlink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}"
         ))
     }
 
