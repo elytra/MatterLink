@@ -13,7 +13,6 @@ abstract class IMatterLink {
     abstract val modVersion: String
 
     abstract var commandSender: IMinecraftCommandSender
-    //var interrupted: Boolean = false
 
     abstract fun wrappedSendToPlayers(msg: String)
 
