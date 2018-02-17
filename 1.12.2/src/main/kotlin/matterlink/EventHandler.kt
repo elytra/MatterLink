@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
 
 //FORGE-DEPENDENT
 @Mod.EventBusSubscriber
-object EventWrapper {
+object EventHandler {
 
     //MC-VERSION & FORGE DEPENDENT
     @SubscribeEvent
@@ -39,7 +39,7 @@ object EventWrapper {
     fun chatEvent(e: ServerChatEvent) {
         val user = e.username
         val msg = e.message
-        ChatHandler.handleChat(user, msg)
+        ChatProcessor.sendToBridge(user, msg,"")
     }
 
     //FORGE-DEPENDENT
@@ -59,7 +59,7 @@ object EventWrapper {
             e.command is CommandBroadcast -> ""
             else -> return
         }
-        CommandHandler.handleCommand(sender, args, type)
+        ChatProcessor.sendToBridge(sender, args, type)
 
     }
 

@@ -4,8 +4,8 @@ import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
 import matterlink.instance
 
-object ChatHandler {
-    fun handleChat(user: String, msg: String) {
+object ChatProcessor {
+    fun sendToBridge(user: String, msg: String, event: String) {
         val message = msg.trim()
         when {
             message.isNotBlank() -> MessageHandler.transmit(ApiMessage(
