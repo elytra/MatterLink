@@ -10,6 +10,7 @@ import matterlink.handlers.*
 import net.minecraft.command.server.CommandBroadcast
 import net.minecraft.command.server.CommandEmote
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.dedicated.DedicatedServer
 import net.minecraft.tileentity.TileEntityCommandBlock
@@ -24,6 +25,14 @@ object EventHandler {
     //MC-VERSION & FORGE DEPENDENT
     @SubscribeEvent
     fun progressEvent(e: AchievementEvent) {
+        val achievement = e.achievement
+        val entityPlayer = e.entityPlayer as? EntityPlayerMP ?: return
+        val statFile = entityPlayer.statFile
+
+        if (!statFile.canUnlockAchievement(achievement) || statFile.hasAchievementUnlocked(achievement)) {
+            return
+        }
+
         ProgressHandler.handleProgress(
                 name = e.entityPlayer.displayName,
                 message = "has earned the achievement",
