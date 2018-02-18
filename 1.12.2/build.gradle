@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         jcenter()
@@ -81,7 +80,7 @@ sourceJar {
     from sourceSets.main.allSource
 
     // copy everything else except the mcmod.info
-    from (project(":core").sourceSets.main.allSource) {
+    from(project(":core").sourceSets.main.allSource) {
         exclude 'mcmod.info'
     }
 }

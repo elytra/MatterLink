@@ -254,11 +254,11 @@ enable=true
 #        key="yourkey"
 
 
-    #[[gateway.inout]] can be used when then channel will be used to receive from
-    #and send messages to
-    [[gateway.inout]]
-    account="irc.freenode"
-    channel="#matterlink-testing"
+#    #[[gateway.inout]] can be used when then channel will be used to receive from
+#    #and send messages to
+#    [[gateway.inout]]
+#    account="irc.freenode"
+#    channel="#matterlink-testing"
 
 #        #OPTIONAL - only used for IRC protocol at the moment
 #        [gateway.out.options]

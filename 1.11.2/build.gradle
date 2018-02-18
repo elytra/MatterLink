@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         jcenter()
@@ -24,7 +23,7 @@ sourceCompatibility = targetCompatibility = '1.8'
 
 dependencies {
     compile project(':core')
-    compile group: "net.shadowfacts", name: "Forgelin", version:  project.forgelin_version
+    compile group: "net.shadowfacts", name: "Forgelin", version: project.forgelin_version
 }
 
 shadowJar {
@@ -55,16 +54,16 @@ compileKotlin.doFirst {
         from("src/templates/kotlin/matterlink/Constants.kt")
         into(target)
     }
-    ant.replaceregexp(match:'@MODVERSION@', replace: project.mod_version, flags:'g', byline:true) {
+    ant.replaceregexp(match: '@MODVERSION@', replace: project.mod_version, flags: 'g', byline: true) {
         fileset(dir: target, includes: 'Constants.kt')
     }
-    ant.replaceregexp(match:'@MCVERSION@', replace: project.mc_version, flags:'g', byline:true) {
+    ant.replaceregexp(match: '@MCVERSION@', replace: project.mc_version, flags: 'g', byline: true) {
         fileset(dir: target, includes: 'Constants.kt')
     }
-    ant.replaceregexp(match:'@FORGELIN-VERSION@', replace: project.forgelin_version, flags:'g', byline:true) {
+    ant.replaceregexp(match: '@FORGELIN-VERSION@', replace: project.forgelin_version, flags: 'g', byline: true) {
         fileset(dir: target, includes: 'Constants.kt')
     }
-    ant.replaceregexp(match:'@FORGE-VERSION@', replace: project.forge_version, flags:'g', byline:true) {
+    ant.replaceregexp(match: '@FORGE-VERSION@', replace: project.forge_version, flags: 'g', byline: true) {
         fileset(dir: target, includes: 'Constants.kt')
     }
 }
@@ -95,7 +94,7 @@ sourceJar {
     from sourceSets.main.allSource
 
     // copy everything else except the mcmod.info
-    from (project(":core").sourceSets.main.allSource) {
+    from(project(":core").sourceSets.main.allSource) {
         exclude 'mcmod.info'
     }
 }

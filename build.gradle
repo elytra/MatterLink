@@ -10,7 +10,7 @@ subprojects {
 
     if (project.hasProperty('build_number')) {
         mod_version += "-build-$build_number"
-    } else if(!project.hasProperty('release')) {
+    } else if (!project.hasProperty('release')) {
         mod_version += "-dev"
     }
 
@@ -44,7 +44,7 @@ subprojects {
             project {
                 id = '287323'
                 releaseType = 'beta'
-                if(project.hasProperty('changelog_file')) {
+                if (project.hasProperty('changelog_file')) {
                     println("changelog = $changelog_file")
                     changelogType = "markdown"
                     changelog = file(changelog_file)

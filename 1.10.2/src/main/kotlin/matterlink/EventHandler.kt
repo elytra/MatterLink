@@ -60,7 +60,7 @@ object EventHandler {
         val sender = when {
             e.sender is DedicatedServer -> cfg.relay.systemUser
             e.sender is TileEntityCommandBlock -> "CommandBlock"
-            else ->  e.sender.name
+            else -> e.sender.name
         }
         val args = e.parameters.joinToString(" ")
         val type = when {

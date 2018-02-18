@@ -12,7 +12,7 @@ abstract class IMinecraftCommandSender(val user: String, val userId: String, val
 
     val accountName = "$user (id=$userId server=$server)"
 
-    fun canExecute(commandName: String) : Boolean {
+    fun canExecute(commandName: String): Boolean {
         instance.info("testing $commandName")
         val command = BridgeCommandRegistry[commandName] ?: return false
 
