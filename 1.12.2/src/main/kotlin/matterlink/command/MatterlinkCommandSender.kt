@@ -2,6 +2,7 @@ package matterlink.command
 
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
+import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import net.minecraft.command.ICommandSender
 import net.minecraft.server.MinecraftServer
@@ -11,9 +12,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler
 import javax.annotation.Nonnull
 
 object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
-    private var level: Int = 0
 
-    override fun execute(cmdString: String, level: Int): Boolean {
+    override fun execute(cmdString: String): Boolean {
         return 0 < FMLCommonHandler.instance().minecraftServerInstance.commandManager.executeCommand(
                 this,
                 cmdString
@@ -29,7 +29,7 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
     }
 
     override fun canUseCommand(permLevel: Int, commandName: String?): Boolean {
-        //TODO: Implement actual permissions checking
+        //permissions are checked on our end
         return true
     }
 

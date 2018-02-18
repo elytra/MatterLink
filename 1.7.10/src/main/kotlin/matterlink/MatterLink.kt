@@ -4,7 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.*
 import matterlink.command.CommandMatterlink
-import matterlink.command.IMinecraftCommandSender
+import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.command.MatterlinkCommandSender
 import matterlink.config.cfg
 import net.minecraft.server.MinecraftServer

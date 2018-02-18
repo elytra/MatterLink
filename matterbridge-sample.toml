@@ -244,7 +244,7 @@ enable=true
 
     #[[gateway.in]] specifies the account and channels we will receive messages from.
     #The following example bridges between mattermost and irc
-    [[gateway.in]]
+    [[gateway.inout]]
     account="irc.freenode"
     channel="#matterlink"
 

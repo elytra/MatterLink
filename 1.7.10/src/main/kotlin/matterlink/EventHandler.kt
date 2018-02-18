@@ -54,10 +54,9 @@ object EventHandler {
     @SubscribeEvent
     fun commandEvent(e: CommandEvent) {
         val sender = when {
-            e.sender is EntityPlayer -> e.sender.commandSenderName
             e.sender is DedicatedServer -> cfg.relay.systemUser
             e.sender is TileEntityCommandBlock -> "CommandBlock"
-            else -> return
+            else -> e.sender.commandSenderName
         }
         val args = e.parameters.joinToString(" ")
         val type = when {

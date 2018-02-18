@@ -20,7 +20,8 @@ object ServerChatHandler {
                 val message = when (nextMessage.event) {
                     "user_action" -> nextMessage.format(cfg.formatting.action)
                     "" -> {
-                        if (BridgeCommandRegistry.handleCommand(nextMessage.text)) return
+                        // try to handle command and do not handle as a chat message
+                        if (BridgeCommandRegistry.handleCommand(nextMessage)) return
                         nextMessage.format(cfg.formatting.chat)
                     }
                     "join_leave" -> nextMessage.format(cfg.formatting.joinLeave)

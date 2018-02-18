@@ -2,7 +2,7 @@ package matterlink
 
 import matterlink.bridge.MessageHandler
 import matterlink.bridge.command.BridgeCommandRegistry
-import matterlink.command.IMinecraftCommandSender
+import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
 import java.io.File

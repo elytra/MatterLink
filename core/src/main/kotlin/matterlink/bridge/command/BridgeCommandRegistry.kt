@@ -1,5 +1,8 @@
 package matterlink.bridge.command
 
+import matterlink.bridge.ApiMessage
+import matterlink.config.CommandConfig
+import matterlink.config.PermissionConfig
 import matterlink.config.cfg
 import matterlink.instance
 import java.util.*
@@ -8,25 +11,28 @@ object BridgeCommandRegistry {
 
     private val commandMap: HashMap<String, IBridgeCommand> = HashMap()
 
-    fun handleCommand(input: String): Boolean {
+    fun handleCommand(input: ApiMessage): Boolean {
         if (!cfg.command.enable) return false
-        if (input[0] != cfg.command.prefix[0] || input.length < 2) return false
+        if (input.text[0] != cfg.command.prefix[0] || input.text.length < 2) return false
 
-        val cmd = input.substring(1).split(' ', ignoreCase = false, limit = 2)
-        val args = if (cmd.size == 2)
-            cmd[1]
-        else
-            ""
+        val cmd = input.text.substring(1).split(' ', ignoreCase = false, limit = 2)
+        val args = if (cmd.size == 2) cmd[1] else ""
 
-        return if (commandMap.containsKey(cmd[0])) (commandMap[cmd[0]]!!.call(args)) else false
+        return if (commandMap.containsKey(cmd[0]))
+            (commandMap[cmd[0]]!!.execute(input.username, input.userid, input.account, args))
+        else false
     }
 
     fun register(cmd: IBridgeCommand): Boolean {
-        if (cmd.name.isBlank() || commandMap.containsKey(cmd.name)) {
-            instance.info("Failed to register command: '${cmd.name}'")
+        if (cmd.alias.isBlank() || commandMap.containsKey(cmd.alias)) {
+            instance.error("Failed to register command: '${cmd.alias}'")
             return false
         }
-        commandMap[cmd.name] = cmd
+        if(!cmd.validate()) {
+            instance.error("Failed to validate command: '${cmd.alias}'")
+            return false
+        }
+        commandMap[cmd.alias] = cmd
         return true
     }
 
@@ -42,14 +48,16 @@ object BridgeCommandRegistry {
         return if (help.isNotBlank()) help else "No help for '$cmd'"
     }
 
-    val commandList: String
-        get() = commandMap.keys.joinToString(separator = ", ")
+    fun getCommandList (permLvl : Int) : String {
+        return commandMap.filter { (key, value) ->
+            value.permLevel <= permLvl
+        }.map {it.key}.joinToString(" ")
+    }
 
     fun reloadCommands() {
         commandMap.clear()
-        registerAll(HelpCommand,PlayerListCommand,UptimeCommand)
-        for ((key, value) in cfg.command.commandMapping) {
-            register(PassthroughCommand(key, value))
-        }
+        PermissionConfig.loadPermFile()
+        register(HelpCommand)
+        registerAll(*CommandConfig.readConfig())
     }
 }

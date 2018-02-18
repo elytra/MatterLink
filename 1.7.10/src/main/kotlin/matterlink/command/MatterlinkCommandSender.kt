@@ -2,9 +2,9 @@ package matterlink.command
 
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
+import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import net.minecraft.command.ICommandSender
-import net.minecraft.entity.Entity
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ChatComponentText
 import net.minecraft.util.ChunkCoordinates
@@ -15,7 +15,7 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
 
     private var level: Int = 0
 
-    override fun execute(cmdString: String, level: Int): Boolean {
+    override fun execute(cmdString: String): Boolean {
         return 0 < MinecraftServer.getServer().commandManager.executeCommand(
                 this,
                 cmdString
@@ -35,7 +35,7 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
     }
 
     override fun canCommandSenderUseCommand(permLevel: Int, commandName: String?): Boolean {
-        //TODO: Implement actual permissions checking
+        //we do permission
         return true
     }
 

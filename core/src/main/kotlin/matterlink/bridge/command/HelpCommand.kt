@@ -5,19 +5,19 @@ import matterlink.bridge.MessageHandler
 import matterlink.config.cfg
 
 object HelpCommand : IBridgeCommand {
-    override val name: String = "help"
+    override val alias: String = "help"
     override val help: String = "Returns the help string for the given command. Syntax: help <command>"
-    override fun call(args: String): Boolean {
-        val msg: String = if (args.isEmpty()) {
-            "Available commands: ${ BridgeCommandRegistry.commandList}"
-        } else {
-            args.split(" ", ignoreCase = false)
-                    .joinToString(separator = "\n") { "$it: ${ BridgeCommandRegistry.getHelpString(it) }" }
+    override val permLevel = 0
+    override fun execute(user:String, userId:String, server:String, args:String) : Boolean {
+        val msg: String = when {
+            args.isEmpty() ->
+                "Available commands: ${BridgeCommandRegistry.getCommandList(IBridgeCommand.getPermLevel(userId, server))}"
+            else -> args.split(" ", ignoreCase = false)
+                    .joinToString(separator = "\n") {
+                        "$it: ${ BridgeCommandRegistry.getHelpString(it) }"
+                    }
         }
-        MessageHandler.transmit(ApiMessage(
-                username = cfg.relay.systemUser,
-                text = msg
-        ))
+        MessageHandler.transmit(ApiMessage(text = msg))
         return true
     }
 

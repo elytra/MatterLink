@@ -1,17 +1,15 @@
 package matterlink
 
 import matterlink.command.CommandMatterlink
-import matterlink.command.IMinecraftCommandSender
+import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.command.MatterlinkCommandSender
 import matterlink.config.cfg
-import matterlink.update.UpdateChecker
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
-import java.io.File
 
 lateinit var logger: Logger
 
