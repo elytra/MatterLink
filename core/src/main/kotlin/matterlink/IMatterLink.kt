@@ -5,6 +5,7 @@ import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
+import java.io.File
 
 lateinit var instance: IMatterLink
 
@@ -12,21 +13,24 @@ abstract class IMatterLink {
     abstract val mcVersion: String
     abstract val modVersion: String
 
+    lateinit var cfgDir: File
+
     abstract var commandSender: IMinecraftCommandSender
 
     abstract fun wrappedSendToPlayers(msg: String)
 
     abstract fun wrappedPlayerList(): Array<String>
 
-    private var updateChecked: Boolean = false
+    private var firstRun: Boolean = true
 
     fun connect() {
-        MessageHandler.start(clear = true)
+        MessageHandler.start(clear = true, firstRun = firstRun)
 
-        if (!updateChecked && cfg.update.enable) {
+        if (firstRun && cfg.update.enable) {
             Thread(UpdateChecker()).start()
-            updateChecked = true
         }
+
+        firstRun = false
     }
 
     fun disconnect() {

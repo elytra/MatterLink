@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 object MessageHandler {
     private var sendErrors = 0
+    var connectErrors = 0
     private var streamConnection: HttpStreamConnection
     var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
         private set
@@ -23,11 +24,10 @@ object MessageHandler {
     val connected get() = streamConnection.connected
 
     private fun createThread(clear: Boolean = true): HttpStreamConnection {
-        instance.info("Attempting to open bridge connection.")
-        instance.info("queue: $rcvQueue")
         return HttpStreamConnection(
                 rcvQueue,
-                clear
+                clear,
+                this
         )
     }
 
@@ -38,12 +38,26 @@ object MessageHandler {
         }
     }
 
-    fun stop() = streamConnection.close()
+    fun stop() {
+        enabled = false
+        streamConnection.close()
+    }
 
-    fun start(clear: Boolean = true) {
-        if (!connected)
+    var enabled: Boolean = false
+
+    fun start(clear: Boolean = true, firstRun: Boolean = false) {
+        enabled = when {
+            firstRun -> cfg.connect.autoConnect
+            else -> true
+        }
+
+        if (!connected) {
             streamConnection = createThread(clear)
-        streamConnection.open()
+        }
+
+        if (enabled) {
+            streamConnection.open()
+        }
     }
 
     private fun transmitMessage(message: ApiMessage) {
@@ -78,9 +92,9 @@ object MessageHandler {
     }
 
     fun checkConnection(tick: Int) {
-        if (streamConnection.enabled && tick % 20 == 0 && !streamConnection.connected && !streamConnection.connecting) {
+        if (enabled && tick % 20 == 0 && !streamConnection.connected && !streamConnection.connecting) {
 
-            if (streamConnection.connectErrors > 5) {
+            if (connectErrors > 5) {
                 instance.fatal("Caught too many errors, closing bridge")
                 stop()
                 return

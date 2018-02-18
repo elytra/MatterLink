@@ -4,10 +4,10 @@ import matterlink.config.BaseConfig
 import net.minecraftforge.common.config.Configuration
 import java.io.File
 
-class MatterLinkConfig(val file: File) : BaseConfig() {
+class MatterLinkConfig(val baseCfgDir: File) : BaseConfig(baseCfgDir) {
     init {
-        logger.info("Reading bridge blueprints... from {}", file)
-        val config = Configuration(file)
+        logger.info("Reading bridge blueprints... from {}", cfgDirectory)
+        val config = Configuration(mainCfgFile)
 
         load(
                 getBoolean = config::getBoolean,
@@ -17,9 +17,8 @@ class MatterLinkConfig(val file: File) : BaseConfig() {
                 getStringList = config::getStringList,
                 addCustomCategoryComment = config::addCustomCategoryComment
         )
-
         if (config.hasChanged()) config.save()
     }
 
-    override fun load() = MatterLinkConfig(file)
+    override fun load() = MatterLinkConfig(baseCfgDir)
 }

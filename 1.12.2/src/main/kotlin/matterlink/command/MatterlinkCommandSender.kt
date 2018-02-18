@@ -39,7 +39,7 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
 
     override fun sendMessage(@Nonnull component: ITextComponent?) {
         MessageHandler.transmit(ApiMessage(
-                username = cfg!!.relay.systemUser,
+                username = cfg.relay.systemUser,
                 text = component!!.unformattedComponentText
         ))
 

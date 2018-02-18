@@ -13,7 +13,7 @@ object JoinLeaveHandler {
             val msg = cfg.joinLeave.joinServer.mapFormat(
                     mapOf(
                             "{username}" to player,
-                            "{username:antiping}" to player.antiping()
+                            "{username:antiping}" to player.antiping
                     )
             )
             MessageHandler.transmit(ApiMessage(
@@ -29,7 +29,7 @@ object JoinLeaveHandler {
             val msg = cfg.joinLeave.leaveServer.mapFormat(
                     mapOf(
                             "{username}" to player,
-                            "{username:antiping}" to player.antiping()
+                            "{username:antiping}" to player.antiping
                     )
             )
             MessageHandler.transmit(ApiMessage(

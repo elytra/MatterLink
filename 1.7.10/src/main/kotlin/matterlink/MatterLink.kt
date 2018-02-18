@@ -1,5 +1,6 @@
 package matterlink
 
+import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.*
 import matterlink.command.CommandMatterlink
@@ -28,10 +29,12 @@ class MatterLink : IMatterLink() {
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent) {
         MinecraftForge.EVENT_BUS.register(EventHandler)
+        FMLCommonHandler.instance().bus().register(EventHandler)
+
         logger = event.modLog
         logger.info("Building bridge!")
 
-        cfg = MatterLinkConfig(event.suggestedConfigurationFile)
+        cfg = MatterLinkConfig(event.modConfigurationDirectory)
     }
 
     @Mod.EventHandler
@@ -63,10 +66,10 @@ class MatterLink : IMatterLink() {
     }
 
     override fun log(level: String, formatString: String, vararg data: Any) =
-            logger.log(Level.toLevel(level, Level.INFO),formatString, *data)
+            logger.log(Level.toLevel(level, Level.INFO), formatString, *data)
 
     override var commandSender: IMinecraftCommandSender = MatterlinkCommandSender
 
-    override val mcVersion: String =  MCVERSION
+    override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION
 }

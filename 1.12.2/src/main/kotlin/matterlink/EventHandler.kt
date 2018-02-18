@@ -52,7 +52,7 @@ object EventHandler {
     fun commandEvent(e: CommandEvent) {
         val sender = when {
             e.sender is EntityPlayer -> e.sender.name
-            e.sender is DedicatedServer -> cfg!!.relay.systemUser
+            e.sender is DedicatedServer -> cfg.relay.systemUser
             e.sender is TileEntityCommandBlock -> "CommandBlock"
             else -> return
         }

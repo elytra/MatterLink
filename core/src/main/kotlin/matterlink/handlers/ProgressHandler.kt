@@ -9,7 +9,7 @@ object ProgressHandler {
 
     fun handleProgress(name: String, message: String, display: String) {
         if (!cfg.relay.advancements) return
-        val usr = name.antiping()
+        val usr = name.antiping
         MessageHandler.transmit(ApiMessage(
                 username = cfg.relay.systemUser,
                 text = "$usr $message $display"

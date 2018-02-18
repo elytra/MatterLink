@@ -6,17 +6,19 @@ import matterlink.config.cfg
 import matterlink.instance
 
 object CommandCore {
-    fun getName() : String { return "bridge" }
-    fun getAliases() : List<String> { return listOf("BRIDGE","bridge") }
-    fun getUsage() : String { return "bridge <connect|disconnect|reload>"}
+    fun getName() = "bridge"
 
-    fun execute(args : Array<String>) : String {
+    fun getAliases() = listOf("BRIDGE", "bridge")
+
+    fun getUsage() = "bridge <connect|disconnect|reload>"
+
+    fun execute(args: Array<String>): String {
         val cmd = args[0].toLowerCase()
 
         return when (cmd) {
             "connect" -> {
                 instance.connect()
-                "Bridge connected!"
+                "Attempting bridge connection!"
             }
             "disconnect" -> {
                 instance.disconnect()

@@ -44,7 +44,7 @@ data class ApiMessage(
                         "{gateway}" to gateway,
                         "{channel}" to channel,
                         "{protocol}" to protocol,
-                        "{username:antiping}" to username.antiping()
+                        "{username:antiping}" to username.antiping
                 )
         )
 

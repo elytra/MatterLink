@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
+import java.io.File
 
 lateinit var logger: Logger
 
@@ -33,17 +34,12 @@ object MatterLink : IMatterLink() {
         logger = event.modLog
         logger.info("Building bridge!")
 
-        cfg = MatterLinkConfig(event.suggestedConfigurationFile)
+        cfg = MatterLinkConfig(event.modConfigurationDirectory)
     }
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
         this.registerBridgeCommands()
-    }
-
-    @Mod.EventHandler
-    fun serverAboutToStart(event: FMLServerAboutToStartEvent) {
-//        MessageHandler.start(clear = true)
     }
 
     @Mod.EventHandler
@@ -70,10 +66,10 @@ object MatterLink : IMatterLink() {
     }
 
     override fun log(level: String, formatString: String, vararg data: Any) =
-            logger.log(Level.toLevel(level, Level.INFO),formatString, *data)
+            logger.log(Level.toLevel(level, Level.INFO), formatString, *data)
 
     override var commandSender: IMinecraftCommandSender = MatterlinkCommandSender
 
-    override val mcVersion: String =  MCVERSION
+    override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION
 }

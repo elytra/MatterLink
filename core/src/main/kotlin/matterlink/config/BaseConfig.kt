@@ -1,23 +1,20 @@
 package matterlink.config
 
+import java.io.File
 import java.util.regex.Pattern
 
 lateinit var cfg: BaseConfig
 
-abstract class BaseConfig {
+abstract class BaseConfig(rootDir: File) {
     companion object {
-        private val CATEGORY_RELAY_OPTIONS = "relay"
-        private val CATEGORY_FORMATTING_INCOMING = "formatting"
-        private val CATEGORY_JOIN_LEAVE = "join_leave"
-        private val CATEGORY_CONNECTION = "connection"
-        private val CATEGORY_COMMAND = "command"
-        private val CATEGORY_DEATH = "death"
-        private val CATEGORY_UPDATE = "update"
-
         fun reload() {
             cfg = cfg.load()
         }
     }
+
+    val cfgDirectory: File = rootDir.resolve("matterlink")
+    val mainCfgFile: File = cfgDirectory.resolve("matterlink.cfg")
+
 
     var relay = RelayOptions()
     var connect = ConnectOptions()
@@ -50,14 +47,16 @@ abstract class BaseConfig {
             var url: String = "http://localhost:4242",
             var authToken: String = "",
             var gateway: String = "minecraft",
-            var enable: Boolean = true
+            var autoConnect: Boolean = true
     )
 
     data class CommandOptions(
             var prefix: String = "$",
             var enable: Boolean = true,
             var commandMapping: Map<String, String> = mapOf(
-                    "tps" to "forge tps"
+                    "tps" to "forge tps",
+                    "list" to "list",
+                    "seed" to "seed"
             )
     )
 
@@ -97,10 +96,7 @@ abstract class BaseConfig {
                     "thrown" to "彡°",
                     "thorns" to "\uD83C\uDF39", //🌹
                     "explosion" to "\uD83D\uDCA3 \uD83D\uDCA5", //💣 💥
-                    "explosion.player" to "\uD83D\uDCA3 \uD83D\uDCA5", //💣 💥
-
-                    "electrocut" to "⚡",
-                    "radiation" to "☢"
+                    "explosion.player" to "\uD83D\uDCA3 \uD83D\uDCA5" //💣 💥
             )
     )
 
@@ -112,8 +108,8 @@ abstract class BaseConfig {
             addCustomCategoryComment: (key: String, comment: String) -> Unit,
             getStringList: (name: String, category: String, defaultValues: Array<String>, comment: String) -> Array<String>
     ) {
-        var category = CATEGORY_RELAY_OPTIONS
-        addCustomCategoryComment(CATEGORY_RELAY_OPTIONS, "Relay options")
+        var category = "relay"
+        addCustomCategoryComment(category, "Relay options")
         relay = RelayOptions(
                 systemUser = getString(
                         "systemUser",
@@ -136,8 +132,8 @@ abstract class BaseConfig {
                 )
         )
 
-        category = CATEGORY_COMMAND
-        addCustomCategoryComment(CATEGORY_COMMAND, "User commands")
+        category = "commands"
+        addCustomCategoryComment(category, "User commands")
         command = CommandOptions(
                 enable = getBoolean(
                         "enable",
@@ -168,8 +164,8 @@ abstract class BaseConfig {
                 }
         )
 
-        category = CATEGORY_FORMATTING_INCOMING
-        addCustomCategoryComment(CATEGORY_FORMATTING_INCOMING, "Gateway -> Server" +
+        category = "formatting"
+        addCustomCategoryComment(category, "Gateway -> Server" +
                 "Formatting options: " +
                 "Available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
         formatting = FormattingOptions(
@@ -193,8 +189,8 @@ abstract class BaseConfig {
                 )
         )
 
-        category = CATEGORY_JOIN_LEAVE
-        addCustomCategoryComment(CATEGORY_JOIN_LEAVE, "Server -> Gateway" +
+        category = "join_leave"
+        addCustomCategoryComment(category, "Server -> Gateway" +
                 "Formatting options: " +
                 "Available variables: {username}, {username:antiping}")
         joinLeave = FormattingJoinLeave(
@@ -226,8 +222,8 @@ abstract class BaseConfig {
                 )
         )
 
-        category = CATEGORY_CONNECTION
-        addCustomCategoryComment(CATEGORY_CONNECTION, "Connection settings")
+        category = "connection"
+        addCustomCategoryComment(category, "Connection settings")
         connect = ConnectOptions(
                 url = getString(
                         "connectURL",
@@ -247,14 +243,14 @@ abstract class BaseConfig {
                         connect.gateway,
                         "MatterBridge gateway"
                 ),
-                enable = getBoolean(
-                        "enable",
+                autoConnect = getBoolean(
+                        "autoConnect",
                         category,
-                        connect.enable,
-                        "Enable the relay, it will not work if it is not enabled"
+                        connect.autoConnect,
+                        "Connect the relay on startup"
                 )
         )
-        category = CATEGORY_DEATH
+        category = "death"
         addCustomCategoryComment(category, "Death message settings")
         death = DeathOptions(
                 showDeath = getBoolean(
@@ -287,7 +283,7 @@ abstract class BaseConfig {
         )
 
 
-        category = CATEGORY_UPDATE
+        category = "update"
         addCustomCategoryComment(category, "Update Settings")
         update = UpdateOptions(
                 enable = getBoolean(

@@ -15,7 +15,7 @@ object PlayerListCommand : IBridgeCommand {
         MessageHandler.transmit(ApiMessage(
                 username = cfg.relay.systemUser,
                 text = when {
-                    playerList.isNotEmpty() -> "players: " + playerList.joinToString(" ") { it.antiping() }
+                    playerList.isNotEmpty() -> "players: " + playerList.joinToString(" ") { it.antiping }
                     else -> "No Players online"
                 }
         ))
