@@ -22,6 +22,16 @@ fun String.mapFormat(env: Map<String, String>): String {
     return result
 }
 
+fun String.lazyFormat(env: Map<String, () -> String>): String {
+    var result = this
+    env.forEach { key, value ->
+        if (result.contains(key)) {
+            result = result.replace(key, value())
+        }
+    }
+    return result
+}
+
 val Exception.stackTraceString: String
     get() {
         val sw = StringWriter()

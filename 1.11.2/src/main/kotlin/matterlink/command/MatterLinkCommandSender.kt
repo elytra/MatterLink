@@ -16,8 +16,7 @@ import net.minecraft.world.World
 import net.minecraftforge.fml.common.FMLCommonHandler
 import javax.annotation.Nonnull
 
-object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
-    private var level: Int = 0
+class MatterLinkCommandSender(user: String, userId: String, server: String) : IMinecraftCommandSender(user, userId, server), ICommandSender {
 
     override fun execute(cmdString: String): Boolean {
         return 0 < FMLCommonHandler.instance().minecraftServerInstance.commandManager.executeCommand(
@@ -27,20 +26,18 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
     }
 
     override fun getDisplayName(): ITextComponent {
-        return TextComponentString("MatterLink")
+        return TextComponentString(user)
     }
 
-    override fun getName(): String {
-        return "MatterLink"
-    }
+    override fun getName() = accountName
 
     override fun getEntityWorld(): World {
-        return FMLCommonHandler.instance().minecraftServerInstance.worldServerForDimension(0)
+        return FMLCommonHandler.instance().minecraftServerInstance.getWorld(0)
     }
 
-    override fun canUseCommand(permLevel: Int, commandName: String?): Boolean {
-        //we check user on our end
-        return true
+    override fun canUseCommand(permLevel: Int, commandName: String): Boolean {
+        //we now do permissions checking on our end
+        return canExecute(commandName)
     }
 
     override fun getServer(): MinecraftServer? {

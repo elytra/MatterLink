@@ -3,6 +3,7 @@ package matterlink.bridge.command
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
 import matterlink.instance
+import matterlink.lazyFormat
 
 data class CustomCommand(
         override val alias: String,
@@ -11,23 +12,23 @@ data class CustomCommand(
         val response: String = "",
         override val permLevel: Int = 0,
         override val help: String = "",
-        val allowArgs : Boolean = true
+        val allowArgs: Boolean = true
 ) : IBridgeCommand {
     override fun execute(user: String, userId: String, server: String, args: String): Boolean {
         if (!allowArgs && args.isNotBlank()) return false
-        if (IBridgeCommand.getPermLevel(userId,server) < permLevel) {
+        if (!canExecute(userId, server)) {
             MessageHandler.transmit(ApiMessage(text = "$user is not permitted to perform command: $alias"))
             return false
         }
 
         return when (type) {
             CommandType.PASSTHROUGH -> {
-                //TODO: use a new commandSender for each user
-                instance.commandSender.execute("$execute $args")
+                //uses a new commandsender for each user
+                // TODO: cache CommandSenders
+                instance.commandSenderFor(user, userId, server).execute("$execute $args")
             }
             CommandType.RESPONSE -> {
-                //TODO: replace format variables, use arguments
-                MessageHandler.transmit(ApiMessage(text = response))
+                MessageHandler.transmit(ApiMessage(text = response.lazyFormat(getReplacements(user, args))))
                 true
             }
         }
@@ -37,10 +38,20 @@ data class CustomCommand(
      *
      */
     override fun validate(): Boolean {
-
+        val typeCheck = when (type) {
+            CommandType.PASSTHROUGH -> execute.isNotBlank()
+            CommandType.RESPONSE -> response.isNotBlank()
+        }
+        if (!typeCheck) return false
 
         return true
     }
+
+    fun getReplacements(user: String, args: String): Map<String, () -> String> = mapOf(
+            "{UPTIME}" to instance::getUptimeAsString,
+            "{USER}" to { user },
+            "{ARGS}" to { args }
+    )
 }
 
 enum class CommandType {

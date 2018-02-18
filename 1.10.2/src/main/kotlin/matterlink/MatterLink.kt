@@ -1,8 +1,8 @@
 package matterlink
 
-import matterlink.command.CommandMatterlink
 import matterlink.bridge.command.IMinecraftCommandSender
-import matterlink.command.MatterlinkCommandSender
+import matterlink.command.CommandMatterlink
+import matterlink.command.MatterLinkCommandSender
 import matterlink.config.cfg
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.fml.common.FMLCommonHandler
@@ -58,15 +58,10 @@ object MatterLink : IMatterLink() {
         FMLCommonHandler.instance().minecraftServerInstance.playerList.sendChatMsg(TextComponentString(msg))
     }
 
-    //FORGE-DEPENDENT
-    override fun wrappedPlayerList(): Array<String> {
-        return FMLCommonHandler.instance().minecraftServerInstance.playerList.onlinePlayerNames
-    }
-
     override fun log(level: String, formatString: String, vararg data: Any) =
             logger.log(Level.toLevel(level, Level.INFO), formatString, *data)
 
-    override var commandSender: IMinecraftCommandSender = MatterlinkCommandSender
+    override fun commandSenderFor(user: String, userId: String, server: String) = MatterLinkCommandSender(user, userId, server)
 
     override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION

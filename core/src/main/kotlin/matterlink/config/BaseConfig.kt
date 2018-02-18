@@ -52,12 +52,7 @@ abstract class BaseConfig(rootDir: File) {
 
     data class CommandOptions(
             var prefix: String = "$",
-            var enable: Boolean = true,
-            var commandMapping: Map<String, String> = mapOf(
-                    "tps" to "forge tps",
-                    "list" to "list",
-                    "seed" to "seed"
-            )
+            var enable: Boolean = true
     )
 
     data class UpdateOptions(
@@ -147,21 +142,7 @@ abstract class BaseConfig(rootDir: File) {
                         command.prefix,
                         "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)",
                         Pattern.compile("^[^0-9A-Za-z/]$")
-                ),
-                commandMapping = getStringList(
-                        "commandMapping",
-                        category,
-                        command.commandMapping.map { entry ->
-                            "${entry.key}=${entry.value}"
-                        }
-                                .toTypedArray(),
-                        "MC commands that can be executed through the bridge" +
-                                "\nSeparate bridge command and MC command with '='."
-                ).associate {
-                    val key = it.substringBefore('=')
-                    val value = it.substringAfter('=')
-                    Pair(key, value)
-                }
+                )
         )
 
         category = "formatting"

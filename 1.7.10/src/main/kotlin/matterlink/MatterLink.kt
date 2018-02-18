@@ -5,7 +5,7 @@ import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.*
 import matterlink.command.CommandMatterlink
 import matterlink.bridge.command.IMinecraftCommandSender
-import matterlink.command.MatterlinkCommandSender
+import matterlink.command.MatterLinkCommandSender
 import matterlink.config.cfg
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ChatComponentText
@@ -60,15 +60,10 @@ class MatterLink : IMatterLink() {
         MinecraftServer.getServer().addChatMessage(ChatComponentText(msg));
     }
 
-    //FORGE-DEPENDENT
-    override fun wrappedPlayerList(): Array<String> {
-        return MinecraftServer.getServer().allUsernames
-    }
-
     override fun log(level: String, formatString: String, vararg data: Any) =
             logger.log(Level.toLevel(level, Level.INFO), formatString, *data)
 
-    override var commandSender: IMinecraftCommandSender = MatterlinkCommandSender
+    override fun commandSenderFor(user: String, userId: String, server: String) = MatterLinkCommandSender(user, userId, server)
 
     override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION

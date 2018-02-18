@@ -11,7 +11,7 @@ import net.minecraft.util.ChunkCoordinates
 import net.minecraft.util.IChatComponent
 import net.minecraft.world.World
 
-object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
+class MatterLinkCommandSender(user: String, userId: String, server: String) : IMinecraftCommandSender(user, userId, server), ICommandSender {
 
     private var level: Int = 0
 
@@ -23,20 +23,18 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
     }
 
     override fun getFormattedCommandSenderName(): IChatComponent {
-        return ChatComponentText(commandSenderName)
+        return ChatComponentText(user)
     }
-    
-    override fun getCommandSenderName(): String {
-        return "MatterLink"
-    }
+
+    override fun getCommandSenderName() = accountName
 
     override fun getEntityWorld(): World {
         return MinecraftServer.getServer().worldServerForDimension(0)
     }
 
-    override fun canCommandSenderUseCommand(permLevel: Int, commandName: String?): Boolean {
+    override fun canCommandSenderUseCommand(permLevel: Int, commandName: String): Boolean {
         //we do permission
-        return true
+        return canExecute(commandName)
     }
 
     override fun addChatMessage(component: IChatComponent) {
@@ -46,5 +44,5 @@ object MatterlinkCommandSender : IMinecraftCommandSender, ICommandSender {
         ))
     }
 
-    override fun getCommandSenderPosition(): ChunkCoordinates = ChunkCoordinates(0,0,0)
+    override fun getCommandSenderPosition(): ChunkCoordinates = ChunkCoordinates(0, 0, 0)
 }

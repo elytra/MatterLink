@@ -9,7 +9,7 @@ import java.util.*
 
 object BridgeCommandRegistry {
 
-    private val commandMap: HashMap<String, IBridgeCommand> = HashMap()
+    private val commandMap: HashMap<String, IBridgeCommand> = hashMapOf()
 
     fun handleCommand(input: ApiMessage): Boolean {
         if (!cfg.command.enable) return false
@@ -28,7 +28,7 @@ object BridgeCommandRegistry {
             instance.error("Failed to register command: '${cmd.alias}'")
             return false
         }
-        if(!cmd.validate()) {
+        if (!cmd.validate()) {
             instance.error("Failed to validate command: '${cmd.alias}'")
             return false
         }
@@ -48,16 +48,22 @@ object BridgeCommandRegistry {
         return if (help.isNotBlank()) help else "No help for '$cmd'"
     }
 
-    fun getCommandList (permLvl : Int) : String {
-        return commandMap.filter { (key, value) ->
-            value.permLevel <= permLvl
-        }.map {it.key}.joinToString(" ")
+    fun getCommandList(permLvl: Int): String {
+        return commandMap
+                .filterValues {
+                    it.permLevel <= permLvl
+                }
+                .keys
+                .joinToString(" ")
     }
 
     fun reloadCommands() {
         commandMap.clear()
-        PermissionConfig.loadPermFile()
+        val permStatus = PermissionConfig.loadPermFile()
         register(HelpCommand)
-        registerAll(*CommandConfig.readConfig())
+        val cmdStatus = CommandConfig.readConfig()
+        registerAll(*CommandConfig.commands)
     }
+
+    operator fun get(command: String) = commandMap[command]
 }

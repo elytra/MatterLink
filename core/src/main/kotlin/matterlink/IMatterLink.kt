@@ -6,6 +6,7 @@ import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
 import java.io.File
+import java.time.Duration
 
 lateinit var instance: IMatterLink
 
@@ -13,13 +14,9 @@ abstract class IMatterLink {
     abstract val mcVersion: String
     abstract val modVersion: String
 
-    lateinit var cfgDir: File
-
-    abstract var commandSender: IMinecraftCommandSender
+    abstract fun commandSenderFor(user: String, userid: String, server: String): IMinecraftCommandSender
 
     abstract fun wrappedSendToPlayers(msg: String)
-
-    abstract fun wrappedPlayerList(): Array<String>
 
     private var firstRun: Boolean = true
 
@@ -63,13 +60,15 @@ abstract class IMatterLink {
     }
 
     fun getUptimeAsString(): String {
-        val total = this.getUptimeInSeconds()
-        val sec = total % 60
-        val min = (total / 60) % 60
-        val hr = (total / 3600) % 24
-        val day = total / 86400
-
-        return "${day}d ${hr}hr ${min}m ${sec}s"
+        val duration = Duration.ofSeconds((System.currentTimeMillis() - serverStartTime) / 1000)
+        return duration.toString()
+//        val total = this.getUptimeInSeconds()
+//        val sec = total % 60
+//        val min = (total / 60) % 60
+//        val hr = (total / 3600) % 24
+//        val day = total / 86400
+//
+//        return "${day}d ${hr}hr ${min}m ${sec}s"
     }
 
     fun registerBridgeCommands() {
