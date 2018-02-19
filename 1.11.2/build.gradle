@@ -105,7 +105,7 @@ reobf {
     shadowJar { mappingType = 'SEARGE' }
 }
 
-tasks.reobfShadowJar.mustRunAfter shadowJar
+tasks.shadowJar.finalizedBy reobfShadowJar
 
 curseforge {
     if (project.hasProperty('CURSEFORGE_API_TOKEN') && project.hasProperty('release')) {
