@@ -44,7 +44,7 @@ class UpdateChecker : Runnable {
 
             gson.fromJson(content, Array<CurseFile>::class.java)
                     .filter {
-                        it.gameVersion.contains(instance.mcVersion)
+                        it.fileStatus == "semiNormal" && it.gameVersion.contains(instance.mcVersion)
                     }
                     .sortedByDescending { it.fileName.substringAfterLast(" ") }
 
@@ -70,7 +70,7 @@ class UpdateChecker : Runnable {
                 if (!bigger) {
                     val currentChunk = modVersionChunks.getOrNull(index) ?: 0
                     instance.debug("$chunk > $currentChunk")
-                    if(chunk < currentChunk)
+                    if (chunk < currentChunk)
                         return@forEach
 
                     bigger = chunk > currentChunk
