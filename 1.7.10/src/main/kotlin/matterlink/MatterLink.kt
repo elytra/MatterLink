@@ -57,7 +57,7 @@ class MatterLink : IMatterLink() {
 
     //FORGE-DEPENDENT
     override fun wrappedSendToPlayers(msg: String) {
-        MinecraftServer.getServer().addChatMessage(ChatComponentText(msg));
+        MinecraftServer.getServer().configurationManager.sendChatMsg(ChatComponentText(msg))
     }
 
     override fun log(level: String, formatString: String, vararg data: Any) =
