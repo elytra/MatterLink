@@ -13,7 +13,12 @@ object PermissionConfig {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private val configFile: File = cfg.cfgDirectory.resolve("permissions.json")
 
-    private val default = PermissionMap()
+    private val default: PermissionMap = hashMapOf(
+            "irc.esper" to hashMapOf(
+                    "~nikky@nikky.moe" to 0,
+                    "user@example.com" to 0
+            )
+    )
 
     var perms: PermissionMap = default
 

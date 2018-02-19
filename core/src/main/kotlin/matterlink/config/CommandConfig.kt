@@ -3,17 +3,15 @@ package matterlink.config
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
-import com.google.gson.stream.MalformedJsonException
 import matterlink.bridge.command.CommandType
 import matterlink.bridge.command.CustomCommand
-import matterlink.bridge.command.IBridgeCommand
 import matterlink.instance
 import java.io.File
 
 object CommandConfig {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private val configFile: File = cfg.cfgDirectory.resolve("commands.json")
-    private val default = arrayOf<CustomCommand>(
+    private val default = arrayOf(
             CustomCommand(
                     alias = "tps",
                     type = CommandType.PASSTHROUGH,

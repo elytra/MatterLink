@@ -14,13 +14,18 @@ import java.io.BufferedReader
 class UpdateChecker : Runnable {
 
     override fun run() {
+        if (instance.modVersion.contains("-build")) {
+            instance.debug("Not checking updates on Jenkins build")
+            return
+        }
+        if (instance.modVersion.contains("-dev")) {
+            instance.debug("Not checking updates on developer build")
+            return
+        }
+
         val gson = Gson()
 
         instance.info("Checking for new versions...")
-
-        if (instance.modVersion.endsWith("-dev")) {
-
-        }
 
         val client: HttpClient = HttpClients.createDefault()
         val request = HttpGet("https://goo.gl/5CMc1N")
@@ -49,7 +54,8 @@ class UpdateChecker : Runnable {
         }
 
         val modVersionChunks = instance.modVersion
-                .replace("-dev", "")
+                .substringBefore("-dev")
+                .substringBefore("-build")
                 .split('.')
                 .map {
                     it.toInt()
