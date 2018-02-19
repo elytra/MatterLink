@@ -114,8 +114,8 @@ curseforge {
         apiKey = CURSEFORGE_API_TOKEN
     }
     project {
-        id = '287323'
-        releaseType = 'beta'
+        id = project.curse_id
+        releaseType = project.curse_release_type
         if (project.hasProperty('changelog_file')) {
             println("changelog = $changelog_file")
             changelogType = "markdown"
@@ -124,7 +124,7 @@ curseforge {
         relations {
             requiredLibrary 'shadowfacts-forgelin'
         }
-        mainArtifact(jar) {
+        mainArtifact(shadowJar) {
             displayName = "MatterLink $version"
         }
     }
