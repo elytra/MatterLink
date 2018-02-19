@@ -9,6 +9,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.matthewprenger.cursegradle' version '1.0.10'
+}
+
 apply plugin: 'forge'
 
 version = project.mc_version + "-" + project.mod_version
@@ -82,6 +86,27 @@ jar {
     configurations.shade.each { dep ->
         from(project.zipTree(dep)) {
             exclude "META-INF", "META-INF/**"
+        }
+    }
+}
+
+curseforge {
+    if (project.hasProperty('CURSEFORGE_API_TOKEN') && project.hasProperty('release')) {
+        apiKey = CURSEFORGE_API_TOKEN
+    }
+    project {
+        id = '287323'
+        releaseType = 'beta'
+        if (project.hasProperty('changelog_file')) {
+            println("changelog = $changelog_file")
+            changelogType = "markdown"
+            changelog = file(changelog_file)
+        }
+        relations {
+            requiredLibrary 'shadowfacts-forgelin'
+        }
+        mainArtifact(jar) {
+            displayName = "MatterLink $version"
         }
     }
 }
