@@ -38,10 +38,7 @@ class MatterLinkCommandSender(user: String, userId: String, server: String) : IM
     }
 
     override fun addChatMessage(component: IChatComponent) {
-        MessageHandler.transmit(ApiMessage(
-                username = cfg.relay.systemUser,
-                text = component.unformattedText
-        ))
+        sendReply(component.unformattedText)
     }
 
     override fun getCommandSenderPosition(): ChunkCoordinates = ChunkCoordinates(0, 0, 0)

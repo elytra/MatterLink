@@ -25,7 +25,8 @@ data class CustomCommand(
             CommandType.PASSTHROUGH -> {
                 //uses a new commandsender for each user
                 // TODO: cache CommandSenders
-                instance.commandSenderFor(user, userId, server).execute("$execute $args")
+                val commandSender = instance.commandSenderFor(user, userId, server)
+                commandSender.execute("$execute $args") || commandSender.reply.isNotBlank()
             }
             CommandType.RESPONSE -> {
                 MessageHandler.transmit(ApiMessage(text = response.lazyFormat(getReplacements(user, args))))

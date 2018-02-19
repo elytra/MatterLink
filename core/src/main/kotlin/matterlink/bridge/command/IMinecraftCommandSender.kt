@@ -1,5 +1,8 @@
 package matterlink.bridge.command
 
+import matterlink.bridge.ApiMessage
+import matterlink.bridge.MessageHandler
+import matterlink.config.cfg
 import matterlink.instance
 
 abstract class IMinecraftCommandSender(val user: String, val userId: String, val server: String) {
@@ -13,9 +16,18 @@ abstract class IMinecraftCommandSender(val user: String, val userId: String, val
     val accountName = "$user (id=$userId server=$server)"
 
     fun canExecute(commandName: String): Boolean {
-        instance.info("testing $commandName")
         val command = BridgeCommandRegistry[commandName] ?: return false
 
         return command.canExecute(userId, server)
+    }
+
+    var reply: String = ""
+
+    fun sendReply(text: String) {
+        reply = text
+        MessageHandler.transmit(ApiMessage(
+                username = cfg.relay.systemUser,
+                text = text
+        ))
     }
 }

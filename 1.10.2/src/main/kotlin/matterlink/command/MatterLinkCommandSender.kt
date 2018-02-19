@@ -46,10 +46,7 @@ class MatterLinkCommandSender(user: String, userId: String, server: String) : IM
     }
 
     override fun sendMessage(@Nonnull component: ITextComponent?) {
-        MessageHandler.transmit(ApiMessage(
-                username = cfg.relay.systemUser,
-                text = component!!.unformattedComponentText
-        ))
+        sendReply(component!!.unformattedComponentText)
 
     }
 
