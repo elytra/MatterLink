@@ -35,10 +35,10 @@ object CommandConfig {
             ),
             CustomCommand(
                     alias = "uptime",
-                    type = CommandType.PASSTHROUGH,
+                    type = CommandType.RESPONSE,
                     permLevel = 1,
                     response = "{uptime}",
-                    help = "Print server world seed",
+                    help = "Print server uptime",
                     allowArgs = false
             )
     )

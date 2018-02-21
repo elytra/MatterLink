@@ -49,8 +49,10 @@ class HttpStreamConnection(private val rcvQueue: ConcurrentLinkedQueue<ApiMessag
         if (success) {
             instance.info("connected successfully")
             messageHandler.connectErrors = 0
+            messageHandler.reconnectCoodown = 0
             connected = true
         } else {
+            messageHandler.reconnectCoodown = messageHandler.connectErrors
             messageHandler.connectErrors++
             connected = false
             instance.warn("connectErrors: ${messageHandler.connectErrors}")
@@ -76,6 +78,8 @@ class HttpStreamConnection(private val rcvQueue: ConcurrentLinkedQueue<ApiMessag
                 r.entity.content.bufferedReader().forEachLine {
                     instance.debug("skipping $it")
                 }
+                //connection was not refused, url and token should be correct
+                setSuccess(true)
             }
             val response = client.execute(get)
             if (response.statusLine.statusCode != 200) {

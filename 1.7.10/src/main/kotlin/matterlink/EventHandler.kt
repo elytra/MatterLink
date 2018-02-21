@@ -96,6 +96,7 @@ object EventHandler {
     //FORGE-DEPENDENT
     @SubscribeEvent
     fun serverTickEvent(e: TickEvent.ServerTickEvent) {
-        TickHandler.handleTick()
+        if(e.phase == TickEvent.Phase.END)
+            TickHandler.handleTick()
     }
 }

@@ -9,7 +9,7 @@
 #You can configure multiple servers "[irc.name]" or "[irc.name2]"
 #In this example we use [irc.freenode]
 #REQUIRED
-[irc.freenode]
+[irc.esper]
 #irc server to connect to.
 #REQUIRED
 Server="irc.esper.net:6697"
@@ -117,6 +117,10 @@ ReplaceMessages=[ ["cat","dog"] ]
 #optional (default empty)
 ReplaceNicks=[ ["user--","user"] ]
 
+#extra label that can be used in the RemoteNickFormat
+#optional (default empty)
+Label=""
+
 #RemoteNickFormat defines how remote users appear on this bridge
 #The string "{NICK}" (case sensitive) will be replaced by the actual nick / username.
 #The string "{BRIDGE}" (case sensitive) will be replaced by the sending bridge
@@ -161,14 +165,16 @@ Buffer=1000
 #OPTIONAL (no authorization if token is empty)
 Token=""
 
+#extra label that can be used in the RemoteNickFormat
+#optional (default empty)
+Label="minecraft"
+
 #RemoteNickFormat defines how remote users appear on this bridge
 #The string "{NICK}" (case sensitive) will be replaced by the actual nick / username.
 #The string "{BRIDGE}" (case sensitive) will be replaced by the sending bridge
 #The string "{PROTOCOL}" (case sensitive) will be replaced by the protocol used by the bridge
 #OPTIONAL (default empty)
 RemoteNickFormat="{NICK}"
-
-
 
 ###################################################################
 #General configuration
@@ -232,56 +238,11 @@ name="minecraft"
 ##OPTIONAL (default false)
 enable=true
 
-    #API example
+    # API
     [[gateway.inout]]
     account="api.minecraft"
     channel="api"
-    #To send data to the api:
-    #curl -XPOST -H 'Content-Type: application/json'  -d '{"text":"test","username":"randomuser","gateway":"gateway1"}' http://localhost:4242/api/message
-    #To read from the api:
-    #curl http://localhost:4242/api/messages
 
-
-    #[[gateway.in]] specifies the account and channels we will receive messages from.
-    #The following example bridges between mattermost and irc
     [[gateway.inout]]
     account="irc.freenode"
     channel="#matterlink"
-
-#        #OPTIONAL - only used for IRC protocol at the moment
-#        [gateway.in.options]
-#        #OPTIONAL - your irc channel key
-#        key="yourkey"
-
-
-#    #[[gateway.inout]] can be used when then channel will be used to receive from
-#    #and send messages to
-#    [[gateway.inout]]
-#    account="irc.freenode"
-#    channel="#matterlink-testing"
-
-#        #OPTIONAL - only used for IRC protocol at the moment
-#        [gateway.out.options]
-#        #OPTIONAL - your irc channel key
-#        key="yourkey"
-
-#    [[gateway.inout]]
-#    account="discord.game"
-#    channel="mygreatgame"
-#
-#        #OPTIONAL - webhookurl only works for discord (it needs a different URL for each cahnnel)
-#        [gateway.inout.options]
-#        webhookurl=""https://discordapp.com/api/webhooks/123456789123456789/C9WPqExYWONPDZabcdef-def1434FGFjstasJX9pYht73y"
-
-
-
-##If you want to do a 1:1 mapping between protocols where the channelnames are the same
-##e.g. slack and mattermost you can use the samechannelgateway configuration
-##the example configuration below send messages from channel testing on mattermost to
-##channel testing on slack and vice versa. (and for the channel testing2 and testing3)
-#
-#[[samechannelgateway]]
-#   name="samechannel1"
-#   enable = false
-#   accounts = [ "mattermost.work","slack.hobby" ]
-#   channels = [ "testing","testing2","testing3"]

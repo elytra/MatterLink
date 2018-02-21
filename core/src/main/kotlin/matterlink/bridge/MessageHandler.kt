@@ -13,6 +13,7 @@ object MessageHandler {
     var enabled: Boolean = false
     private var sendErrors = 0
     var connectErrors = 0
+    var reconnectCoodown = 0
     private var streamConnection: HttpStreamConnection
     var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
         private set
@@ -103,14 +104,18 @@ object MessageHandler {
     fun checkConnection() {
         if (enabled && !streamConnection.connected && !streamConnection.connecting) {
 
-            if (connectErrors > 5) {
+            if (connectErrors >= 10) {
                 instance.fatal("Caught too many errors, closing bridge")
                 stop("Interrupting connection to matterbridge API due to accumulated connection errors")
                 return
             }
 
-            instance.info("Trying to reconnect")
-            MessageHandler.start(clear = false, message = "Reconnecting to matterbridge API after connection error")
+            if (reconnectCoodown <= 0) {
+                instance.info("Trying to reconnect")
+                MessageHandler.start(clear = false, message = "Reconnecting to matterbridge API after connection error")
+            } else {
+                reconnectCoodown--
+            }
         }
     }
 }
