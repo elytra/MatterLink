@@ -38,14 +38,19 @@ object MessageHandler {
         }
     }
 
-    fun stop() {
+    fun stop(message: String?) {
+        if (message != null && cfg.debug.announceDisconnect) {
+            transmit(ApiMessage(
+                    text = message
+            ))
+        }
         enabled = false
         streamConnection.close()
     }
 
     var enabled: Boolean = false
 
-    fun start(clear: Boolean = true, firstRun: Boolean = false) {
+    fun start(message: String?, clear: Boolean = true, firstRun: Boolean = false) {
         enabled = when {
             firstRun -> cfg.connect.autoConnect
             else -> true
@@ -57,6 +62,12 @@ object MessageHandler {
 
         if (enabled) {
             streamConnection.open()
+        }
+
+        if (message != null && cfg.debug.announceConnect) {
+            transmit(ApiMessage(
+                    text = message //?: "Connected to matterbridge API"
+            ))
         }
     }
 
@@ -77,7 +88,7 @@ object MessageHandler {
                 sendErrors++
                 if (sendErrors > 5) {
                     instance.error("Caught too many errors, closing bridge")
-                    stop()
+                    stop("Interrupting Connection to matterbridge API due status code $code")
                 }
             }
             sendErrors = 0
@@ -86,7 +97,7 @@ object MessageHandler {
             sendErrors++
             if (sendErrors > 5) {
                 instance.error("Caught too many errors, closing bridge")
-                stop()
+                stop("Interrupting connection to matterbridge API, too many errors trying to send message")
             }
         }
     }
@@ -96,12 +107,12 @@ object MessageHandler {
 
             if (connectErrors > 5) {
                 instance.fatal("Caught too many errors, closing bridge")
-                stop()
+                stop("Interrupting connection to matterbridge API due to accumulated connection errors")
                 return
             }
 
             instance.info("Trying to reconnect")
-            MessageHandler.start(clear = false)
+            MessageHandler.start(clear = false, message = "Reconnecting to matterbridge API after connection error")
         }
     }
 }

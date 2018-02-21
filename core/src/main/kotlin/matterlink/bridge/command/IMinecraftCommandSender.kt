@@ -26,7 +26,6 @@ abstract class IMinecraftCommandSender(val user: String, val userId: String, val
     fun sendReply(text: String) {
         reply = text
         MessageHandler.transmit(ApiMessage(
-                username = cfg.relay.systemUser,
                 text = text
         ))
     }

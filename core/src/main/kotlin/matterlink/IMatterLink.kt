@@ -5,7 +5,6 @@ import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
-import java.io.File
 import java.time.Duration
 
 lateinit var instance: IMatterLink
@@ -18,20 +17,18 @@ abstract class IMatterLink {
 
     abstract fun wrappedSendToPlayers(msg: String)
 
-    private var firstRun: Boolean = true
 
-    fun connect() {
-        MessageHandler.start(clear = true, firstRun = firstRun)
-
-        if (firstRun && cfg.update.enable) {
+    fun start() {
+        serverStartTime = System.currentTimeMillis()
+        MessageHandler.start(clear = true, firstRun = true, message = "Server started, connecting to matterbridge API")
+        if (cfg.update.enable) {
             Thread(UpdateChecker()).start()
         }
 
-        firstRun = false
     }
 
-    fun disconnect() {
-        MessageHandler.stop()
+    fun stop() {
+        MessageHandler.stop(message = "Server shutting down, disconnecting from matterbridge API")
     }
 
     abstract fun log(level: String, formatString: String, vararg data: Any)
@@ -41,12 +38,12 @@ abstract class IMatterLink {
     fun warn(formatString: String, vararg data: Any) = log("WARN", formatString, *data)
     fun info(formatString: String, vararg data: Any) = log("INFO", formatString, *data)
     fun debug(formatString: String, vararg data: Any) {
-        if (cfg.relay.logLevel == "DEBUG" || cfg.relay.logLevel == "TRACE")
+        if (cfg.debug.logLevel == "DEBUG" || cfg.debug.logLevel == "TRACE")
             log("INFO", "DEBUG: " + formatString.replace("\n", "\nDEBUG: "), *data)
     }
 
     fun trace(formatString: String, vararg data: Any) {
-        if (cfg.relay.logLevel == "TRACE")
+        if (cfg.debug.logLevel == "TRACE")
             log("INFO", "TRACE: " + formatString.replace("\n", "\nTRACE: "), *data)
     }
 

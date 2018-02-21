@@ -82,3 +82,5 @@ matterbridge
 Now you just need to run MatterBridge on the server, the default configuration works with the provided sample.
 
 and then [RTFM!!!](https://github.com/42wim/matterbridge#configuration)
+
+powered by wishful thinking

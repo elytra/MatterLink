@@ -59,7 +59,7 @@ object EventHandler {
     @JvmStatic
     fun commandEvent(e: CommandEvent) {
         val sender = when {
-            e.sender is DedicatedServer -> cfg.relay.systemUser
+            e.sender is DedicatedServer -> cfg.outgoing.systemUser
             e.sender is TileEntityCommandBlock -> "CommandBlock"
             else -> e.sender.name
         }

@@ -14,16 +14,15 @@ object DeathHandler {
             deathMessage: String,
             damageType: String
     ) {
-        if (cfg.death.showDeath) {
+        if (cfg.outgoing.death.enable) {
             var msg = deathMessage.replace(player, player.antiping)
-            if (cfg.death.showDamageType) {
-                val emojis = cfg.death.damageTypeMapping[damageType]?.split(' ')
+            if (cfg.outgoing.death.damageType) {
+                val emojis = cfg.outgoing.death.damageTypeMapping[damageType]?.split(' ')
                         ?: listOf("\uD83D\uDC7B unknown type '$damageType'")
                 val damageEmoji = emojis[random.nextInt(emojis.size)]
                 msg += " " + damageEmoji
             }
             MessageHandler.transmit(ApiMessage(
-                    username = cfg.relay.systemUser,
                     text = msg
             ))
         }

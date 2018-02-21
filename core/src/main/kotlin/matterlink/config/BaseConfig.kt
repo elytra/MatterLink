@@ -16,53 +16,51 @@ abstract class BaseConfig(rootDir: File) {
     val mainCfgFile: File = cfgDirectory.resolve("matterlink.cfg")
 
 
-    var relay = RelayOptions()
     var connect = ConnectOptions()
-    var formatting = FormattingOptions()
-    var joinLeave = FormattingJoinLeave()
+    var debug = DebugOptions()
+    var incoming = IncomingOption()
+    var outgoing = OutgoingOptions()
     var command = CommandOptions()
-    var death = DeathOptions()
     var update = UpdateOptions()
 
-    data class RelayOptions(
-            var systemUser: String = "Server",
-            var advancements: Boolean = true,
-            var logLevel: String = "INFO"
-    )
 
-    data class FormattingOptions(
-            var chat: String = "<{username}> {text}",
-            var joinLeave: String = "§6-- {username} {text}",
-            var action: String = "§5* {username} {text}"
-    )
-
-    data class FormattingJoinLeave(
-            var showJoin: Boolean = true,
-            var showLeave: Boolean = true,
-            var joinServer: String = "{username:antiping} has connected to the server",
-            var leaveServer: String = "{username:antiping} has disconnected from the server"
+    data class CommandOptions(
+            val prefix: String = "$",
+            val enable: Boolean = true
     )
 
     data class ConnectOptions(
-            var url: String = "http://localhost:4242",
-            var authToken: String = "",
-            var gateway: String = "minecraft",
-            var autoConnect: Boolean = true
+            val url: String = "http://localhost:4242",
+            val authToken: String = "",
+            val gateway: String = "minecraft",
+            val autoConnect: Boolean = true
     )
 
-    data class CommandOptions(
-            var prefix: String = "$",
-            var enable: Boolean = true
+    data class DebugOptions(
+            var logLevel: String = "INFO",
+            var announceConnect: Boolean = false,
+            var announceDisconnect: Boolean = false
     )
 
-    data class UpdateOptions(
-            var enable: Boolean = true
+    data class IncomingOption(
+            val chat: String = "<{username}> {text}",
+            val joinPart: String = "§6-- {username} {text}",
+            val action: String = "§5* {username} {text}"
+    )
+
+    data class OutgoingOptions(
+            val systemUser: String = "Server",
+            //outgoing toggles
+            val advancements: Boolean = true,
+            var death: DeathOptions = DeathOptions(),
+
+            var joinPart: JoinPartOptions = JoinPartOptions()
     )
 
     data class DeathOptions(
-            var showDeath: Boolean = true,
-            var showDamageType: Boolean = true,
-            var damageTypeMapping: Map<String, String> = mapOf(
+            val enable: Boolean = true,
+            val damageType: Boolean = true,
+            val damageTypeMapping: Map<String, String> = mapOf(
                     "inFire" to "\uD83D\uDD25", //🔥
                     "lightningBolt" to "\uD83C\uDF29", //🌩
                     "onFire" to "\uD83D\uDD25", //🔥
@@ -95,37 +93,27 @@ abstract class BaseConfig(rootDir: File) {
             )
     )
 
+    data class JoinPartOptions(
+            val enable: Boolean = true,
+            val joinServer: String = "{username:antiping} has connected to the server",
+            val partServer: String = "{username:antiping} has disconnected from the server"
+    )
+
+    data class UpdateOptions(
+            val enable: Boolean = true
+    )
+
     protected fun load(
             getBoolean: (key: String, category: String, default: Boolean, comment: String) -> Boolean,
             getString: (key: String, category: String, default: String, comment: String) -> String,
             getStringValidated: (key: String, category: String, default: String, comment: String, pattern: Pattern) -> String,
             getStringValidValues: (key: String, category: String, default: String, comment: String, validValues: Array<String>) -> String,
-            addCustomCategoryComment: (key: String, comment: String) -> Unit,
-            getStringList: (name: String, category: String, defaultValues: Array<String>, comment: String) -> Array<String>
+            getStringList: (name: String, category: String, defaultValues: Array<String>, comment: String) -> Array<String>,
+            addCustomCategoryComment: (key: String, comment: String) -> Unit
     ) {
-        var category = "relay"
-        addCustomCategoryComment(category, "Relay options")
-        relay = RelayOptions(
-                systemUser = getString(
-                        "systemUser",
-                        category,
-                        relay.systemUser,
-                        "Name of the server user (used by death and advancement messages and the /say command)"
-                ),
-                advancements = getBoolean(
-                        "advancements",
-                        category,
-                        relay.advancements,
-                        "Relay player advancements"
-                ),
-                logLevel = getStringValidValues(
-                        "logLevel",
-                        category,
-                        relay.logLevel,
-                        "MatterLink log level",
-                        arrayOf("INFO", "DEBUG", "TRACE")
-                )
-        )
+
+        var category = "root"
+
 
         category = "commands"
         addCustomCategoryComment(category, "User commands")
@@ -142,64 +130,6 @@ abstract class BaseConfig(rootDir: File) {
                         command.prefix,
                         "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)",
                         Pattern.compile("^[^0-9A-Za-z/]$")
-                )
-        )
-
-        category = "formatting"
-        addCustomCategoryComment(category, "Gateway -> Server" +
-                "Formatting options: " +
-                "Available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
-        formatting = FormattingOptions(
-                chat = getString(
-                        "chat",
-                        category,
-                        formatting.chat,
-                        "Generic chat event, just talking"
-                ),
-                joinLeave = getString(
-                        "joinLeave",
-                        category,
-                        formatting.joinLeave,
-                        "Join and leave events from other gateways"
-                ),
-                action = getString(
-                        "action",
-                        category,
-                        formatting.action,
-                        "User actions (/me) sent by users from other gateways"
-                )
-        )
-
-        category = "join_leave"
-        addCustomCategoryComment(category, "Server -> Gateway" +
-                "Formatting options: " +
-                "Available variables: {username}, {username:antiping}")
-        joinLeave = FormattingJoinLeave(
-
-                showJoin = getBoolean(
-                        "showJoin",
-                        category,
-                        joinLeave.showJoin,
-                        "Relay when a player joins the game"
-                ),
-
-                showLeave = getBoolean(
-                        "showLeave",
-                        category,
-                        joinLeave.showLeave,
-                        "Relay when a player leaves the game"
-                ),
-                joinServer = getString(
-                        "joinServer",
-                        category,
-                        joinLeave.joinServer,
-                        "user join message sent to other gateways, available variables: {username}, {username:antiping}"
-                ),
-                leaveServer = getString(
-                        "leaveServer",
-                        category,
-                        joinLeave.leaveServer,
-                        "user leave message sent to other gateways, available variables: {username}, {username:antiping}"
                 )
         )
 
@@ -231,29 +161,101 @@ abstract class BaseConfig(rootDir: File) {
                         "Connect the relay on startup"
                 )
         )
-        category = "death"
-        addCustomCategoryComment(category, "Death message settings")
-        death = DeathOptions(
-                showDeath = getBoolean(
-                        "showDeath",
+
+        category = "debug"
+        addCustomCategoryComment(category, "Options to help you figure out what happens and why, because computers can be silly")
+        debug = DebugOptions(
+                logLevel = getStringValidValues(
+                        "logLevel",
                         category,
-                        death.showDeath,
+                        debug.logLevel,
+                        "MatterLink log level",
+                        arrayOf("INFO", "DEBUG", "TRACE")
+                ),
+                announceConnect = getBoolean(
+                        "announceConnect",
+                        category,
+                        debug.announceConnect,
+                        "announce successful connection to the gateway"
+                ),
+                announceDisconnect = getBoolean(
+                        "announceDisconnect",
+                        category,
+                        debug.announceConnect,
+                        "announce intention to disconnect / reconnect"
+                )
+        )
+
+        category = "incoming"
+        addCustomCategoryComment(category, "Gateway -> Server" +
+                "\nOptions all about receiving messages from the API" +
+                "\nFormatting options: " +
+                "\nAvailable variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
+        incoming = IncomingOption(
+                chat = getString(
+                        "chat",
+                        category,
+                        incoming.chat,
+                        "Generic chat event, just talking"
+                ),
+                joinPart = getString(
+                        "joinPart",
+                        category,
+                        incoming.joinPart,
+                        "Join and part events from other gateways"
+                ),
+                action = getString(
+                        "action",
+                        category,
+                        incoming.action,
+                        "User actions (/me) sent by users from other gateways"
+                )
+        )
+
+        category = "outgoing"
+        addCustomCategoryComment(category, "Server -> Gateway" +
+                "\nOptions all about sending messages to the API")
+
+        outgoing = OutgoingOptions(
+                systemUser = getString(
+                        "systemUser",
+                        category,
+                        outgoing.systemUser,
+                        "Name of the server user (used by death and advancement messages and the /say command)"
+                ),
+                //outgoing events toggle
+                advancements = getBoolean(
+                        "advancements",
+                        category,
+                        outgoing.advancements,
+                        "Relay player achievements / advancements"
+                )
+        )
+
+        category = "outgoing.death"
+        addCustomCategoryComment(category, "Death messages settings")
+        outgoing.death = DeathOptions(
+
+                enable = getBoolean(
+                        "enable",
+                        category,
+                        outgoing.death.enable,
                         "Relay player death messages"
                 ),
-                showDamageType = getBoolean(
-                        "showDamageType",
+                damageType = getBoolean(
+                        "damageType",
                         category,
-                        death.showDamageType,
+                        outgoing.death.damageType,
                         "Enable Damage type symbols on death messages"
                 ),
                 damageTypeMapping = getStringList(
                         "damageTypeMapping",
                         category,
-                        death.damageTypeMapping.map { entry ->
+                        outgoing.death.damageTypeMapping.map { entry ->
                             "${entry.key}=${entry.value}"
                         }
                                 .toTypedArray(),
-                        "Damage type mapping for everything else, " +
+                        "Damage type mapping for death cause, " +
                                 "\nseparate value and key with '=', " +
                                 "\nseparate multiple values with spaces\n"
                 ).associate {
@@ -262,6 +264,34 @@ abstract class BaseConfig(rootDir: File) {
                     Pair(key, value)
                 }
         )
+
+        category = "outgoing.join&part"
+        addCustomCategoryComment(category, "relay join and part messages to the gatway" +
+                "\nFormatting options: " +
+                "\nAvailable variables: {username}, {username:antiping}")
+        outgoing.joinPart = JoinPartOptions(
+                enable = getBoolean(
+                        "enable",
+                        category,
+                        outgoing.joinPart.enable,
+                        "Relay when a player joins / parts the game" +
+                                "\nany receiving end still needs to be configured with showJoinPart = true" +
+                                "\nto display the messages"
+                ),
+                joinServer = getString(
+                        "joinServer",
+                        category,
+                        outgoing.joinPart.joinServer,
+                        "user join message sent to other gateways, available variables: {username}, {username:antiping}"
+                ),
+                partServer = getString(
+                        "partServer",
+                        category,
+                        outgoing.joinPart.partServer,
+                        "user part message sent to other gateways, available variables: {username}, {username:antiping}"
+                )
+        )
+
 
 
         category = "update"

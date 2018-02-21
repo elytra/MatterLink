@@ -46,13 +46,12 @@ class MatterLink : IMatterLink() {
     fun serverStarting(event: FMLServerStartingEvent) {
         logger.debug("Registering server commands")
         event.registerServerCommand(CommandMatterlink())
-        serverStartTime = System.currentTimeMillis()
-        connect()
+        start()
     }
 
     @Mod.EventHandler
     fun serverStopping(event: FMLServerStoppingEvent) {
-        disconnect()
+        stop()
     }
 
     //FORGE-DEPENDENT

@@ -1,15 +1,15 @@
 package matterlink.bridge
 
-import matterlink.config.cfg
-import matterlink.antiping
 import com.google.gson.Gson
+import matterlink.antiping
+import matterlink.config.cfg
 import matterlink.mapFormat
 
 const val USER_ACTION: String = "user_action"
 const val JOIN_LEAVE: String = "join_leave"
 
 data class ApiMessage(
-        val username: String = cfg.relay.systemUser,
+        val username: String = cfg.outgoing.systemUser,
         val text: String = "",
         val gateway: String = cfg.connect.gateway,
         val channel: String = "",
