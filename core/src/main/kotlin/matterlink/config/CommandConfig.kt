@@ -32,6 +32,14 @@ object CommandConfig {
                     execute = "seed",
                     help = "Print server world seed",
                     allowArgs = false
+            ),
+            CustomCommand(
+                    alias = "uptime",
+                    type = CommandType.PASSTHROUGH,
+                    permLevel = 1,
+                    response = "{uptime}",
+                    help = "Print server world seed",
+                    allowArgs = false
             )
     )
     var commands: Array<CustomCommand> = default

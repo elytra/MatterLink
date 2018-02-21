@@ -49,9 +49,9 @@ data class CustomCommand(
     }
 
     fun getReplacements(user: String, args: String): Map<String, () -> String> = mapOf(
-            "{UPTIME}" to instance::getUptimeAsString,
-            "{USER}" to { user },
-            "{ARGS}" to { args }
+            "{uptime}" to instance::getUptimeAsString,
+            "{users}" to { user },
+            "{args}" to { args }
     )
 }
 

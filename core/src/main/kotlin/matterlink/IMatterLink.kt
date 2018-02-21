@@ -5,7 +5,6 @@ import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
-import java.time.Duration
 
 lateinit var instance: IMatterLink
 
@@ -52,20 +51,29 @@ abstract class IMatterLink {
      */
     var serverStartTime: Long = 0
 
-    fun getUptimeInSeconds(): Int {
-        return ((System.currentTimeMillis() - serverStartTime) / 1000).toInt()
+    fun getUptimeInSeconds(): Long {
+        return (System.currentTimeMillis() - serverStartTime) / 1000
     }
 
     fun getUptimeAsString(): String {
-        val duration = Duration.ofSeconds((System.currentTimeMillis() - serverStartTime) / 1000)
-        return duration.toString()
-//        val total = this.getUptimeInSeconds()
-//        val sec = total % 60
-//        val min = (total / 60) % 60
-//        val hr = (total / 3600) % 24
-//        val day = total / 86400
-//
-//        return "${day}d ${hr}hr ${min}m ${sec}s"
+        val total = this.getUptimeInSeconds()
+        val s = total % 60
+        val m = (total / 60) % 60
+        val h = (total / 3600) % 24
+        val d = total / 86400
+
+        fun timeFormat(unit: Long, name: String) = when {
+            unit > 1L -> "$unit ${name}s "
+            unit == 1L -> "$unit $name "
+            else -> ""
+        }
+
+        var result = ""
+        result += timeFormat(d, "Day")
+        result += timeFormat(h, "Hour")
+        result += timeFormat(m, "Minute")
+        result += timeFormat(s, "Second")
+        return result
     }
 
     fun registerBridgeCommands() {
