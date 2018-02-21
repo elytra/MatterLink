@@ -104,6 +104,6 @@ object EventHandler {
     @SubscribeEvent
     @JvmStatic
     fun serverTickEvent(e: TickEvent.ServerTickEvent) {
-        ServerChatHandler.writeIncomingToChat(FMLCommonHandler.instance().minecraftServerInstance.tickCounter)
+        TickHandler.handleTick()
     }
 }

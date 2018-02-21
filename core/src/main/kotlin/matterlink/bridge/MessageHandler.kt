@@ -10,18 +10,18 @@ import java.io.IOException
 import java.util.concurrent.ConcurrentLinkedQueue
 
 object MessageHandler {
+    var enabled: Boolean = false
     private var sendErrors = 0
     var connectErrors = 0
     private var streamConnection: HttpStreamConnection
     var rcvQueue = ConcurrentLinkedQueue<ApiMessage>()
         private set
+    val connected get() = streamConnection.connected
 
     init {
         //initialized here so we can make sure rcvQueue is never null
         streamConnection = createThread()
     }
-
-    val connected get() = streamConnection.connected
 
     private fun createThread(clear: Boolean = true): HttpStreamConnection {
         return HttpStreamConnection(
@@ -47,8 +47,6 @@ object MessageHandler {
         enabled = false
         streamConnection.close()
     }
-
-    var enabled: Boolean = false
 
     fun start(message: String?, clear: Boolean = true, firstRun: Boolean = false) {
         enabled = when {
@@ -102,8 +100,8 @@ object MessageHandler {
         }
     }
 
-    fun checkConnection(tick: Int) {
-        if (enabled && tick % 20 == 0 && !streamConnection.connected && !streamConnection.connecting) {
+    fun checkConnection() {
+        if (enabled && !streamConnection.connected && !streamConnection.connecting) {
 
             if (connectErrors > 5) {
                 instance.fatal("Caught too many errors, closing bridge")

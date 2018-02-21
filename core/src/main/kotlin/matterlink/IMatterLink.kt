@@ -20,10 +20,8 @@ abstract class IMatterLink {
     fun start() {
         serverStartTime = System.currentTimeMillis()
         MessageHandler.start(clear = true, firstRun = true, message = "Server started, connecting to matterbridge API")
-        if (cfg.update.enable) {
-            Thread(UpdateChecker()).start()
-        }
 
+        UpdateChecker.run()
     }
 
     fun stop() {
@@ -49,14 +47,10 @@ abstract class IMatterLink {
     /**
      * in milliseconds
      */
-    var serverStartTime: Long = 0
-
-    fun getUptimeInSeconds(): Long {
-        return (System.currentTimeMillis() - serverStartTime) / 1000
-    }
+    var serverStartTime: Long = System.currentTimeMillis()
 
     fun getUptimeAsString(): String {
-        val total = this.getUptimeInSeconds()
+        val total = (System.currentTimeMillis() - serverStartTime) / 1000
         val s = total % 60
         val m = (total / 60) % 60
         val h = (total / 3600) % 24

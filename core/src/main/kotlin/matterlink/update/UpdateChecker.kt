@@ -1,8 +1,6 @@
 package matterlink.update
 
 import com.google.gson.Gson
-import matterlink.bridge.ApiMessage
-import matterlink.bridge.MessageHandler
 import matterlink.config.cfg
 import matterlink.instance
 import org.apache.http.HttpResponse
@@ -11,7 +9,18 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import java.io.BufferedReader
 
-class UpdateChecker : Runnable {
+class UpdateChecker : Thread() {
+    companion object {
+        fun run() {
+            if (cfg.update.enable) {
+                UpdateChecker().start()
+            }
+        }
+    }
+
+    init {
+        name = "UpdateCheckerThread"
+    }
 
     override fun run() {
         if (instance.modVersion.contains("-build")) {

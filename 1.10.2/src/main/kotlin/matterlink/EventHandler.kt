@@ -3,10 +3,7 @@ package matterlink
 import matterlink.bridge.ServerChatHandler
 import matterlink.bridge.USER_ACTION
 import matterlink.config.cfg
-import matterlink.handlers.ChatProcessor
-import matterlink.handlers.DeathHandler
-import matterlink.handlers.JoinLeaveHandler
-import matterlink.handlers.ProgressHandler
+import matterlink.handlers.*
 import net.minecraft.command.server.CommandBroadcast
 import net.minecraft.command.server.CommandEmote
 import net.minecraft.entity.player.EntityPlayer
@@ -106,6 +103,6 @@ object EventHandler {
     @SubscribeEvent
     @JvmStatic
     fun serverTickEvent(e: TickEvent.ServerTickEvent) {
-        ServerChatHandler.writeIncomingToChat(FMLCommonHandler.instance().minecraftServerInstance.tickCounter)
+        TickHandler.handleTick()
     }
 }

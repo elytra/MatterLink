@@ -9,8 +9,7 @@ object ServerChatHandler {
     /**
      * This method must be called every server tick with no arguments.
      */
-    fun writeIncomingToChat(tick: Int) {
-        MessageHandler.checkConnection(tick)
+    fun writeIncomingToChat() {
         if (MessageHandler.rcvQueue.isNotEmpty())
             instance.debug("incoming: " + MessageHandler.rcvQueue.toString())
         val nextMessage = MessageHandler.rcvQueue.poll()
