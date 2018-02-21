@@ -96,6 +96,6 @@ object EventHandler {
     //FORGE-DEPENDENT
     @SubscribeEvent
     fun serverTickEvent(e: TickEvent.ServerTickEvent) {
-        TickHandler.handleTick(MinecraftServer.getServer().tickCounter)
+        TickHandler.handleTick()
     }
 }
