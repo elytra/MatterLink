@@ -102,9 +102,7 @@ curseforge {
             changelogType = "markdown"
             changelog = file(changelog_file)
         }
-        relations {
-            requiredLibrary 'shadowfacts-forgelin'
-        }
+        relations { }
         mainArtifact(jar) {
             displayName = "MatterLink $version"
         }
