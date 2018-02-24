@@ -29,7 +29,7 @@ data class CustomCommand(
                 commandSender.execute("$execute $args") || commandSender.reply.isNotBlank()
             }
             CommandType.RESPONSE -> {
-                MessageHandler.transmit(ApiMessage(text = response.lazyFormat(getReplacements(user, args))))
+                MessageHandler.transmit(ApiMessage(text = response.lazyFormat(getReplacements(user, userId, server, args))))
                 true
             }
         }
@@ -48,9 +48,11 @@ data class CustomCommand(
         return true
     }
 
-    fun getReplacements(user: String, args: String): Map<String, () -> String> = mapOf(
+    fun getReplacements(user: String, userId: String, server: String, args: String): Map<String, () -> String> = mapOf(
             "{uptime}" to instance::getUptimeAsString,
-            "{users}" to { user },
+            "{user}" to { user },
+            "{userid}" to { userId },
+            "{server}" to { server },
             "{args}" to { args }
     )
 }
