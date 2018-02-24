@@ -14,21 +14,21 @@ object CommandConfig {
     private val default = arrayOf(
             CustomCommand(
                     alias = "tps",
-                    type = CommandType.PASSTHROUGH,
+                    type = CommandType.EXECUTE,
                     execute = "forge tps",
                     help = "Print server tps",
                     allowArgs = false
             ),
             CustomCommand(
                     alias = "list",
-                    type = CommandType.PASSTHROUGH,
+                    type = CommandType.EXECUTE,
                     execute = "list",
                     help = "List online players",
                     allowArgs = false
             ),
             CustomCommand(
                     alias = "seed",
-                    type = CommandType.PASSTHROUGH,
+                    type = CommandType.EXECUTE,
                     execute = "seed",
                     help = "Print server world seed",
                     allowArgs = false

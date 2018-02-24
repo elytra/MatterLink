@@ -2,6 +2,7 @@ package matterlink.bridge.command
 
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
+import matterlink.handlers.TickHandler
 import matterlink.instance
 import matterlink.lazyFormat
 
@@ -12,17 +13,29 @@ data class CustomCommand(
         val response: String = "",
         override val permLevel: Int = 0,
         override val help: String = "",
-        val allowArgs: Boolean = true
+        val allowArgs: Boolean = true,
+        val timeout: Int = 20
 ) : IBridgeCommand {
+
+    var lastUsed: Int = 0
     override fun execute(user: String, userId: String, server: String, args: String): Boolean {
         if (!allowArgs && args.isNotBlank()) return false
+
+        if (TickHandler.tickCounter - lastUsed < timeout)
+        {
+            instance.debug("dropped command $alias")
+            return true //eat command silently
+        }
+
         if (!canExecute(userId, server)) {
             MessageHandler.transmit(ApiMessage(text = "$user is not permitted to perform command: $alias"))
             return false
         }
 
+        lastUsed = TickHandler.tickCounter
+
         return when (type) {
-            CommandType.PASSTHROUGH -> {
+            CommandType.EXECUTE -> {
                 //uses a new commandsender for each user
                 // TODO: cache CommandSenders
                 val commandSender = instance.commandSenderFor(user, userId, server)
@@ -40,7 +53,7 @@ data class CustomCommand(
      */
     override fun validate(): Boolean {
         val typeCheck = when (type) {
-            CommandType.PASSTHROUGH -> execute.isNotBlank()
+            CommandType.EXECUTE -> execute.isNotBlank()
             CommandType.RESPONSE -> response.isNotBlank()
         }
         if (!typeCheck) return false
@@ -58,5 +71,5 @@ data class CustomCommand(
 }
 
 enum class CommandType {
-    PASSTHROUGH, RESPONSE
+    EXECUTE, RESPONSE
 }

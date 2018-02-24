@@ -10,12 +10,13 @@ import matterlink.update.UpdateChecker
  * @version 1.0
  */
 object TickHandler {
-    private var totalTicks = 0
+    var tickCounter = 0
+        private set
     private var accumulator = 0
     private const val updateInterval = 12 * 60 * 60 * 20
     fun handleTick() {
-        totalTicks++
-        if (totalTicks % 100 == 0) {
+        tickCounter++
+        if (tickCounter % 100 == 0) {
             MessageHandler.checkConnection()
         }
 
