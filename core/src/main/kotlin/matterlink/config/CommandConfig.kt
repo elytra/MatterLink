@@ -55,7 +55,7 @@ object CommandConfig {
             .setOriginComments(false)
 
     fun readConfig(): Boolean {
-        if (!configFile.exists()) {
+        if (!configFile.exists() || configFile.readText().isBlank()) {
             configFile.createNewFile()
             val config: Config = default.toConfig("commands")
             configFile.writeText(config.root().render(options))
