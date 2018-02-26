@@ -7,7 +7,6 @@ import matterlink.instance
 import matterlink.lazyFormat
 
 data class CustomCommand(
-        override val alias: String,
         val type: CommandType = CommandType.RESPONSE,
         val execute: String = "",
         val response: String = "",
@@ -16,9 +15,11 @@ data class CustomCommand(
         val allowArgs: Boolean = true,
         val timeout: Int = 20
 ) : IBridgeCommand {
+    val alias: String
+        get() = BridgeCommandRegistry.getName(this)!!
 
     var lastUsed: Int = 0
-    override fun execute(user: String, userId: String, server: String, args: String): Boolean {
+    override fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean {
         if (!allowArgs && args.isNotBlank()) return false
 
         if (TickHandler.tickCounter - lastUsed < timeout)
@@ -61,13 +62,16 @@ data class CustomCommand(
         return true
     }
 
-    fun getReplacements(user: String, userId: String, server: String, args: String): Map<String, () -> String> = mapOf(
-            "{uptime}" to instance::getUptimeAsString,
-            "{user}" to { user },
-            "{userid}" to { userId },
-            "{server}" to { server },
-            "{args}" to { args }
-    )
+    companion object {
+
+        fun getReplacements(user: String, userId: String, server: String, args: String): Map<String, () -> String> = mapOf(
+                "{uptime}" to instance::getUptimeAsString,
+                "{user}" to { user },
+                "{userid}" to { userId },
+                "{server}" to { server },
+                "{args}" to { args }
+        )
+    }
 }
 
 enum class CommandType {

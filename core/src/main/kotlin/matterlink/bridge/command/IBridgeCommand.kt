@@ -1,13 +1,15 @@
 package matterlink.bridge.command
 
+import com.typesafe.config.ConfigException
 import matterlink.config.PermissionConfig
+import matterlink.instance
+import matterlink.stackTraceString
 
 interface IBridgeCommand {
-    val alias: String
     val help: String
     val permLevel: Int
 
-    fun execute(user: String, userId: String, server: String, args: String): Boolean
+    fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean
 
     fun canExecute(userId: String, server: String): Boolean {
         return getPermLevel(userId, server) >= permLevel
@@ -17,8 +19,20 @@ interface IBridgeCommand {
 
     companion object {
         fun getPermLevel(userId: String, server: String): Int {
-            if (PermissionConfig.perms[server] == null) return 0
-            return PermissionConfig.perms[server]?.get(userId) ?: 0
+            try {
+                instance.debug("looking up server $server")
+                instance.debug("looking up userId $userId")
+                val serverMap = PermissionConfig.perms[server] ?: return 0
+                serverMap.forEach { (permLevel, userIDs) ->
+                    userIDs.forEach { if(it == userId) return permLevel }
+                }
+                return 0
+            } catch (e: ConfigException.WrongType) {
+                instance.warn(e.stackTraceString)
+                return 0
+            } catch (e: ConfigException.Missing) {
+                return 0
+            }
         }
     }
 }
