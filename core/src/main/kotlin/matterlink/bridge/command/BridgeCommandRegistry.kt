@@ -18,26 +18,22 @@ object BridgeCommandRegistry {
         val cmd = input.text.substring(1).split(' ', ignoreCase = false, limit = 2)
         val args = if (cmd.size == 2) cmd[1] else ""
 
-        return if (commandMap.containsKey(cmd[0]))
-            (commandMap[cmd[0]]!!.execute(input.username, input.userid, input.account, args))
-        else false
+        return commandMap[cmd[0]]?.execute(cmd[0], input.username, input.userid, input.account, args) ?: false
     }
 
-    fun register(cmd: IBridgeCommand): Boolean {
-        if (cmd.alias.isBlank() || commandMap.containsKey(cmd.alias)) {
-            instance.error("Failed to register command: '${cmd.alias}'")
+    fun register(alias: String, cmd: IBridgeCommand): Boolean {
+        if (alias.isBlank() || commandMap.containsKey(alias)) {
+            instance.error("Failed to register command: '${alias}'")
             return false
         }
         if (!cmd.validate()) {
-            instance.error("Failed to validate command: '${cmd.alias}'")
+            instance.error("Failed to validate command: '${alias}'")
             return false
         }
-        commandMap[cmd.alias] = cmd
+        //TODO: maybe write alias to command here ?
+        // could avoid searching for the command in the registry
+        commandMap[alias] = cmd
         return true
-    }
-
-    fun registerAll(vararg commands: IBridgeCommand) {
-        commands.forEach { register(it) }
     }
 
     fun getHelpString(cmd: String): String {
@@ -60,10 +56,19 @@ object BridgeCommandRegistry {
     fun reloadCommands() {
         commandMap.clear()
         val permStatus = PermissionConfig.loadPermFile()
-        register(HelpCommand)
+        register("help", HelpCommand)
         val cmdStatus = CommandConfig.readConfig()
-        registerAll(*CommandConfig.commands)
+        CommandConfig.commands.forEach { (alias, command) ->
+            register(alias, command)
+        }
     }
 
     operator fun get(command: String) = commandMap[command]
+
+    fun getName(command: IBridgeCommand): String? {
+        commandMap.forEach{(alias, cmd) ->
+            if(command == cmd) return alias
+        }
+        return null
+    }
 }

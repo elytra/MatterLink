@@ -38,9 +38,9 @@ minecraft {
 
     srgExtra "PK: kotlin matterlink/repack/kotlin"
     srgExtra "PK: org/jetbrains/annotations matterlink/repack/org/jetbrains/annotations"
-    srgExtra "PK: com/google/gson matterlink/repack/com/google/gson"
     srgExtra "PK: org/apache/http matterlink/repack/org/apache/http"
-    srgExtra "PK: org/intelij matterlink/repack/org/intelij"
+    //srgExtra "PK: org/apache/commons matterlink/repack/org/apache/commons"
+    srgExtra "PK: org/intellij matterlink/repack/org/intellij"
 }
 
 compileKotlin.doFirst {
@@ -86,6 +86,7 @@ jar {
     configurations.shade.each { dep ->
         from(project.zipTree(dep)) {
             exclude "META-INF", "META-INF/**"
+            exclude "com/google/gson", "com/google/gson/**"
         }
     }
 }

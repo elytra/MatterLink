@@ -3,11 +3,10 @@ package matterlink.bridge.command
 import matterlink.config.PermissionConfig
 
 interface IBridgeCommand {
-    val alias: String
     val help: String
     val permLevel: Int
 
-    fun execute(user: String, userId: String, server: String, args: String): Boolean
+    fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean
 
     fun canExecute(userId: String, server: String): Boolean {
         return getPermLevel(userId, server) >= permLevel
