@@ -2,21 +2,19 @@ package matterlink.config
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigException
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigRenderOptions
-import io.github.config4k.extract
-import io.github.config4k.toConfig
+import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 import matterlink.bridge.command.CommandType
 import matterlink.bridge.command.CustomCommand
 import matterlink.instance
 import matterlink.stackTraceString
 import java.io.File
 
+typealias CommandMap = Map<String, CustomCommand>
+
 object CommandConfig {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-    private val configFile: File = cfg.cfgDirectory.resolve("commands.hocon")
+    private val configFile: File = cfg.cfgDirectory.resolve("commands.json")
 
     private val default = hashMapOf(
             "tps" to CustomCommand(
@@ -46,41 +44,25 @@ object CommandConfig {
             )
     )
 
-    var commands: Map<String, CustomCommand> = default
+    var commands: CommandMap = default
         private set
-
-    val options = ConfigRenderOptions
-            .defaults()
-            .setJson(false)
-            .setOriginComments(false)
 
     fun readConfig(): Boolean {
         if (!configFile.exists() || configFile.readText().isBlank()) {
             configFile.createNewFile()
-            val config: Config = default.toConfig("commands")
-            configFile.writeText(config.root().render(options))
+            configFile.writeText(gson.toJson(default))
             return true
         }
 
-        var success = true
-        commands = try {
-            val config = ConfigFactory.parseFile(configFile)
-            val commandConfig = config.getConfig("commands")
-
-            val keys = config.getObject("commands")
-                    .unwrapped()
-                    .keys
-
-            keys.associate { it to commandConfig.extract<CustomCommand>(it) }
-
-        } catch (e: ConfigException) {
+        try {
+            commands = gson.fromJson(configFile.readText(), object : TypeToken<CommandMap>() {}.type)
+        } catch (e: JsonSyntaxException) {
             instance.fatal(e.stackTraceString)
             instance.fatal("failed to parse $configFile using last good values as fallback")
 
-            success = false
-            commands
+            return false
         }
-        return success
+        return true
     }
 
 

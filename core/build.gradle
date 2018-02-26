@@ -17,7 +17,6 @@ repositories {
 }
 
 dependencies {
-    compile group: 'io.github.config4k', name: 'config4k', version: '0.3.3'
     compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.3.3'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.3'
     compile group: 'commons-logging', name: 'commons-logging', version: '1.1.3'
