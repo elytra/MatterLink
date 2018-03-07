@@ -5,6 +5,7 @@ import matterlink.command.CommandMatterlink
 import matterlink.command.MatterLinkCommandSender
 import matterlink.config.cfg
 import net.minecraft.util.text.TextComponentString
+import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.*
@@ -64,4 +65,5 @@ object MatterLink : IMatterLink() {
 
     override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION
+    override val forgeVersion = ForgeVersion.getVersion()
 }

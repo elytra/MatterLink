@@ -11,6 +11,7 @@ lateinit var instance: IMatterLink
 abstract class IMatterLink {
     abstract val mcVersion: String
     abstract val modVersion: String
+    abstract val forgeVersion: String
 
     abstract fun commandSenderFor(user: String, userId: String, server: String): IMinecraftCommandSender
 
@@ -20,8 +21,6 @@ abstract class IMatterLink {
     fun start() {
         serverStartTime = System.currentTimeMillis()
         MessageHandler.start(clear = true, firstRun = true, message = "Server started, connecting to matterbridge API")
-
-        UpdateChecker.run()
     }
 
     fun stop() {

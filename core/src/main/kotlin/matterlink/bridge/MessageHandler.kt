@@ -2,6 +2,7 @@ package matterlink.bridge
 
 import matterlink.config.cfg
 import matterlink.instance
+import matterlink.update.UpdateChecker
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.StringEntity
@@ -67,6 +68,10 @@ object MessageHandler {
             transmit(ApiMessage(
                     text = message //?: "Connected to matterbridge API"
             ))
+        }
+
+        if(firstRun) {
+            UpdateChecker.run()
         }
     }
 

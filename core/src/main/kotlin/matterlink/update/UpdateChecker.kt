@@ -1,6 +1,9 @@
 package matterlink.update
 
-import com.google.gson.Gson
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
+import matterlink.bridge.ApiMessage
+import matterlink.bridge.MessageHandler
 import matterlink.config.cfg
 import matterlink.instance
 import org.apache.http.HttpResponse
@@ -32,15 +35,19 @@ class UpdateChecker : Thread() {
             return
         }
 
-        val gson = Gson()
+        val gson = GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+                .create()
 
         instance.info("Checking for new versions...")
 
         val client: HttpClient = HttpClients.createDefault()
-        val request = HttpGet("https://goo.gl/5CMc1N")
+        val request = HttpGet("https://cursemeta.dries007.net/api/v2/direct/GetAllFilesForAddOn/287323")
 
         with(instance) {
-            request.setHeader("User-Agent", "Minecraft/$mcVersion MatterLink/$modVersion")
+            val useragent = "MatterLink/$modVersion MinecraftForge/$mcVersion-$forgeVersion (https://github.com/elytra/MatterLink)"
+            instance.debug("setting User-Agent: '$useragent'")
+            request.setHeader("User-Agent", useragent)
         }
 
         val response: HttpResponse = client.execute(request)
@@ -53,7 +60,7 @@ class UpdateChecker : Thread() {
 
             gson.fromJson(content, Array<CurseFile>::class.java)
                     .filter {
-                        it.fileStatus == "semiNormal" && it.gameVersion.contains(instance.mcVersion)
+                        it.fileStatus == "SemiNormal" && it.gameVersion.contains(instance.mcVersion)
                     }
                     .sortedByDescending { it.fileName.substringAfterLast(" ") }
 
@@ -102,9 +109,9 @@ class UpdateChecker : Thread() {
         }
 
         instance.warn("Mod out of date! New $version available at ${latest.downloadURL}")
-//        MessageHandler.transmit(ApiMessage(
-//                username = cfg.relay.systemUser,
-//                text = "Matterlink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}"
-//        ))
+        MessageHandler.transmit(ApiMessage(
+                username = cfg.outgoing.systemUser,
+                text = "MatterLink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}"
+        ))
     }
 }
