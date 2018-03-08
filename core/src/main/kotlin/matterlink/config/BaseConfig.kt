@@ -6,12 +6,6 @@ import java.util.regex.Pattern
 lateinit var cfg: BaseConfig
 
 abstract class BaseConfig(rootDir: File) {
-    companion object {
-        fun reload() {
-            cfg = cfg.load()
-        }
-    }
-
     val cfgDirectory: File = rootDir.resolve("matterlink")
     val mainCfgFile: File = cfgDirectory.resolve("matterlink.cfg")
 
@@ -112,10 +106,8 @@ abstract class BaseConfig(rootDir: File) {
             addCustomCategoryComment: (key: String, comment: String) -> Unit
     ) {
 
-        var category = "root"
+        var category = "commands"
 
-
-        category = "commands"
         addCustomCategoryComment(category, "User commands")
         command = CommandOptions(
                 enable = getBoolean(

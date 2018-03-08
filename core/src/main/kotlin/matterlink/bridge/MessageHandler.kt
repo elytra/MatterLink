@@ -41,7 +41,7 @@ object MessageHandler {
     }
 
     fun stop(message: String?) {
-        if (message != null && cfg.debug.announceDisconnect) {
+        if (message != null && cfg.outgoing.announceDisconnect) {
             transmit(ApiMessage(
                     text = message
             ))
@@ -64,7 +64,7 @@ object MessageHandler {
             streamConnection.open()
         }
 
-        if (message != null && cfg.debug.announceConnect) {
+        if (message != null && cfg.outgoing.announceConnect) {
             transmit(ApiMessage(
                     text = message //?: "Connected to matterbridge API"
             ))
