@@ -37,9 +37,7 @@ abstract class BaseConfig(rootDir: File) {
     )
 
     data class DebugOptions(
-            var logLevel: String = "INFO",
-            var announceConnect: Boolean = false,
-            var announceDisconnect: Boolean = false
+            var logLevel: String = "INFO"
     )
 
     data class IncomingOption(
@@ -51,6 +49,8 @@ abstract class BaseConfig(rootDir: File) {
     data class OutgoingOptions(
             val systemUser: String = "Server",
             //outgoing toggles
+            var announceConnect: Boolean = true,
+            var announceDisconnect: Boolean = true,
             val advancements: Boolean = true,
             var death: DeathOptions = DeathOptions(),
 
@@ -171,18 +171,6 @@ abstract class BaseConfig(rootDir: File) {
                         debug.logLevel,
                         "MatterLink log level",
                         arrayOf("INFO", "DEBUG", "TRACE")
-                ),
-                announceConnect = getBoolean(
-                        "announceConnect",
-                        category,
-                        debug.announceConnect,
-                        "announce successful connection to the gateway"
-                ),
-                announceDisconnect = getBoolean(
-                        "announceDisconnect",
-                        category,
-                        debug.announceConnect,
-                        "announce intention to disconnect / reconnect"
                 )
         )
 
@@ -229,6 +217,18 @@ abstract class BaseConfig(rootDir: File) {
                         category,
                         outgoing.advancements,
                         "Relay player achievements / advancements"
+                ),
+                announceConnect = getBoolean(
+                        "announceConnect",
+                        category,
+                        outgoing.announceConnect,
+                        "announce successful connection to the gateway"
+                ),
+                announceDisconnect = getBoolean(
+                        "announceDisconnect",
+                        category,
+                        outgoing.announceConnect,
+                        "announce intention to disconnect / reconnect"
                 )
         )
 

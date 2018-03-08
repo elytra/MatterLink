@@ -103,7 +103,6 @@ curseforge {
             changelogType = "markdown"
             changelog = file(changelog_file)
         }
-        relations { }
         mainArtifact(jar) {
             displayName = "MatterLink $version"
         }
