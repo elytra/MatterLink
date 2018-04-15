@@ -7,8 +7,8 @@ subprojects {
     apply plugin: "kotlin"
     apply plugin: "idea"
 
-    if (project.hasProperty('build_number')) {
-        mod_version += "-build-$build_number"
+    if (System.env.BUILD_NUMBER) {
+        mod_version += "-${System.env.BUILD_NUMBER}"
     } else if (!project.hasProperty('release')) {
         mod_version += "-dev"
     }

@@ -9,6 +9,7 @@ import matterlink.instance
 import org.apache.http.HttpResponse
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.HttpClients
 import java.io.BufferedReader
 
@@ -41,7 +42,7 @@ class UpdateChecker : Thread() {
 
         instance.info("Checking for new versions...")
 
-        val client: HttpClient = HttpClients.createDefault()
+        val client = HttpClients.createDefault()
         val request = HttpGet("https://cursemeta.dries007.net/api/v2/direct/GetAllFilesForAddOn/287323")
 
         with(instance) {

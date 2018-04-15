@@ -1,6 +1,5 @@
 package matterlink
 
-import matterlink.bridge.ServerChatHandler
 import matterlink.bridge.USER_ACTION
 import matterlink.config.cfg
 import matterlink.handlers.*
@@ -14,7 +13,6 @@ import net.minecraftforge.event.CommandEvent
 import net.minecraftforge.event.ServerChatEvent
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.event.entity.player.AchievementEvent
-import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.PlayerEvent
@@ -36,7 +34,7 @@ object EventHandler {
             return
         }
         ProgressHandler.handleProgress(
-                name = e.entityPlayer.name,
+                name = e.entityPlayer.displayName.unformattedText,
                 message = "has earned the achievement",
                 display = e.achievement.statName.unformattedText
         )
@@ -47,7 +45,7 @@ object EventHandler {
     @JvmStatic
     fun chatEvent(e: ServerChatEvent) {
         ChatProcessor.sendToBridge(
-                user = e.username,
+                user = e.player.displayName.unformattedText,
                 msg = e.message,
                 event = ""
         )
@@ -59,12 +57,12 @@ object EventHandler {
     fun commandEvent(e: CommandEvent) {
         val sender = when {
             e.sender is DedicatedServer -> cfg.outgoing.systemUser
-            e.sender is TileEntityCommandBlock -> "CommandBlock"
-            else -> e.sender.name
+            else -> e.sender.displayName.unformattedText
         }
         val args = e.parameters.joinToString(" ")
         val type = when {
             e.command is CommandEmote -> USER_ACTION
+            e.command.name == "me" -> USER_ACTION
             e.command is CommandBroadcast -> ""
             else -> return
         }
@@ -78,7 +76,7 @@ object EventHandler {
     fun deathEvent(e: LivingDeathEvent) {
         if (e.entityLiving is EntityPlayer) {
             DeathHandler.handleDeath(
-                    player = e.entityLiving.name,
+                    player = e.entityLiving.displayName.unformattedText,
                     deathMessage = e.entityLiving.combatTracker.deathMessage.unformattedText,
                     damageType = e.source.damageType
             )
@@ -89,14 +87,14 @@ object EventHandler {
     @SubscribeEvent
     @JvmStatic
     fun joinEvent(e: PlayerEvent.PlayerLoggedInEvent) {
-        JoinLeaveHandler.handleJoin(e.player.name)
+        JoinLeaveHandler.handleJoin(e.player.displayName.unformattedText)
     }
 
     //FORGE-DEPENDENT
     @SubscribeEvent
     @JvmStatic
     fun leaveEvent(e: PlayerEvent.PlayerLoggedOutEvent) {
-        JoinLeaveHandler.handleLeave(e.player.name)
+        JoinLeaveHandler.handleLeave(e.player.displayName.unformattedText)
     }
 
     //FORGE-DEPENDENT

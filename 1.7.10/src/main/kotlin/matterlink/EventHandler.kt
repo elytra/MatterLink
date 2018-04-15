@@ -3,7 +3,6 @@ package matterlink
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.PlayerEvent
 import cpw.mods.fml.common.gameevent.TickEvent
-import matterlink.bridge.ServerChatHandler
 import matterlink.bridge.USER_ACTION
 import matterlink.config.cfg
 import matterlink.handlers.*
@@ -11,7 +10,6 @@ import net.minecraft.command.server.CommandBroadcast
 import net.minecraft.command.server.CommandEmote
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.EntityPlayerMP
-import net.minecraft.server.MinecraftServer
 import net.minecraft.server.dedicated.DedicatedServer
 import net.minecraft.tileentity.TileEntityCommandBlock
 import net.minecraftforge.event.CommandEvent
@@ -44,7 +42,7 @@ object EventHandler {
     @SubscribeEvent
     fun chatEvent(e: ServerChatEvent) {
         ChatProcessor.sendToBridge(
-                user = e.username,
+                user = e.player.displayName,
                 msg = e.message,
                 event = ""
         )
@@ -55,12 +53,12 @@ object EventHandler {
     fun commandEvent(e: CommandEvent) {
         val sender = when {
             e.sender is DedicatedServer -> cfg.outgoing.systemUser
-            e.sender is TileEntityCommandBlock -> "CommandBlock"
             else -> e.sender.commandSenderName
         }
         val args = e.parameters.joinToString(" ")
         val type = when {
             e.command is CommandEmote -> USER_ACTION
+            e.command.commandName == "me" -> USER_ACTION
             e.command is CommandBroadcast -> ""
             else -> return
         }
@@ -96,7 +94,7 @@ object EventHandler {
     //FORGE-DEPENDENT
     @SubscribeEvent
     fun serverTickEvent(e: TickEvent.ServerTickEvent) {
-        if(e.phase == TickEvent.Phase.END)
+        if (e.phase == TickEvent.Phase.END)
             TickHandler.handleTick()
     }
 }
