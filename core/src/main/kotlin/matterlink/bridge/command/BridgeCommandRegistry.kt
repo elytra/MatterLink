@@ -44,7 +44,7 @@ object BridgeCommandRegistry {
         return if (help.isNotBlank()) help else "No help for '$cmd'"
     }
 
-    fun getCommandList(permLvl: Int): String {
+    fun getCommandList(permLvl: Double): String {
         return commandMap
                 .filterValues {
                     it.permLevel <= permLvl

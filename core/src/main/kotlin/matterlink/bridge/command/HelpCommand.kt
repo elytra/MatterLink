@@ -6,7 +6,7 @@ import matterlink.config.cfg
 
 object HelpCommand : IBridgeCommand {
     override val help: String = "Returns the help string for the given command. Syntax: help <command>"
-    override val permLevel = 0
+    override val permLevel = 0.0
     override fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean {
         val msg: String = when {
             args.isEmpty() ->

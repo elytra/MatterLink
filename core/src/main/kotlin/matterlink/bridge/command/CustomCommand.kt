@@ -10,7 +10,7 @@ data class CustomCommand(
         val type: CommandType = CommandType.RESPONSE,
         val execute: String = "",
         val response: String = "",
-        override val permLevel: Int = 0,
+        override val permLevel: Double = 0.0,
         override val help: String = "",
         val allowArgs: Boolean = true,
         val timeout: Int = 20

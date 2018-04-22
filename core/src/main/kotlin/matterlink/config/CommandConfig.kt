@@ -37,7 +37,7 @@ object CommandConfig {
             ),
             "uptime" to CustomCommand(
                     type = CommandType.RESPONSE,
-                    permLevel = 1,
+                    permLevel = 1.0,
                     response = "{uptime}",
                     help = "Print server uptime",
                     allowArgs = false

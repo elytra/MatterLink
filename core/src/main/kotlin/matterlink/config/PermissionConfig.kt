@@ -8,7 +8,7 @@ import matterlink.instance
 import matterlink.stackTraceString
 import java.io.File
 
-typealias PermissionMap = Map<String, Map<String, Int>>
+typealias PermissionMap = Map<String, Map<String, Double>>
 
 object PermissionConfig {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
@@ -16,11 +16,11 @@ object PermissionConfig {
 
     private val default = mapOf(
             "irc.esper" to mapOf(
-                    "~nikky@nikky.moe" to 0,
-                    "user@example." to 0
+                    "~nikky@nikky.moe" to 0.0,
+                    "user@example." to 0.0
             ),
             "discord.game" to mapOf(
-                    "112228624366575616" to 0
+                    "112228624366575616" to 0.0
             )
     )
 

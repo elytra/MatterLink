@@ -4,7 +4,7 @@ import matterlink.config.PermissionConfig
 
 interface IBridgeCommand {
     val help: String
-    val permLevel: Int
+    val permLevel: Double
 
     fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean
 
@@ -15,9 +15,9 @@ interface IBridgeCommand {
     fun validate() = true
 
     companion object {
-        fun getPermLevel(userId: String, server: String): Int {
-            if (PermissionConfig.perms[server] == null) return 0
-            return PermissionConfig.perms[server]?.get(userId) ?: 0
+        fun getPermLevel(userId: String, server: String): Double {
+            val serverMap = PermissionConfig.perms[server] ?: return 0.0
+            return serverMap[userId] ?: 0.0
         }
     }
 }
