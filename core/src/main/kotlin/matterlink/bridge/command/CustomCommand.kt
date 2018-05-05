@@ -22,8 +22,7 @@ data class CustomCommand(
     override fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean {
         if (!allowArgs && args.isNotBlank()) return false
 
-        if (TickHandler.tickCounter - lastUsed < timeout)
-        {
+        if (TickHandler.tickCounter - lastUsed < timeout) {
             instance.debug("dropped command $alias")
             return true //eat command silently
         }

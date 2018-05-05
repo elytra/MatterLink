@@ -1,9 +1,6 @@
 package matterlink.command
 
-import matterlink.bridge.ApiMessage
-import matterlink.bridge.MessageHandler
 import matterlink.bridge.command.IMinecraftCommandSender
-import matterlink.config.cfg
 import net.minecraft.command.CommandResultStats
 import net.minecraft.command.ICommandSender
 import net.minecraft.entity.Entity

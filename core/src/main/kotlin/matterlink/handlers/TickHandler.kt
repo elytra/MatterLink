@@ -22,7 +22,7 @@ object TickHandler {
 
         ServerChatHandler.writeIncomingToChat()
 
-        if(accumulator++ > updateInterval) {
+        if (accumulator++ > updateInterval) {
             accumulator -= updateInterval
             UpdateChecker.run()
         }

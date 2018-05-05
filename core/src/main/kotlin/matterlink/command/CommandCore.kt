@@ -1,10 +1,8 @@
 package matterlink.command
 
-import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.config.cfg
-import matterlink.instance
 
 object CommandCore {
     fun getName() = "bridge"

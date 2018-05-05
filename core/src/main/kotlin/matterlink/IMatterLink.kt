@@ -4,7 +4,6 @@ import matterlink.bridge.MessageHandler
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
-import matterlink.update.UpdateChecker
 
 lateinit var instance: IMatterLink
 

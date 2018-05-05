@@ -8,13 +8,4 @@ data class CurseFile(
         val gameVersion: List<String>,
         val releaseType: String,
         val fileStatus: String
-) {
-    companion object {
-        val gson = Gson()
-
-        fun decode(json: String): CurseFile {
-            return gson.fromJson(json, CurseFile::class.java)
-        }
-    }
-
-}
+)

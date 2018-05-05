@@ -11,7 +11,6 @@ import net.minecraft.command.server.CommandEmote
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.dedicated.DedicatedServer
-import net.minecraft.tileentity.TileEntityCommandBlock
 import net.minecraftforge.event.CommandEvent
 import net.minecraftforge.event.ServerChatEvent
 import net.minecraftforge.event.entity.living.LivingDeathEvent

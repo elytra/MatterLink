@@ -2,8 +2,6 @@ package matterlink.bridge.command
 
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
-import matterlink.config.cfg
-import matterlink.instance
 
 abstract class IMinecraftCommandSender(val user: String, val userId: String, val server: String) {
     /**

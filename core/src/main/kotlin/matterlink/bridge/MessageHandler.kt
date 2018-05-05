@@ -70,7 +70,7 @@ object MessageHandler {
             ))
         }
 
-        if(firstRun) {
+        if (firstRun) {
             UpdateChecker.run()
         }
     }

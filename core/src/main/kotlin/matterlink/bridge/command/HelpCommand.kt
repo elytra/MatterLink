@@ -2,7 +2,6 @@ package matterlink.bridge.command
 
 import matterlink.bridge.ApiMessage
 import matterlink.bridge.MessageHandler
-import matterlink.config.cfg
 
 object HelpCommand : IBridgeCommand {
     override val help: String = "Returns the help string for the given command. Syntax: help <command>"

@@ -1,7 +1,6 @@
 package matterlink
 
 import matterlink.config.BaseConfig
-import matterlink.config.cfg
 import net.minecraftforge.common.config.Configuration
 import java.io.File
 

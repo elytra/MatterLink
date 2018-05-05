@@ -66,8 +66,8 @@ object BridgeCommandRegistry {
     operator fun get(command: String) = commandMap[command]
 
     fun getName(command: IBridgeCommand): String? {
-        commandMap.forEach{(alias, cmd) ->
-            if(command == cmd) return alias
+        commandMap.forEach { (alias, cmd) ->
+            if (command == cmd) return alias
         }
         return null
     }

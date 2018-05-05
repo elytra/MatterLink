@@ -20,7 +20,7 @@ object DeathHandler {
                 val emojis = cfg.outgoing.death.damageTypeMapping[damageType]?.split(' ')
                         ?: listOf("\uD83D\uDC7B unknown type '$damageType'")
                 val damageEmoji = emojis[random.nextInt(emojis.size)]
-                msg += " " + damageEmoji
+                msg += " $damageEmoji"
             }
             MessageHandler.transmit(ApiMessage(
                     text = msg

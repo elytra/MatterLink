@@ -1,6 +1,5 @@
 package matterlink
 
-import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.command.CommandMatterlink
 import matterlink.command.MatterLinkCommandSender
 import matterlink.config.cfg
