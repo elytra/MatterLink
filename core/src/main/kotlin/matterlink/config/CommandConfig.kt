@@ -21,7 +21,8 @@ object CommandConfig {
                     type = CommandType.EXECUTE,
                     execute = "forge tps",
                     help = "Print server tps",
-                    allowArgs = false
+                    allowArgs = false,
+                    timeout = 200
             ),
             "list" to CustomCommand(
                     type = CommandType.EXECUTE,
@@ -41,6 +42,13 @@ object CommandConfig {
                     response = "{uptime}",
                     help = "Print server uptime",
                     allowArgs = false
+            ),
+            "whoami" to CustomCommand(
+                    type = CommandType.RESPONSE,
+                    response = "server: `{server}` userid: `{userid}` user: `{user}`",
+                    help = "Print debug user data",
+                    allowArgs = false,
+                    timeout = 200
             )
     )
 

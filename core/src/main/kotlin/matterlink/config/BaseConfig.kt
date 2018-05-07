@@ -19,7 +19,7 @@ abstract class BaseConfig(rootDir: File) {
 
 
     data class CommandOptions(
-            val prefix: String = "$",
+            val prefix: String = "!",
             val enable: Boolean = true
     )
 
