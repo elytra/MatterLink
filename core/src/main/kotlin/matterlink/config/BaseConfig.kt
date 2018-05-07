@@ -1,5 +1,6 @@
 package matterlink.config
 
+import matterlink.bridge.MessageHandlerInst
 import java.io.File
 import java.util.regex.Pattern
 
@@ -27,7 +28,8 @@ abstract class BaseConfig(rootDir: File) {
             val url: String = "http://localhost:4242",
             val authToken: String = "",
             val gateway: String = "minecraft",
-            val autoConnect: Boolean = true
+            val autoConnect: Boolean = true,
+            val reconnectWait: Long = 500
     )
 
     data class DebugOptions(
@@ -296,6 +298,17 @@ abstract class BaseConfig(rootDir: File) {
                         "Enable Update checking"
                 )
         )
+
+
+        MessageHandlerInst.config.url = connect.url
+        MessageHandlerInst.config.token = connect.authToken
+        MessageHandlerInst.config.gateway = connect.gateway
+        MessageHandlerInst.config.reconnectWait = connect.reconnectWait
+
+        MessageHandlerInst.config.systemUser = outgoing.systemUser
+        MessageHandlerInst.config.announceConnect = outgoing.announceConnect
+        MessageHandlerInst.config.announceDisconnect = outgoing.announceDisconnect
+
     }
 
     abstract fun load(): BaseConfig

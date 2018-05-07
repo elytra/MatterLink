@@ -3,7 +3,7 @@ package matterlink
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.PlayerEvent
 import cpw.mods.fml.common.gameevent.TickEvent
-import matterlink.bridge.USER_ACTION
+import matterlink.api.ApiMessage.USER_ACTION
 import matterlink.config.cfg
 import matterlink.handlers.*
 import net.minecraft.command.server.CommandBroadcast

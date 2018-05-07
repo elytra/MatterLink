@@ -1,8 +1,8 @@
 package matterlink.handlers
 
 import matterlink.antiping
-import matterlink.bridge.ApiMessage
-import matterlink.bridge.MessageHandler
+import matterlink.api.ApiMessage
+import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 import java.util.*
 
@@ -22,9 +22,9 @@ object DeathHandler {
                 val damageEmoji = emojis[random.nextInt(emojis.size)]
                 msg += " $damageEmoji"
             }
-            MessageHandler.transmit(ApiMessage(
-                    text = msg
-            ))
+            MessageHandlerInst.transmit(ApiMessage()
+                    .setText(msg)
+            )
         }
     }
 }

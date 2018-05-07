@@ -1,6 +1,6 @@
 package matterlink.bridge.command
 
-import matterlink.bridge.ApiMessage
+import matterlink.api.ApiMessage
 import matterlink.config.CommandConfig
 import matterlink.config.PermissionConfig
 import matterlink.config.cfg

@@ -1,7 +1,7 @@
 package matterlink.bridge.command
 
-import matterlink.bridge.ApiMessage
-import matterlink.bridge.MessageHandler
+import matterlink.api.ApiMessage
+import matterlink.bridge.MessageHandlerInst
 
 abstract class IMinecraftCommandSender(val user: String, val userId: String, val server: String) {
     /**
@@ -23,8 +23,8 @@ abstract class IMinecraftCommandSender(val user: String, val userId: String, val
 
     fun sendReply(text: String) {
         reply = text
-        MessageHandler.transmit(ApiMessage(
-                text = text
-        ))
+        MessageHandlerInst.transmit(ApiMessage()
+                .setText(text)
+        )
     }
 }

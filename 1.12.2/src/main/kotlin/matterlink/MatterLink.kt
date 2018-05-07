@@ -42,7 +42,7 @@ object MatterLink : IMatterLink() {
 
     @Mod.EventHandler
     fun serverAboutToStart(event: FMLServerAboutToStartEvent) {
-//        MessageHandler.start(clear = true)
+//        MessageHandlerInst.start(clear = true)
     }
 
     @Mod.EventHandler

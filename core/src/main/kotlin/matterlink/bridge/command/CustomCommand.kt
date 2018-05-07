@@ -1,7 +1,7 @@
 package matterlink.bridge.command
 
-import matterlink.bridge.ApiMessage
-import matterlink.bridge.MessageHandler
+import matterlink.api.ApiMessage
+import matterlink.bridge.MessageHandlerInst
 import matterlink.handlers.TickHandler
 import matterlink.instance
 import matterlink.lazyFormat
@@ -28,7 +28,9 @@ data class CustomCommand(
         }
 
         if (!canExecute(userId, server)) {
-            MessageHandler.transmit(ApiMessage(text = "$user is not permitted to perform command: $alias"))
+            MessageHandlerInst.transmit(ApiMessage()
+                    .setText("$user is not permitted to perform command: $alias")
+            )
             return false
         }
 
@@ -42,7 +44,9 @@ data class CustomCommand(
                 commandSender.execute("$execute $args") || commandSender.reply.isNotBlank()
             }
             CommandType.RESPONSE -> {
-                MessageHandler.transmit(ApiMessage(text = response.lazyFormat(getReplacements(user, userId, server, args))))
+                MessageHandlerInst.transmit(ApiMessage()
+                        .setText(response.lazyFormat(getReplacements(user, userId, server, args)))
+                )
                 true
             }
         }

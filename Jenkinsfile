@@ -1,6 +1,11 @@
 pipeline {
     agent any
 	stages {
+	    stage("init") {
+	        steps {
+	            sh 'git submodule update --init --recursive'
+	        }
+	    }
 	    stage("1.7.10") {
 	        steps {
 	            sh './gradlew :1.7.10:setupCiWorkspace'

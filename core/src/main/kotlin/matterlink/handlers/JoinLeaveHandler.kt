@@ -1,9 +1,9 @@
 package matterlink.handlers
 
 import matterlink.antiping
-import matterlink.bridge.ApiMessage
-import matterlink.bridge.JOIN_LEAVE
-import matterlink.bridge.MessageHandler
+import matterlink.api.ApiMessage
+import matterlink.api.ApiMessage.JOIN_LEAVE
+import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 import matterlink.mapFormat
 
@@ -16,10 +16,10 @@ object JoinLeaveHandler {
                             "{username:antiping}" to player.antiping
                     )
             )
-            MessageHandler.transmit(ApiMessage(
-                    text = msg,
-                    event = JOIN_LEAVE
-            ))
+            MessageHandlerInst.transmit(ApiMessage()
+                    .setText(msg)
+                    .setEvent(ApiMessage.JOIN_LEAVE)
+            )
         }
     }
 
@@ -31,10 +31,10 @@ object JoinLeaveHandler {
                             "{username:antiping}" to player.antiping
                     )
             )
-            MessageHandler.transmit(ApiMessage(
-                    text = msg,
-                    event = JOIN_LEAVE
-            ))
+            MessageHandlerInst.transmit(ApiMessage()
+                    .setText(msg)
+                    .setEvent(JOIN_LEAVE)
+            )
         }
     }
 }

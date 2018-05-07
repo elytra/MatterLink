@@ -1,6 +1,6 @@
 package matterlink.handlers
 
-import matterlink.bridge.MessageHandler
+import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.ServerChatHandler
 import matterlink.update.UpdateChecker
 
@@ -17,7 +17,7 @@ object TickHandler {
     fun handleTick() {
         tickCounter++
         if (tickCounter % 100 == 0) {
-            MessageHandler.checkConnection()
+            MessageHandlerInst.checkConnection()
         }
 
         ServerChatHandler.writeIncomingToChat()

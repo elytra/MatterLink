@@ -1,6 +1,6 @@
 package matterlink.command
 
-import matterlink.bridge.MessageHandler
+import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.config.cfg
 
@@ -16,18 +16,20 @@ object CommandCore {
 
         return when (cmd) {
             "connect" -> {
-                MessageHandler.start(message = "Bridge connected by console")
+                MessageHandlerInst.start( "Bridge connected by console", true)
                 "Attempting bridge connection!"
             }
             "disconnect" -> {
-                MessageHandler.stop(message = "Bridge disconnected by console")
+                MessageHandlerInst.stop("Bridge disconnected by console")
                 "Bridge disconnected!"
             }
             "reload" -> {
-                if (MessageHandler.connected) MessageHandler.stop(message = "Bridge restarting (reload command issued by console)")
+//                if (MessageHandlerInst.connected)
+                MessageHandlerInst.stop("Bridge restarting (reload command issued by console)")
                 cfg = cfg.load()
                 BridgeCommandRegistry.reloadCommands()
-                if (!MessageHandler.connected) MessageHandler.start(message = "Bridge reconnected")
+//                if (!MessageHandlerInst.connected)
+                MessageHandlerInst.start("Bridge reconnected", false)
                 "Bridge config reloaded!"
             }
             else -> {

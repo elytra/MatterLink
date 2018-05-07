@@ -1,9 +1,10 @@
 package matterlink
 
-import matterlink.bridge.MessageHandler
+import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
+import matterlink.update.UpdateChecker
 
 lateinit var instance: IMatterLink
 
@@ -16,22 +17,35 @@ abstract class IMatterLink {
 
     abstract fun wrappedSendToPlayers(msg: String)
 
-
     fun start() {
+        MessageHandlerInst.setLogger({ level, msg ->
+            when (level) {
+                "FATAL" -> fatal(msg)
+                "ERROR" -> error(msg)
+                "WARN" -> warn(msg)
+                "INFO" -> info(msg)
+                "DEBUG" -> debug(msg)
+                "TRACE" -> trace(msg)
+            }
+        })
         serverStartTime = System.currentTimeMillis()
-        MessageHandler.start(clear = true, firstRun = true, message = "Server started, connecting to matterbridge API")
+
+        if (cfg.connect.autoConnect)
+            MessageHandlerInst.start("Server started, connecting to matterbridge API", true)
+        UpdateChecker.run()
     }
 
     fun stop() {
-        MessageHandler.stop(message = "Server shutting down, disconnecting from matterbridge API")
+        MessageHandlerInst.stop("Server shutting down, disconnecting from matterbridge API")
     }
 
     abstract fun log(level: String, formatString: String, vararg data: Any)
 
-    fun fatal(formatString: String, vararg data: Any) = log("^FATAL", formatString, *data)
+    fun fatal(formatString: String, vararg data: Any) = log("FATAL", formatString, *data)
     fun error(formatString: String, vararg data: Any) = log("ERROR", formatString, *data)
     fun warn(formatString: String, vararg data: Any) = log("WARN", formatString, *data)
     fun info(formatString: String, vararg data: Any) = log("INFO", formatString, *data)
+
     fun debug(formatString: String, vararg data: Any) {
         if (cfg.debug.logLevel == "DEBUG" || cfg.debug.logLevel == "TRACE")
             log("INFO", "DEBUG: " + formatString.replace("\n", "\nDEBUG: "), *data)

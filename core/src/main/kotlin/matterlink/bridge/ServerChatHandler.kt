@@ -1,6 +1,7 @@
 package matterlink.bridge
 
 import matterlink.bridge.command.BridgeCommandRegistry
+import matterlink.bridge.format
 import matterlink.config.cfg
 import matterlink.instance
 
@@ -10,9 +11,9 @@ object ServerChatHandler {
      * This method must be called every server tick with no arguments.
      */
     fun writeIncomingToChat() {
-        if (MessageHandler.rcvQueue.isNotEmpty())
-            instance.debug("incoming: " + MessageHandler.rcvQueue.toString())
-        val nextMessage = MessageHandler.rcvQueue.poll()
+        if (MessageHandlerInst.queue.isNotEmpty())
+            instance.debug("incoming: " + MessageHandlerInst.queue.toString())
+        val nextMessage = MessageHandlerInst.queue.poll()
 
         if (nextMessage != null && nextMessage.gateway == cfg.connect.gateway) {
             if (!nextMessage.text.isBlank()) {

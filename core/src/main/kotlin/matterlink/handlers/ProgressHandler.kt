@@ -1,8 +1,8 @@
 package matterlink.handlers
 
 import matterlink.antiping
-import matterlink.bridge.ApiMessage
-import matterlink.bridge.MessageHandler
+import matterlink.api.ApiMessage
+import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 
 object ProgressHandler {
@@ -10,8 +10,8 @@ object ProgressHandler {
     fun handleProgress(name: String, message: String, display: String) {
         if (!cfg.outgoing.advancements) return
         val usr = name.antiping
-        MessageHandler.transmit(ApiMessage(
-                text = "$usr $message $display"
-        ))
+        MessageHandlerInst.transmit(ApiMessage()
+                .setText("$usr $message $display")
+        )
     }
 }
