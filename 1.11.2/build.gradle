@@ -31,7 +31,8 @@ shadowJar {
     classifier ''
 
     dependencies {
-        include(project(":core"))
+        include project(":core")
+        include project(":api")
     }
 
     exclude 'dummyThing'

@@ -5,7 +5,7 @@ import matterlink.api.ApiMessage
 import matterlink.api.MessageHandler
 import matterlink.mapFormat
 
-object MessageHandlerInst : MessageHandler()
+object MessageHandlerInst: MessageHandler()
 
 fun ApiMessage.format(fmt: String): String {
     return fmt.mapFormat(

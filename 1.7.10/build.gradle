@@ -28,6 +28,7 @@ configurations {
 
 dependencies {
     shade project(":core")
+    shade project(":api")
 }
 
 minecraft {
