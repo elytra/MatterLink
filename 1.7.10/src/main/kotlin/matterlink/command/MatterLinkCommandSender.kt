@@ -8,7 +8,7 @@ import net.minecraft.util.ChunkCoordinates
 import net.minecraft.util.IChatComponent
 import net.minecraft.world.World
 
-class MatterLinkCommandSender(user: String, userId: String, server: String) : IMinecraftCommandSender(user, userId, server), ICommandSender {
+class MatterLinkCommandSender(user: String, userId: String, server: String, op: Boolean) : IMinecraftCommandSender(user, userId, server, op), ICommandSender {
 
     private var level: Int = 0
 

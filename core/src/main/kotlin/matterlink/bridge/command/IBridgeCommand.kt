@@ -1,6 +1,7 @@
 package matterlink.bridge.command
 
 import matterlink.config.PermissionConfig
+import matterlink.instance
 
 interface IBridgeCommand {
     val help: String
@@ -9,7 +10,10 @@ interface IBridgeCommand {
     fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean
 
     fun canExecute(userId: String, server: String): Boolean {
-        return getPermLevel(userId, server) >= permLevel
+        instance.info("this: $this canExecute: $userId server: $server permLevel: $permLevel")
+        val canExec = getPermLevel(userId, server) >= permLevel
+        instance.info("return $canExec")
+        return canExec
     }
 
     fun validate() = true

@@ -3,7 +3,7 @@ package matterlink.bridge.command
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 
-abstract class IMinecraftCommandSender(val user: String, val userId: String, val server: String) {
+abstract class IMinecraftCommandSender(val user: String, val userId: String, val server: String, val op: Boolean) {
     /**
      * @param   cmdString The command to execute with its arguments
      *
@@ -14,8 +14,8 @@ abstract class IMinecraftCommandSender(val user: String, val userId: String, val
     val accountName = "$user (id=$userId server=$server)"
 
     fun canExecute(commandName: String): Boolean {
+        if(op) return true
         val command = BridgeCommandRegistry[commandName] ?: return false
-
         return command.canExecute(userId, server)
     }
 

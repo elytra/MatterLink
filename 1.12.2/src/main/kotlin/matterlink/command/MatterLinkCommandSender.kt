@@ -9,8 +9,7 @@ import net.minecraft.world.World
 import net.minecraftforge.fml.common.FMLCommonHandler
 import javax.annotation.Nonnull
 
-class MatterLinkCommandSender(user: String, userId: String, server: String) : IMinecraftCommandSender(user, userId, server), ICommandSender {
-
+class MatterLinkCommandSender(user: String, userId: String, server: String, op: Boolean) : IMinecraftCommandSender(user, userId, server, op), ICommandSender {
     override fun execute(cmdString: String): Boolean {
         return 0 < FMLCommonHandler.instance().minecraftServerInstance.commandManager.executeCommand(
                 this,

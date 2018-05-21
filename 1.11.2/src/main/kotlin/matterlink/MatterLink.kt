@@ -63,7 +63,7 @@ object MatterLink : IMatterLink() {
     override fun log(level: String, formatString: String, vararg data: Any) =
             logger.log(Level.toLevel(level, Level.INFO), formatString, *data)
 
-    override fun commandSenderFor(user: String, userId: String, server: String) = MatterLinkCommandSender(user, userId, server)
+    override fun commandSenderFor(user: String, userId: String, server: String, op: Boolean) = MatterLinkCommandSender(user, userId, server, op)
 
     override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION

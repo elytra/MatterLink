@@ -13,7 +13,7 @@ abstract class IMatterLink {
     abstract val modVersion: String
     abstract val forgeVersion: String
 
-    abstract fun commandSenderFor(user: String, userId: String, server: String): IMinecraftCommandSender
+    abstract fun commandSenderFor(user: String, userId: String, server: String, op: Boolean): IMinecraftCommandSender
 
     abstract fun wrappedSendToPlayers(msg: String)
 

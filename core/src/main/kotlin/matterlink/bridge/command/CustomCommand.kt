@@ -14,7 +14,8 @@ data class CustomCommand(
         override val help: String = "",
         val allowArgs: Boolean = true,
         val timeout: Int = 20,
-        val defaultCommand: Boolean? = null
+        val defaultCommand: Boolean? = null,
+        val execOp: Boolean? = null
 ) : IBridgeCommand {
     val alias: String
         get() = BridgeCommandRegistry.getName(this)!!
@@ -41,8 +42,9 @@ data class CustomCommand(
             CommandType.EXECUTE -> {
                 //uses a new commandsender for each user
                 // TODO: cache CommandSenders
-                val commandSender = instance.commandSenderFor(user, userId, server)
-                commandSender.execute("$execute $args") || commandSender.reply.isNotBlank()
+                val commandSender = instance.commandSenderFor(user, userId, server, execOp ?: false)
+                val cmd = "$execute $args"
+                commandSender.execute(cmd) || commandSender.reply.isNotBlank()
             }
             CommandType.RESPONSE -> {
                 MessageHandlerInst.transmit(ApiMessage()
@@ -58,7 +60,7 @@ data class CustomCommand(
      */
     override fun validate(): Boolean {
         val typeCheck = when (type) {
-            CommandType.EXECUTE -> execute?.isNotBlank() ?: false
+            CommandType.EXECUTE -> execute != null
             CommandType.RESPONSE -> response?.isNotBlank() ?: false
         }
         if (!typeCheck) return false
