@@ -8,17 +8,18 @@ import matterlink.lazyFormat
 
 data class CustomCommand(
         val type: CommandType = CommandType.RESPONSE,
-        val execute: String = "",
-        val response: String = "",
+        val execute: String? = null,
+        val response: String? = null,
         override val permLevel: Double = 0.0,
         override val help: String = "",
         val allowArgs: Boolean = true,
-        val timeout: Int = 20
+        val timeout: Int = 20,
+        val defaultCommand: Boolean? = null
 ) : IBridgeCommand {
     val alias: String
         get() = BridgeCommandRegistry.getName(this)!!
 
-    var lastUsed: Int = 0
+    @Transient private var lastUsed: Int = 0
     override fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean {
         if (!allowArgs && args.isNotBlank()) return false
 
@@ -45,7 +46,7 @@ data class CustomCommand(
             }
             CommandType.RESPONSE -> {
                 MessageHandlerInst.transmit(ApiMessage()
-                        .setText(response.lazyFormat(getReplacements(user, userId, server, args)))
+                        .setText((response ?: "").lazyFormat(getReplacements(user, userId, server, args)))
                 )
                 true
             }
@@ -57,8 +58,8 @@ data class CustomCommand(
      */
     override fun validate(): Boolean {
         val typeCheck = when (type) {
-            CommandType.EXECUTE -> execute.isNotBlank()
-            CommandType.RESPONSE -> response.isNotBlank()
+            CommandType.EXECUTE -> execute?.isNotBlank() ?: false
+            CommandType.RESPONSE -> response?.isNotBlank() ?: false
         }
         if (!typeCheck) return false
 
