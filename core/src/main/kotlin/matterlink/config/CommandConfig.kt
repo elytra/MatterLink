@@ -54,6 +54,15 @@ object CommandConfig {
                     allowArgs = false,
                     timeout = 200,
                     defaultCommand = true
+            ),
+            "exec" to CustomCommand(
+                    type = CommandType.EXECUTE,
+                    execute = "",
+                    permLevel = 1.0,
+                    help = "Execute any command as OP, be careful with this one",
+                    allowArgs = false,
+                    execOp = true,
+                    defaultCommand = true
             )
     )
 
