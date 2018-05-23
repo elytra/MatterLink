@@ -44,8 +44,7 @@ Commands are specified in JSON format as follows:
 Passthrough command (executes the configured command from the MC server console)
 
 ```json
-{
-    "alias": "tps",
+"tps": {
     "type": "PASSTHROUGH",
     "execute": "forge tps",
     "permLevel": 0,
@@ -57,8 +56,7 @@ Passthrough command (executes the configured command from the MC server console)
 Response command
 
 ```json
-{
-    "alias": "uptime",
+"uptime": {
     "type": "RESPONSE",
     "response": "{uptime}",
     "permLevel": 1,
@@ -82,7 +80,7 @@ For Discord, this is your userid (NOT the four-digit number.)
 ```
 * Edit and reload the config file without restarting the server!
 ```
-/config <connect|disconnect|reload>
+/bridge <connect|disconnect|reload>
     connect:    Connects the MC chat to the MatterBridge server
     disconnect: Disconnects the chat from the MatterBridge server
     reload:     Disconnects, reloads the config and custom command files, 
@@ -98,7 +96,7 @@ Requires the matterbridge config api section to be setup along these lines:
 [api.local]
     BindAddress="0.0.0.0:4242" # or listen only to localhost: 127.0.0.1:4242
     #OPTIONAL (no authorization if token is empty)
-    Token="mytoken"
+    Token="mytoken" # leave this empty if you know its going to run on the same machine as the minecraft server
     Buffer=1000
     RemoteNickFormat="{NICK}"
     ShowJoinPart = true
