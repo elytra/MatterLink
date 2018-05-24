@@ -18,7 +18,7 @@ abstract class IMatterLink {
     abstract fun wrappedSendToPlayers(msg: String)
 
     fun start() {
-        MessageHandlerInst.setLogger({ level, msg ->
+        MessageHandlerInst.logger = { level, msg ->
             when (level) {
                 "FATAL" -> fatal(msg)
                 "ERROR" -> error(msg)
@@ -27,7 +27,7 @@ abstract class IMatterLink {
                 "DEBUG" -> debug(msg)
                 "TRACE" -> trace(msg)
             }
-        })
+        }
         serverStartTime = System.currentTimeMillis()
 
         if (cfg.connect.autoConnect)

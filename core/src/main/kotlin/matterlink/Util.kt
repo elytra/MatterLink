@@ -1,5 +1,7 @@
 package matterlink
 
+import matterlink.bridge.MessageHandlerInst
+import matterlink.config.cfg
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -31,6 +33,14 @@ fun String.lazyFormat(env: Map<String, () -> String>): String {
     }
     return result
 }
+
+val String.stripColor: String
+    get() =
+        if (cfg.outgoing.stripColors)
+            this.replace("§.".toRegex(), "")
+        else
+            this
+
 
 val Exception.stackTraceString: String
     get() {

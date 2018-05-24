@@ -5,12 +5,12 @@
 - [Features](#features)
 - [Setup](#setup)
 
-A MatterBridge endpoint for MC servers!
+A Matterbridge endpoint for MC servers!
 
 THIS MOD REQUIRES YOU TO ALSO RUN A MATTERBRIDGE RELAY
 https://github.com/42wim/matterbridge
 
-Chat with us on IRC: [#matterbridge @ irc.esper.net](irc://irc.esper.net/matterbridge)
+Chat with us on IRC: [#matterlink @ irc.esper.net](irc://irc.esper.net/matterlink)
 
 ## Downloads
 
@@ -20,17 +20,17 @@ Chat with us on IRC: [#matterbridge @ irc.esper.net](irc://irc.esper.net/matterb
 
 [![Files](https://curse.nikky.moe/api/img/287323/files?logo&style=for-the-badge&version=1.12.2)](https://minecraft.curseforge.com/projects/287323/files)
 
-[![Download](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.12.2)](https://curse.nikky.moe/api/url/287323?version=1.12.2)
+[![Download 1.12.2](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.12.2)](https://curse.nikky.moe/api/url/287323?version=1.12.2)
 
-[![Download](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.11.2)](https://curse.nikky.moe/api/url/287323?version=1.11.2)
+[![Download 1.11.2](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.11.2)](https://curse.nikky.moe/api/url/287323?version=1.11.2)
 
-[![Download](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.10.2)](https://curse.nikky.moe/api/url/287323?version=1.10.2)
+[![Download 1.10.2](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.10.2)](https://curse.nikky.moe/api/url/287323?version=1.10.2)
 
-[![Download](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.7.10)](https://curse.nikky.moe/api/url/287323?version=1.7.10)
+[![Download 1.7.10](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.7.10)](https://curse.nikky.moe/api/url/287323?version=1.7.10)
 
 ## Dependencies
 
-[![Files](https://curse.nikky.moe/api/img/248453/files?logo&style=for-the-badge)](https://minecraft.curseforge.com/projects/248453/files)
+[![Forgelin Files](https://curse.nikky.moe/api/img/248453/files?logo&style=for-the-badge)](https://minecraft.curseforge.com/projects/248453/files)
 
 ## Features
 
@@ -96,7 +96,7 @@ Requires the matterbridge config api section to be setup along these lines:
 [api.local]
     BindAddress="0.0.0.0:4242" # or listen only to localhost: 127.0.0.1:4242
     #OPTIONAL (no authorization if token is empty)
-    Token="mytoken" # leave this empty if you know its going to run on the same machine as the minecraft server
+    Token="mytoken" # leave this empty if you know its going to run on localhost only
     Buffer=1000
     RemoteNickFormat="{NICK}"
     ShowJoinPart = true

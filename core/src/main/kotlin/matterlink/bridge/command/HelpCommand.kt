@@ -15,8 +15,10 @@ object HelpCommand : IBridgeCommand {
                         "$it: ${BridgeCommandRegistry.getHelpString(it)}"
                     }
         }
-        MessageHandlerInst.transmit(ApiMessage()
-                .setText(msg)
+        MessageHandlerInst.transmit(
+                ApiMessage(
+                        text = msg
+                )
         )
         return true
     }

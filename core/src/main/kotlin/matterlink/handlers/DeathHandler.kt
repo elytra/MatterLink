@@ -4,6 +4,7 @@ import matterlink.antiping
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
+import matterlink.stripColor
 import java.util.*
 
 object DeathHandler {
@@ -15,16 +16,14 @@ object DeathHandler {
             damageType: String
     ) {
         if (cfg.outgoing.death.enable) {
-            var msg = deathMessage.replace(player, player.antiping)
+            var msg = deathMessage.replace(player, player.stripColor.antiping)
             if (cfg.outgoing.death.damageType) {
                 val emojis = cfg.outgoing.death.damageTypeMapping[damageType]?.split(' ')
                         ?: listOf("\uD83D\uDC7B unknown type '$damageType'")
                 val damageEmoji = emojis[random.nextInt(emojis.size)]
                 msg += " $damageEmoji"
             }
-            MessageHandlerInst.transmit(ApiMessage()
-                    .setText(msg)
-            )
+            MessageHandlerInst.transmit(ApiMessage(text = msg))
         }
     }
 }

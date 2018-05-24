@@ -20,7 +20,9 @@ data class CustomCommand(
     val alias: String
         get() = BridgeCommandRegistry.getName(this)!!
 
-    @Transient private var lastUsed: Int = 0
+    @Transient
+    private var lastUsed: Int = 0
+
     override fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean {
         if (!allowArgs && args.isNotBlank()) return false
 
@@ -30,8 +32,10 @@ data class CustomCommand(
         }
 
         if (!canExecute(userId, server)) {
-            MessageHandlerInst.transmit(ApiMessage()
-                    .setText("$user is not permitted to perform command: $alias")
+            MessageHandlerInst.transmit(
+                    ApiMessage(
+                            text = "$user is not permitted to perform command: $alias"
+                    )
             )
             return false
         }
@@ -47,8 +51,10 @@ data class CustomCommand(
                 commandSender.execute(cmd) || commandSender.reply.isNotBlank()
             }
             CommandType.RESPONSE -> {
-                MessageHandlerInst.transmit(ApiMessage()
-                        .setText((response ?: "").lazyFormat(getReplacements(user, userId, server, args)))
+                MessageHandlerInst.transmit(
+                        ApiMessage(
+                                text = (response?.lazyFormat(getReplacements(user, userId, server, args)) ?: "")
+                        )
                 )
                 true
             }

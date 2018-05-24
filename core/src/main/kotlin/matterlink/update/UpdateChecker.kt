@@ -108,8 +108,10 @@ class UpdateChecker : Thread() {
         }
 
         instance.warn("Mod out of date! New $version available at ${latest.downloadURL}")
-        MessageHandlerInst.transmit(ApiMessage()
-                .setText("MatterLink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}")
+        MessageHandlerInst.transmit(
+                ApiMessage(
+                        text = "MatterLink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}"
+                )
         )
     }
 }

@@ -1,5 +1,7 @@
-package matterlink.bridge
+package matterlink.handlers
 
+import com.sun.xml.internal.ws.util.StringUtils
+import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.format
 import matterlink.config.cfg
@@ -15,7 +17,7 @@ object ServerChatHandler {
             instance.debug("incoming: " + MessageHandlerInst.queue.toString())
         val nextMessage = MessageHandlerInst.queue.poll()
 
-        if (nextMessage != null && nextMessage.gateway == cfg.connect.gateway) {
+        if (nextMessage.gateway == cfg.connect.gateway) {
             if (!nextMessage.text.isBlank()) {
                 val message = when (nextMessage.event) {
                     "user_action" -> nextMessage.format(cfg.incoming.action)

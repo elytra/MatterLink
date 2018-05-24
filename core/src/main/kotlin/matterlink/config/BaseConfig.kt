@@ -1,6 +1,7 @@
 package matterlink.config
 
 import matterlink.bridge.MessageHandlerInst
+import matterlink.stripColor
 import java.io.File
 import java.util.regex.Pattern
 
@@ -48,8 +49,9 @@ abstract class BaseConfig(rootDir: File) {
             var announceConnect: Boolean = true,
             var announceDisconnect: Boolean = true,
             val advancements: Boolean = true,
-            var death: DeathOptions = DeathOptions(),
+            var stripColors: Boolean = true,
 
+            var death: DeathOptions = DeathOptions(),
             var joinPart: JoinPartOptions = JoinPartOptions()
     )
 
@@ -223,6 +225,12 @@ abstract class BaseConfig(rootDir: File) {
                         category,
                         outgoing.announceConnect,
                         "announce intention to disconnect / reconnect"
+                ),
+                stripColors = getBoolean(
+                        "stripColors",
+                        category,
+                        outgoing.stripColors,
+                        "strip colors from nicknames and messages"
                 )
         )
 
@@ -308,7 +316,6 @@ abstract class BaseConfig(rootDir: File) {
         MessageHandlerInst.config.systemUser = outgoing.systemUser
         MessageHandlerInst.config.announceConnect = outgoing.announceConnect
         MessageHandlerInst.config.announceDisconnect = outgoing.announceDisconnect
-
     }
 
     abstract fun load(): BaseConfig

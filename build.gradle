@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version '1.2.21'
+    id "org.jetbrains.kotlin.jvm" version '1.2.41'
     id 'idea'
 }
 
@@ -19,18 +19,16 @@ subprojects {
         }
     }
 
-    if (name != "core") {
-
-        repositories {
-            jcenter()
-            maven {
-                name = "unascribed"
-                url = 'http://unascribed.com/maven/releases'
-            }
-            maven {
-                name = "shadowfacts"
-                url = "http://maven.shadowfacts.net/"
-            }
+    repositories {
+        jcenter()
+        maven {
+            name = "unascribed"
+            url = 'http://unascribed.com/maven/releases'
+        }
+        maven {
+            name = "shadowfacts"
+            url = "http://maven.shadowfacts.net/"
         }
     }
+
 }

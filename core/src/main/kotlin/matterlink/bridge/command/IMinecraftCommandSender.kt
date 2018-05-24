@@ -23,8 +23,10 @@ abstract class IMinecraftCommandSender(val user: String, val userId: String, val
 
     fun sendReply(text: String) {
         reply = text
-        MessageHandlerInst.transmit(ApiMessage()
-                .setText(text)
+        MessageHandlerInst.transmit(
+                ApiMessage(
+                        text = text
+                )
         )
     }
 }

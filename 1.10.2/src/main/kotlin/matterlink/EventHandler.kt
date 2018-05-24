@@ -1,6 +1,6 @@
 package matterlink
 
-import matterlink.api.ApiMessage.USER_ACTION
+import matterlink.api.ApiMessage.Companion.USER_ACTION
 import matterlink.config.cfg
 import matterlink.handlers.*
 import net.minecraft.command.server.CommandBroadcast
