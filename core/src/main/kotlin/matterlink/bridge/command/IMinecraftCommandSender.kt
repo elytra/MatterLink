@@ -2,6 +2,7 @@ package matterlink.bridge.command
 
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
+import matterlink.stripColorOut
 
 abstract class IMinecraftCommandSender(val user: String, val userId: String, val server: String, val op: Boolean) {
     /**
@@ -25,7 +26,7 @@ abstract class IMinecraftCommandSender(val user: String, val userId: String, val
         reply = text
         MessageHandlerInst.transmit(
                 ApiMessage(
-                        text = text
+                        text = text.stripColorOut
                 )
         )
     }
