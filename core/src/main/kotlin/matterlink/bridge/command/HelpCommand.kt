@@ -2,6 +2,7 @@ package matterlink.bridge.command
 
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
+import matterlink.stripColorOut
 
 object HelpCommand : IBridgeCommand {
     override val help: String = "Returns the help string for the given command. Syntax: help <command>"
@@ -17,7 +18,7 @@ object HelpCommand : IBridgeCommand {
         }
         MessageHandlerInst.transmit(
                 ApiMessage(
-                        text = msg
+                        _text = msg.stripColorOut
                 )
         )
         return true

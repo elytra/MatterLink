@@ -47,16 +47,19 @@ object EventHandler {
     @SubscribeEvent
     @JvmStatic
     fun commandEvent(e: CommandEvent) {
-        logger.info("commandEvent ${e.sender.javaClass.simpleName}")
-        logger.info("commandEvent ${e.sender.javaClass.typeName}")
+        instance.log("DEBUG","commandEvent ${e.sender.javaClass.simpleName}")
+        instance.log("DEBUG","commandEvent ${e.sender.javaClass.typeName}")
+        instance.log("DEBUG","command ${e.command.aliases}")
+        instance.log("DEBUG","command ${e.command.name}")
         val sender = when {
             e.sender is DedicatedServer -> cfg.outgoing.systemUser
             else -> e.sender.displayName.unformattedText
         }
+        instance.log("DEBUG","sender $sender")
         val args = e.parameters.joinToString(" ")
         val type = when {
             e.command is CommandEmote -> USER_ACTION
-            e.command.name == "me" -> USER_ACTION
+            e.command.name.equals("me", true) -> USER_ACTION
             e.command is CommandBroadcast -> ""
             else -> return
         }

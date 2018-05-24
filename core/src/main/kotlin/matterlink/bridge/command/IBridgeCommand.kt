@@ -10,9 +10,9 @@ interface IBridgeCommand {
     fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean
 
     fun canExecute(userId: String, server: String): Boolean {
-        instance.info("this: $this canExecute: $userId server: $server permLevel: $permLevel")
+        instance.trace("canExecute this: $this canExecute: $userId server: $server permLevel: $permLevel")
         val canExec = getPermLevel(userId, server) >= permLevel
-        instance.info("return $canExec")
+        instance.trace("canExecute return $canExec")
         return canExec
     }
 

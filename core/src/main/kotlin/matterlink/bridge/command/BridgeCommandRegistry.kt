@@ -12,7 +12,8 @@ object BridgeCommandRegistry {
     private val commandMap: HashMap<String, IBridgeCommand> = hashMapOf()
 
     fun handleCommand(input: ApiMessage): Boolean {
-        if (!cfg.command.enable) return false
+        if (!cfg.command.enable || input.text.isBlank()) return false
+
         if (input.text[0] != cfg.command.prefix[0] || input.text.length < 2) return false
 
         val cmd = input.text.substring(1).split(' ', ignoreCase = false, limit = 2)
@@ -23,11 +24,11 @@ object BridgeCommandRegistry {
 
     fun register(alias: String, cmd: IBridgeCommand): Boolean {
         if (alias.isBlank() || commandMap.containsKey(alias)) {
-            instance.error("Failed to register command: '${alias}'")
+            instance.error("Failed to register command: '$alias'")
             return false
         }
         if (!cmd.validate()) {
-            instance.error("Failed to validate command: '${alias}'")
+            instance.error("Failed to validate command: '$alias'")
             return false
         }
         //TODO: maybe write alias to command here ?

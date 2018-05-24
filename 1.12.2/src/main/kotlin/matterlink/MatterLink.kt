@@ -47,7 +47,7 @@ object MatterLink : IMatterLink() {
 
     @Mod.EventHandler
     fun serverStarting(event: FMLServerStartingEvent) {
-        logger.debug("Registering server commands")
+        log("DEBUG", "Registering server commands")
         event.registerServerCommand(CommandMatterlink())
         start()
     }

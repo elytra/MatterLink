@@ -35,7 +35,7 @@ data class CustomCommand(
         if (!canExecute(userId, server)) {
             MessageHandlerInst.transmit(
                     ApiMessage(
-                            text = "$user is not permitted to perform command: $alias".stripColorOut
+                            _text = "$user is not permitted to perform command: $alias".stripColorOut
                     )
             )
             return false
@@ -45,8 +45,7 @@ data class CustomCommand(
 
         return when (type) {
             CommandType.EXECUTE -> {
-                //uses a new commandsender for each user
-                // TODO: cache CommandSenders
+                // uses a new commandsender for each use
                 val commandSender = instance.commandSenderFor(user, userId, server, execOp ?: false)
                 val cmd = "$execute $args"
                 commandSender.execute(cmd) || commandSender.reply.isNotBlank()
@@ -54,7 +53,7 @@ data class CustomCommand(
             CommandType.RESPONSE -> {
                 MessageHandlerInst.transmit(
                         ApiMessage(
-                                text = (response?.lazyFormat(getReplacements(user, userId, server, args))?.stripColorOut ?: "")
+                                _text = (response?.lazyFormat(getReplacements(user, userId, server, args))?.stripColorOut ?: "")
                         )
                 )
                 true

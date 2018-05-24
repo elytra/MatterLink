@@ -37,17 +37,16 @@ fun String.lazyFormat(env: Map<String, () -> String>): String {
 val String.stripColorOut: String
     get() =
         if (cfg.outgoing.stripColors)
-            this.replace("§.".toRegex(), "")
+            this.replace("§.?".toRegex(RegexOption.UNIX_LINES), "")
         else
             this
 
 
 val String.stripColorIn: String
-    get() =
-        if (cfg.incoming.stripColors)
-            this.replace("§.".toRegex(), "")
-        else
-            this
+    get() = if (cfg.incoming.stripColors)
+        this.replace("§.?".toRegex(), "")
+    else
+        this
 
 
 val Exception.stackTraceString: String
