@@ -1,6 +1,5 @@
 package matterlink
 
-import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 import java.io.PrintWriter
 import java.io.StringWriter
