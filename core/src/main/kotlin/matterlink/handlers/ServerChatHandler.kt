@@ -19,12 +19,13 @@ object ServerChatHandler {
 
         if (nextMessage?.gateway == cfg.connect.gateway) {
             if (!nextMessage.text.isBlank()) {
+                nextMessage.text = nextMessage.text.stripColorIn
                 val message = when (nextMessage.event) {
                     "user_action" -> nextMessage.format(cfg.incoming.action)
                     "" -> {
                         // try to handle command and do not handle as a chat message
                         if (BridgeCommandRegistry.handleCommand(nextMessage)) return
-                        nextMessage.format(cfg.incoming.chat.stripColorIn)
+                        nextMessage.format(cfg.incoming.chat)
                     }
                     "join_leave" -> nextMessage.format(cfg.incoming.joinPart)
                     else -> {
