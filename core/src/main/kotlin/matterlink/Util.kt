@@ -34,9 +34,17 @@ fun String.lazyFormat(env: Map<String, () -> String>): String {
     return result
 }
 
-val String.stripColor: String
+val String.stripColorOut: String
     get() =
         if (cfg.outgoing.stripColors)
+            this.replace("§.".toRegex(), "")
+        else
+            this
+
+
+val String.stripColorIn: String
+    get() =
+        if (cfg.incoming.stripColors)
             this.replace("§.".toRegex(), "")
         else
             this

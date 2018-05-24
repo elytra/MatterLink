@@ -3,15 +3,15 @@ package matterlink.handlers
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.instance
-import matterlink.stripColor
+import matterlink.stripColorOut
 
 object ChatProcessor {
     fun sendToBridge(user: String, msg: String, event: String) {
         val message = msg.trim()
         when {
             message.isNotBlank() -> MessageHandlerInst.transmit(ApiMessage(
-                    username = user.stripColor,
-                    text = message.stripColor,
+                    username = user.stripColorOut,
+                    text = message.stripColorOut,
                     event = event)
             )
             else -> instance.warn("WARN: dropped blank message by '$user'")

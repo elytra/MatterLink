@@ -6,15 +6,15 @@ import matterlink.api.ApiMessage.Companion.JOIN_LEAVE
 import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 import matterlink.mapFormat
-import matterlink.stripColor
+import matterlink.stripColorOut
 
 object JoinLeaveHandler {
     fun handleJoin(player: String) {
         if (cfg.outgoing.joinPart.enable) {
             val msg = cfg.outgoing.joinPart.joinServer.mapFormat(
                     mapOf(
-                            "{username}" to player.stripColor,
-                            "{username:antiping}" to player.stripColor.antiping
+                            "{username}" to player.stripColorOut,
+                            "{username:antiping}" to player.stripColorOut.antiping
                     )
             )
             MessageHandlerInst.transmit(
@@ -30,8 +30,8 @@ object JoinLeaveHandler {
         if (cfg.outgoing.joinPart.enable) {
             val msg = cfg.outgoing.joinPart.partServer.mapFormat(
                     mapOf(
-                            "{username}" to player.stripColor,
-                            "{username:antiping}" to player.stripColor.antiping
+                            "{username}" to player.stripColorOut,
+                            "{username:antiping}" to player.stripColorOut.antiping
                     )
             )
             MessageHandlerInst.transmit(

@@ -1,11 +1,11 @@
 package matterlink.handlers
 
-import com.sun.xml.internal.ws.util.StringUtils
 import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.format
 import matterlink.config.cfg
 import matterlink.instance
+import matterlink.stripColorIn
 
 object ServerChatHandler {
 
@@ -24,7 +24,7 @@ object ServerChatHandler {
                     "" -> {
                         // try to handle command and do not handle as a chat message
                         if (BridgeCommandRegistry.handleCommand(nextMessage)) return
-                        nextMessage.format(cfg.incoming.chat)
+                        nextMessage.format(cfg.incoming.chat.stripColorIn)
                     }
                     "join_leave" -> nextMessage.format(cfg.incoming.joinPart)
                     else -> {

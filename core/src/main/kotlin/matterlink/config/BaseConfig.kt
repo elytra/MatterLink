@@ -1,7 +1,6 @@
 package matterlink.config
 
 import matterlink.bridge.MessageHandlerInst
-import matterlink.stripColor
 import java.io.File
 import java.util.regex.Pattern
 
@@ -40,7 +39,8 @@ abstract class BaseConfig(rootDir: File) {
     data class IncomingOption(
             val chat: String = "<{username}> {text}",
             val joinPart: String = "§6-- {username} {text}",
-            val action: String = "§5* {username} {text}"
+            val action: String = "§5* {username} {text}",
+            var stripColors: Boolean = true
     )
 
     data class OutgoingOptions(
@@ -193,6 +193,12 @@ abstract class BaseConfig(rootDir: File) {
                         category,
                         incoming.action,
                         "User actions (/me) sent by users from other gateways"
+                ),
+                stripColors = getBoolean(
+                        "stripColors",
+                        category,
+                        incoming.stripColors,
+                        "strip colors from incoming text"
                 )
         )
 
