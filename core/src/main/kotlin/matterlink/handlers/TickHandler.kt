@@ -1,7 +1,6 @@
 package matterlink.handlers
 
 import matterlink.bridge.MessageHandlerInst
-import matterlink.bridge.ServerChatHandler
 import matterlink.update.UpdateChecker
 
 /**
