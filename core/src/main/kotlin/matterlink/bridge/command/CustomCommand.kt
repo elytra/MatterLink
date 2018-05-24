@@ -5,6 +5,7 @@ import matterlink.bridge.MessageHandlerInst
 import matterlink.handlers.TickHandler
 import matterlink.instance
 import matterlink.lazyFormat
+import matterlink.stripColor
 
 data class CustomCommand(
         val type: CommandType = CommandType.RESPONSE,
@@ -34,7 +35,7 @@ data class CustomCommand(
         if (!canExecute(userId, server)) {
             MessageHandlerInst.transmit(
                     ApiMessage(
-                            text = "$user is not permitted to perform command: $alias"
+                            text = "$user is not permitted to perform command: $alias".stripColor
                     )
             )
             return false
@@ -53,7 +54,7 @@ data class CustomCommand(
             CommandType.RESPONSE -> {
                 MessageHandlerInst.transmit(
                         ApiMessage(
-                                text = (response?.lazyFormat(getReplacements(user, userId, server, args)) ?: "")
+                                text = (response?.lazyFormat(getReplacements(user, userId, server, args))?.stripColor ?: "")
                         )
                 )
                 true

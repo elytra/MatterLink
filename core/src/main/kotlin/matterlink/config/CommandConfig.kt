@@ -60,7 +60,7 @@ object CommandConfig {
                     execute = "",
                     permLevel = 1.0,
                     help = "Execute any command as OP, be careful with this one",
-                    allowArgs = false,
+                    allowArgs = true,
                     execOp = true,
                     defaultCommand = true
             )

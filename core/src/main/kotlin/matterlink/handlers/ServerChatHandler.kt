@@ -15,9 +15,9 @@ object ServerChatHandler {
     fun writeIncomingToChat() {
         if (MessageHandlerInst.queue.isNotEmpty())
             instance.debug("incoming: " + MessageHandlerInst.queue.toString())
-        val nextMessage = MessageHandlerInst.queue.poll()
+        val nextMessage = MessageHandlerInst.queue.poll() ?: null
 
-        if (nextMessage.gateway == cfg.connect.gateway) {
+        if (nextMessage?.gateway == cfg.connect.gateway) {
             if (!nextMessage.text.isBlank()) {
                 val message = when (nextMessage.event) {
                     "user_action" -> nextMessage.format(cfg.incoming.action)
