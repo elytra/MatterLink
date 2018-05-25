@@ -16,7 +16,7 @@ object DeathHandler {
             damageType: String
     ) {
         if (cfg.outgoing.death.enable) {
-            var msg = deathMessage.replace(player, player.stripColorOut.antiping)
+            var msg = deathMessage.stripColorOut.replace(player, player.stripColorOut.antiping)
             if (cfg.outgoing.death.damageType) {
                 val emojis = cfg.outgoing.death.damageTypeMapping[damageType]?.split(' ')
                         ?: listOf("\uD83D\uDC7B unknown type '$damageType'")
