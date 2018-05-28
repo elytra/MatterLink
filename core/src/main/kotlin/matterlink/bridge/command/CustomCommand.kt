@@ -17,7 +17,7 @@ data class CustomCommand(
         val timeout: Int = 20,
         val defaultCommand: Boolean? = null,
         val execOp: Boolean? = null,
-        val argumentsRegext: Regex? = null
+        val argumentsRegex: Regex? = null
 ) : IBridgeCommand {
     val alias: String
         get() = BridgeCommandRegistry.getName(this)!!
@@ -26,9 +26,9 @@ data class CustomCommand(
     private var lastUsed: Int = 0
 
     override fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean {
-        if(argumentsRegext != null) {
-            instance.debug("testing '$args' against '${argumentsRegext.pattern}'")
-            if(!argumentsRegext.matches(args)) {
+        if(argumentsRegex != null) {
+            instance.debug("testing '$args' against '${argumentsRegex.pattern}'")
+            if(!argumentsRegex.matches(args)) {
                 MessageHandlerInst.transmit(
                         ApiMessage(
                                 text = "$user sent invalid input to command $alias".stripColorOut

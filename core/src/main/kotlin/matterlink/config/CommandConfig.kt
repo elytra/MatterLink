@@ -58,7 +58,7 @@ object CommandConfig {
             "exec" to CustomCommand(
                     type = CommandType.EXECUTE,
                     execute = "{args}",
-                    argumentsRegext = ".*".toRegex(),
+                    argumentsRegex = ".*".toRegex(),
                     permLevel = 1.0,
                     help = "Execute any command as OP, be careful with this one",
                     execOp = true,
