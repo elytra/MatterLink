@@ -13,7 +13,7 @@ object ProgressHandler {
         val usr = name.stripColorOut.antiping
         MessageHandlerInst.transmit(
                 ApiMessage(
-                        _text = "$usr $message $display".stripColorOut
+                        text = "$usr $message $display".stripColorOut
                 )
         )
     }

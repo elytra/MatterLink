@@ -26,7 +26,7 @@ abstract class IMinecraftCommandSender(val user: String, val userId: String, val
         reply = text
         MessageHandlerInst.transmit(
                 ApiMessage(
-                        _text = text.stripColorOut
+                        text = text.stripColorOut
                 )
         )
     }

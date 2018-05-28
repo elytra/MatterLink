@@ -10,9 +10,9 @@ object ChatProcessor {
         val message = msg.trim()
         when {
             message.isNotBlank() -> MessageHandlerInst.transmit(ApiMessage(
-                    _username = user.stripColorOut,
-                    _text = message.stripColorOut,
-                    _event = event)
+                    username = user.stripColorOut,
+                    text = message.stripColorOut,
+                    event = event)
             )
             else -> instance.warn("WARN: dropped blank message by '$user'")
         }

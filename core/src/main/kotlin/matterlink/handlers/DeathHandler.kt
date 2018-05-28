@@ -23,7 +23,7 @@ object DeathHandler {
                 val damageEmoji = emojis[random.nextInt(emojis.size)]
                 msg += " $damageEmoji"
             }
-            MessageHandlerInst.transmit(ApiMessage(_text = msg))
+            MessageHandlerInst.transmit(ApiMessage(text = msg))
         }
     }
 }

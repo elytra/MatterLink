@@ -18,7 +18,7 @@ object HelpCommand : IBridgeCommand {
         }
         MessageHandlerInst.transmit(
                 ApiMessage(
-                        _text = msg.stripColorOut
+                        text = msg.stripColorOut
                 )
         )
         return true

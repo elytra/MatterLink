@@ -19,8 +19,8 @@ object JoinLeaveHandler {
             )
             MessageHandlerInst.transmit(
                     ApiMessage(
-                            _text = msg,
-                            _event = JOIN_LEAVE
+                            text = msg,
+                            event = JOIN_LEAVE
                     )
             )
         }
@@ -36,8 +36,8 @@ object JoinLeaveHandler {
             )
             MessageHandlerInst.transmit(
                     ApiMessage(
-                            _text = msg,
-                            _event = JOIN_LEAVE
+                            text = msg,
+                            event = JOIN_LEAVE
                     )
             )
         }
