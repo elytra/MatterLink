@@ -44,6 +44,7 @@ object EventHandler {
     @SubscribeEvent
     @JvmStatic
     fun chatEvent(e: ServerChatEvent) {
+        if(e.isCanceled) return
         ChatProcessor.sendToBridge(
                 user = e.player.displayName.unformattedText,
                 msg = e.message,

@@ -3,18 +3,23 @@ buildscript {
         jcenter()
         maven { url = "http://files.minecraftforge.net/maven" }
         mavenCentral()
+        maven {
+            url = 'https://oss.sonatype.org/content/groups/public'
+        }
+        maven {
+            url = "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.0"
+        classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.0.10"
     }
 }
 
-plugins {
-    id "com.github.johnrengelman.shadow" version "1.2.4"
-    id 'com.matthewprenger.cursegradle' version '1.0.10'
-}
-
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: 'com.matthewprenger.cursegradle'
 
 version = project.mc_version + "-" + project.mod_version
 
@@ -30,9 +35,12 @@ dependencies {
 shadowJar {
     classifier ''
 
+    relocate "blue.endless", "matterlink.repack.blue.endless"
+
     dependencies {
-        include project(":core")
+        include project(':core')
         include project(":api")
+        include project(":Jankson")
     }
 
     exclude 'dummyThing'

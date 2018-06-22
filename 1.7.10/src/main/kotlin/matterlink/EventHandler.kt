@@ -40,6 +40,7 @@ object EventHandler {
     //FORGE-DEPENDENT
     @SubscribeEvent
     fun chatEvent(e: ServerChatEvent) {
+        if(e.isCanceled) return
         ChatProcessor.sendToBridge(
                 user = e.player.displayName,
                 msg = e.message,

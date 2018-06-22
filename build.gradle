@@ -29,6 +29,11 @@ subprojects {
             name = "shadowfacts"
             url = "http://maven.shadowfacts.net/"
         }
+        ivy {
+            //Resolves jankson
+            name "endless.blue dependency mirror";
+            artifactPattern "https://endless.blue/files/ivy/[module]-[revision].[ext]";
+        }
     }
 
 }
