@@ -88,6 +88,7 @@ data class CustomCommand(
     }
 
     companion object {
+        val DEFAULT = CustomCommand()
 
         fun getReplacements(user: String, userId: String, server: String, args: String): Map<String, () -> String> = mapOf(
                 "{uptime}" to instance::getUptimeAsString,
