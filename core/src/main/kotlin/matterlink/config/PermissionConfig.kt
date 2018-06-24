@@ -63,7 +63,7 @@ object PermissionConfig {
         }
 
         configFile.writeText(jsonObject.toJson(true, true))
-        
+
         return true
     }
 }

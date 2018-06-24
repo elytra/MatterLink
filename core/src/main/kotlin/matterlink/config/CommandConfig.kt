@@ -77,8 +77,7 @@ object CommandConfig {
                 .registerTypeAdapter(CustomCommand::class.java) { jsonObj ->
                     with(CustomCommand.DEFAULT) {
                         CustomCommand(
-                                type = jsonObj.get(String::class.java, "type")?.let { CommandType.valueOf(it) }
-                                        ?: type,
+                                type = jsonObj.get(CommandType::class.java, "type") ?: type,
                                 execute = jsonObj.get(String::class.java, "execute") ?: execute,
                                 response = jsonObj.get(String::class.java, "response") ?: response,
                                 permLevel = jsonObj.get(Double::class.java, "permLevel") ?: permLevel,
@@ -86,11 +85,15 @@ object CommandConfig {
                                 timeout = jsonObj.get(Int::class.java, "timeout") ?: timeout,
                                 defaultCommand = jsonObj.get(Boolean::class.java, "defaultCommand") ?: defaultCommand,
                                 execOp = jsonObj.get(Boolean::class.java, "execOp") ?: execOp,
-                                argumentsRegex = jsonObj.get(String::class.java, "argumentsRegex")?.toRegex()
-                                        ?: argumentsRegex
+                                argumentsRegex = jsonObj.get(Regex::class.java, "argumentsRegex") ?: argumentsRegex
                         )
                     }
-
+                }
+                .registerPrimitiveTypeAdapter(CommandType::class.java) {jsonObj ->
+                    CommandType.valueOf(jsonObj.toString())
+                }
+                .registerPrimitiveTypeAdapter(Regex::class.java) {jsonObj ->
+                    jsonObj.toString().toRegex()
                 }
                 .build()
 
