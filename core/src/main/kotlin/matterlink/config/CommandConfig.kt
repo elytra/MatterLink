@@ -61,7 +61,7 @@ object CommandConfig {
                     type = CommandType.EXECUTE,
                     execute = "{args}",
                     argumentsRegex = ".*".toRegex(),
-                    permLevel = 1.0,
+                    permLevel = 50.0,
                     help = "Execute any command as OP, be careful with this one",
                     execOp = true,
                     defaultCommand = true
