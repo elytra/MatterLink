@@ -58,6 +58,7 @@ object BridgeCommandRegistry {
         commandMap.clear()
         val permStatus = PermissionConfig.loadPermFile()
         register("help", HelpCommand)
+        register("req", PermCommand)
         val cmdStatus = CommandConfig.readConfig()
         CommandConfig.commands.forEach { (alias, command) ->
             register(alias, command)

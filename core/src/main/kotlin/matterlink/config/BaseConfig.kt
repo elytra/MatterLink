@@ -374,19 +374,18 @@ data class BaseConfig(val rootDir: File) {
             MatterLinkConfig()
         }
 
-
 //        val defaultJsonObject = jankson.load("{}")
 //        jankson.fromJson(defaultJsonObject, MatterLinkConfig::class.java)
 //        val nonDefault = jsonObject.getDelta(defaultJsonObject)
 
-        MessageHandlerInst.config.url = cfg.connect.url
-        MessageHandlerInst.config.token = cfg.connect.authToken
-        MessageHandlerInst.config.gateway = cfg.connect.gateway
-        MessageHandlerInst.config.reconnectWait = cfg.connect.reconnectWait
+        MessageHandlerInst.config.url = tmpCfg.connect.url
+        MessageHandlerInst.config.token = tmpCfg.connect.authToken
+        MessageHandlerInst.config.gateway = tmpCfg.connect.gateway
+        MessageHandlerInst.config.reconnectWait = tmpCfg.connect.reconnectWait
 
-        MessageHandlerInst.config.systemUser = cfg.outgoing.systemUser
-        MessageHandlerInst.config.announceConnect = cfg.outgoing.announceConnect
-        MessageHandlerInst.config.announceDisconnect = cfg.outgoing.announceDisconnect
+        MessageHandlerInst.config.systemUser = tmpCfg.outgoing.systemUser
+        MessageHandlerInst.config.announceConnect = tmpCfg.outgoing.announceConnect
+        MessageHandlerInst.config.announceDisconnect = tmpCfg.outgoing.announceDisconnect
 
         return tmpCfg
     }

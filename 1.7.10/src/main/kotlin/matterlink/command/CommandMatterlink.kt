@@ -12,7 +12,7 @@ class CommandMatterlink : CommandBase() {
             throw WrongUsageException("Invalid command! Valid uses: ${this.getCommandUsage(sender)}")
         }
 
-        val reply = CommandCore.execute(args)
+        val reply = CommandCore.execute(args, sender.commandSenderName)
 
         if (reply.isNotEmpty()) {
             sender.addChatMessage(ChatComponentText(reply))

@@ -25,7 +25,7 @@ class CommandMatterlink : CommandBase() {
             throw WrongUsageException("Invalid command! Valid uses: ${this.getUsage(sender)}")
         }
 
-        val reply = CommandCore.execute(args)
+        val reply = CommandCore.execute(args, sender.name)
 
         if (reply.isNotEmpty() && sender.sendCommandFeedback()) {
             sender.sendMessage(TextComponentString(reply))
