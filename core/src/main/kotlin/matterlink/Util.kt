@@ -1,5 +1,6 @@
 package matterlink
 
+import blue.endless.jankson.JsonObject
 import matterlink.config.cfg
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -54,3 +55,8 @@ val Exception.stackTraceString: String
         this.printStackTrace(PrintWriter(sw))
         return sw.toString()
     }
+
+inline fun <reified T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? = null): T {
+    instance.info("type: ${T::class.java.name} key: $key default: $default")
+    return putDefault(key, default, comment)!!
+}

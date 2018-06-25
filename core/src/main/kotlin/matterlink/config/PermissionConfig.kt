@@ -15,7 +15,7 @@ object PermissionConfig {
             .builder()
             .build()
 
-    private val configFile: File = cfg.cfgDirectory.resolve("permissions.json")
+    private val configFile: File = baseCfg.cfgDirectory.resolve("permissions.hjson")
 
     private val default = mapOf(
             "irc.esper" to mapOf(
@@ -42,13 +42,17 @@ object PermissionConfig {
         }
 
         default.forEach { platform, userMap ->
-            val jsonUserMap = jsonObject.getOrDefault(platform, JsonObject()) as JsonObject
-            userMap.forEach { user, (powerlevel, comment) ->
-                instance.trace("loading platform: $platform user: $user powwerlevel: $powerlevel")
-                val element = Marshaller.getFallback().serialize(powerlevel)
-                jsonUserMap.putDefault(user, element, comment.takeUnless { it.isBlank() })
+            val jsonUserMap = jsonObject.getOrDefault(platform, JsonObject())
+            if(jsonUserMap is JsonObject) {
+                userMap.forEach { user, (powerlevel, comment) ->
+                    instance.trace("loading platform: $platform user: $user powwerlevel: $powerlevel")
+                    val element = Marshaller.getFallback().serialize(powerlevel)
+                    jsonUserMap.putDefault(user, element, comment.takeUnless { it.isBlank() })
+                }
+                jsonObject[platform] = jsonUserMap
+            } else {
+                instance.error("cannot parse platform: $platform , value: '$jsonUserMap' as Map, skipping")
             }
-            jsonObject[platform] = jsonUserMap
         }
 
         jsonObject.forEach { platform, jsonUserMap ->

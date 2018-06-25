@@ -2,6 +2,7 @@ package matterlink.command
 
 import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
+import matterlink.config.baseCfg
 import matterlink.config.cfg
 
 object CommandCore {
@@ -26,7 +27,7 @@ object CommandCore {
             "reload" -> {
 //                if (MessageHandlerInst.connected)
                 MessageHandlerInst.stop("Bridge restarting (reload command issued by console)")
-                cfg = cfg.load()
+                cfg = baseCfg.load()
                 BridgeCommandRegistry.reloadCommands()
 //                if (!MessageHandlerInst.connected)
                 MessageHandlerInst.start("Bridge reconnected", false)

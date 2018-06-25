@@ -18,8 +18,8 @@ object DeathHandler {
         if (cfg.outgoing.death.enable) {
             var msg = deathMessage.stripColorOut.replace(player, player.stripColorOut.antiping)
             if (cfg.outgoing.death.damageType) {
-                val emojis = cfg.outgoing.death.damageTypeMapping[damageType]?.split(' ')
-                        ?: listOf("\uD83D\uDC7B unknown type '$damageType'")
+                val emojis = cfg.outgoing.death.damageTypeMapping[damageType]
+                        ?: arrayOf("\uD83D\uDC7B unknown type '$damageType'")
                 val damageEmoji = emojis[random.nextInt(emojis.size)]
                 msg += " $damageEmoji"
             }

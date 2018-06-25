@@ -8,6 +8,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent
 import cpw.mods.fml.common.event.FMLServerStoppingEvent
 import matterlink.command.CommandMatterlink
 import matterlink.command.MatterLinkCommandSender
+import matterlink.config.BaseConfig
 import matterlink.config.cfg
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ChatComponentText
@@ -37,7 +38,7 @@ class MatterLink : IMatterLink() {
         logger = event.modLog
         logger.info("Building bridge!")
 
-        cfg = MatterLinkConfig(event.modConfigurationDirectory)
+        cfg = BaseConfig(event.modConfigurationDirectory).load()
     }
 
     @Mod.EventHandler

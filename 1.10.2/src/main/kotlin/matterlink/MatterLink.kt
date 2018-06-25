@@ -2,6 +2,7 @@ package matterlink
 
 import matterlink.command.CommandMatterlink
 import matterlink.command.MatterLinkCommandSender
+import matterlink.config.BaseConfig
 import matterlink.config.cfg
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.common.ForgeVersion
@@ -35,7 +36,7 @@ object MatterLink : IMatterLink() {
         logger = event.modLog
         logger.info("Building bridge!")
 
-        cfg = MatterLinkConfig(event.modConfigurationDirectory)
+        cfg = BaseConfig(event.modConfigurationDirectory).load()
     }
 
     @Mod.EventHandler

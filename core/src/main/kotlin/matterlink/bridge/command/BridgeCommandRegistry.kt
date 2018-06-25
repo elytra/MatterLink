@@ -14,7 +14,7 @@ object BridgeCommandRegistry {
     fun handleCommand(input: ApiMessage): Boolean {
         if (!cfg.command.enable || input.text.isBlank()) return false
 
-        if (input.text[0] != cfg.command.prefix[0] || input.text.length < 2) return false
+        if (input.text[0] != cfg.command.prefix || input.text.length < 2) return false
 
         val cmd = input.text.substring(1).split(' ', ignoreCase = false, limit = 2)
         val args = if (cmd.size == 2) cmd[1] else ""

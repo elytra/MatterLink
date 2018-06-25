@@ -3,7 +3,6 @@ package matterlink.config
 import blue.endless.jankson.Jankson
 import blue.endless.jankson.JsonObject
 import blue.endless.jankson.JsonPrimitive
-import blue.endless.jankson.impl.Marshaller
 import blue.endless.jankson.impl.SyntaxError
 import matterlink.bridge.command.CommandType
 import matterlink.bridge.command.CustomCommand
@@ -15,7 +14,7 @@ typealias CommandMap = MutableMap<String, CustomCommand>
 typealias DefaultCommands = Map<String, Pair<String, CustomCommand>>
 
 object CommandConfig {
-    private val configFile: File = cfg.cfgDirectory.resolve("commands.json")
+    private val configFile: File = baseCfg.cfgDirectory.resolve("commands.hjson")
 
     private val default: DefaultCommands = mapOf(
             "tps" to ("""Your run off the mill tps commands, change it to /sampler tps or /cofh tps if you like
@@ -89,19 +88,13 @@ object CommandConfig {
                         )
                     }
                 }
-                .registerPrimitiveTypeAdapter(CommandType::class.java) {jsonObj ->
-                    CommandType.valueOf(jsonObj.toString())
-                }
-                .registerPrimitiveTypeAdapter(Regex::class.java) {jsonObj ->
-                    jsonObj.toString().toRegex()
+                .registerPrimitiveTypeAdapter(Regex::class.java) {
+                    it.toString().toRegex()
                 }
                 .build()
 
-        Marshaller.getFallback().registerSerializer(Regex::class.java) {
+        jankson.marshaller.registerSerializer(Regex::class.java) {
             JsonPrimitive(it.pattern)
-        }
-        Marshaller.getFallback().registerSerializer(CommandType::class.java) {
-            JsonPrimitive(it.name)
         }
 
         val jsonObject = try {
@@ -117,8 +110,13 @@ object CommandConfig {
         commands.clear()
         jsonObject.forEach { key, element ->
             instance.trace("loading command '$key'")
-            val command = jankson.fromJson(element.toJson(), CustomCommand::class.java)
-            commands[key] = command
+            val command = jsonObject.get(CustomCommand::class.java, key)
+            if(command != null)
+                commands[key] = command
+            else {
+                instance.error("could not parse key: $key, value: '$element' as CustomCommand")
+                instance.error("skipping $key")
+            }
         }
 
         //apply defaults
@@ -126,7 +124,7 @@ object CommandConfig {
             val command = commands[k]
             if (command == null || command.defaultCommand == true) {
                 commands[k] = defCommand
-                val element = Marshaller.getFallback().serialize(defCommand)
+                val element = jankson.marshaller.serialize(defCommand)
                 jsonObject.putDefault(k, element, comment)
             }
         }
@@ -134,7 +132,9 @@ object CommandConfig {
         instance.debug("loaded jsonObj: $jsonObject")
         instance.debug("loaded commandMap: $commands")
 
-        configFile.writeText(jsonObject.toJson(true, true))
+        val nonDefaultJsonObj = jsonObject.getDelta(jankson.marshaller.serialize(default.mapValues { it.value.second }) as JsonObject)
+
+        configFile.writeText(nonDefaultJsonObj.toJson(true, true))
 
         return true
     }

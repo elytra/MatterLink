@@ -2,12 +2,16 @@ package matterlink
 
 import matterlink.command.CommandMatterlink
 import matterlink.command.MatterLinkCommandSender
+import matterlink.config.BaseConfig
 import matterlink.config.cfg
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.event.*
+import net.minecraftforge.fml.common.event.FMLInitializationEvent
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
 
@@ -32,17 +36,12 @@ object MatterLink : IMatterLink() {
         logger = event.modLog
         logger.info("Building bridge!")
 
-        cfg = MatterLinkConfig(event.modConfigurationDirectory)
+        cfg = BaseConfig(event.modConfigurationDirectory).load()
     }
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
         this.registerBridgeCommands()
-    }
-
-    @Mod.EventHandler
-    fun serverAboutToStart(event: FMLServerAboutToStartEvent) {
-//        MessageHandlerInst.start(clear = true)
     }
 
     @Mod.EventHandler

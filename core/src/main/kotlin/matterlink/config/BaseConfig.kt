@@ -1,26 +1,40 @@
 package matterlink.config
 
+import blue.endless.jankson.Jankson
+import blue.endless.jankson.JsonObject
+import blue.endless.jankson.impl.Marshaller
+import blue.endless.jankson.impl.SyntaxError
 import matterlink.bridge.MessageHandlerInst
+import matterlink.getOrDefault
+import matterlink.instance
+import matterlink.stackTraceString
 import java.io.File
-import java.util.regex.Pattern
+import java.io.FileNotFoundException
 
-lateinit var cfg: BaseConfig
+lateinit var cfg: BaseConfig.MatterLinkConfig
+lateinit var baseCfg: BaseConfig
 
-abstract class BaseConfig(rootDir: File) {
+data class BaseConfig(val rootDir: File) {
     val cfgDirectory: File = rootDir.resolve("matterlink")
-    val mainCfgFile: File = cfgDirectory.resolve("matterlink.cfg")
+    val configFile: File = cfgDirectory.resolve("matterlink.hjson")
 
+    init {
+        instance.info("Reading bridge blueprints... from {}", rootDir)
+        baseCfg = this
+    }
 
-    var connect = ConnectOptions()
-    var debug = DebugOptions()
-    var incoming = IncomingOption()
-    var outgoing = OutgoingOptions()
-    var command = CommandOptions()
-    var update = UpdateOptions()
+    data class MatterLinkConfig(
+            val connect: ConnectOptions = ConnectOptions(),
+            val debug: DebugOptions = DebugOptions(),
+            val incoming: IncomingOptions = IncomingOptions(),
+            val outgoing: OutgoingOptions = OutgoingOptions(),
+            val command: CommandOptions = CommandOptions(),
+            val update: UpdateOptions = UpdateOptions()
+    )
 
 
     data class CommandOptions(
-            val prefix: String = "!",
+            val prefix: Char = '!',
             val enable: Boolean = true
     )
 
@@ -36,10 +50,10 @@ abstract class BaseConfig(rootDir: File) {
             var logLevel: String = "INFO"
     )
 
-    data class IncomingOption(
+    data class IncomingOptions(
             val chat: String = "<{username}> {text}",
-            val joinPart: String = "§6-- {username} {text}",
-            val action: String = "§5* {username} {text}",
+            val joinPart: String = "",//"§6-- {username} {text}",
+            val action: String = "",//"§5* {username} {text}",
             var stripColors: Boolean = true
     )
 
@@ -58,36 +72,36 @@ abstract class BaseConfig(rootDir: File) {
     data class DeathOptions(
             val enable: Boolean = true,
             val damageType: Boolean = true,
-            val damageTypeMapping: Map<String, String> = mapOf(
-                    "inFire" to "\uD83D\uDD25", //🔥
-                    "lightningBolt" to "\uD83C\uDF29", //🌩
-                    "onFire" to "\uD83D\uDD25", //🔥
-                    "lava" to "\uD83D\uDD25", //🔥
-                    "hotFloor" to "♨️",
-                    "inWall" to "",
-                    "cramming" to "",
-                    "drown" to "\uD83C\uDF0A", //🌊
-                    "starve" to "\uD83D\uDC80", //💀
-                    "cactus" to "\uD83C\uDF35", //🌵
-                    "fall" to "\u2BEF️", //⯯️
-                    "flyIntoWall" to "\uD83D\uDCA8", //💨
-                    "outOfWorld" to "\u2734", //✴
-                    "generic" to "\uD83D\uDC7B", //👻
-                    "magic" to "✨ ⚚",
-                    "indirectMagic" to "✨ ⚚",
-                    "wither" to "\uD83D\uDD71", //🕱
-                    "anvil" to "",
-                    "fallingBlock" to "",
-                    "dragonBreath" to "\uD83D\uDC32", //🐲
-                    "fireworks" to "\uD83C\uDF86", //🎆
+            val damageTypeMapping: Map<String, Array<String>> = mapOf(
+                    "inFire" to arrayOf("\uD83D\uDD25"), //🔥
+                    "lightningBolt" to arrayOf("\uD83C\uDF29"), //🌩
+                    "onFire" to arrayOf("\uD83D\uDD25"), //🔥
+                    "lava" to arrayOf("\uD83D\uDD25"), //🔥
+                    "hotFloor" to arrayOf("♨️"),
+                    "inWall" to arrayOf(),
+                    "cramming" to arrayOf(),
+                    "drown" to arrayOf("\uD83C\uDF0A"), //🌊
+                    "starve" to arrayOf("\uD83D\uDC80"), //💀
+                    "cactus" to arrayOf("\uD83C\uDF35"), //🌵
+                    "fall" to arrayOf("\u2BEF️"), //⯯️
+                    "flyIntoWall" to arrayOf("\uD83D\uDCA8"), //💨
+                    "outOfWorld" to arrayOf("\u2734"), //✴
+                    "generic" to arrayOf("\uD83D\uDC7B"), //👻
+                    "magic" to arrayOf("✨ ⚚"),
+                    "indirectMagic" to arrayOf("✨ ⚚"),
+                    "wither" to arrayOf("\uD83D\uDD71"), //🕱
+                    "anvil" to arrayOf(),
+                    "fallingBlock" to arrayOf(),
+                    "dragonBreath" to arrayOf("\uD83D\uDC32"), //🐲
+                    "fireworks" to arrayOf("\uD83C\uDF86"), //🎆
 
-                    "mob" to "\uD83D\uDC80", //💀
-                    "player" to "\uD83D\uDDE1", //🗡
-                    "arrow" to "\uD83C\uDFF9", //🏹
-                    "thrown" to "彡°",
-                    "thorns" to "\uD83C\uDF39", //🌹
-                    "explosion" to "\uD83D\uDCA3 \uD83D\uDCA5", //💣 💥
-                    "explosion.player" to "\uD83D\uDCA3 \uD83D\uDCA5" //💣 💥
+                    "mob" to arrayOf("\uD83D\uDC80"), //💀
+                    "player" to arrayOf("\uD83D\uDDE1"), //🗡
+                    "arrow" to arrayOf("\uD83C\uDFF9"), //🏹
+                    "thrown" to arrayOf("彡°"),
+                    "thorns" to arrayOf("\uD83C\uDF39"), //🌹
+                    "explosion" to arrayOf("\uD83D\uDCA3", "\uD83D\uDCA5"), //💣 💥
+                    "explosion.player" to arrayOf("\uD83D\uDCA3", "\uD83D\uDCA5") //💣 💥
             )
     )
 
@@ -101,228 +115,279 @@ abstract class BaseConfig(rootDir: File) {
             val enable: Boolean = true
     )
 
-    protected fun load(
-            getBoolean: (key: String, category: String, default: Boolean, comment: String) -> Boolean,
-            getString: (key: String, category: String, default: String, comment: String) -> String,
-            getStringValidated: (key: String, category: String, default: String, comment: String, pattern: Pattern) -> String,
-            getStringValidValues: (key: String, category: String, default: String, comment: String, validValues: Array<String>) -> String,
-            getStringList: (name: String, category: String, defaultValues: Array<String>, comment: String) -> Array<String>,
-            addCustomCategoryComment: (key: String, comment: String) -> Unit
-    ) {
-
-        var category = "commands"
-
-        addCustomCategoryComment(category, "User commands")
-        command = CommandOptions(
-                enable = getBoolean(
-                        "enable",
-                        category,
-                        command.enable,
-                        "Enable MC bridge commands"
-                ),
-                prefix = getStringValidated(
-                        "prefix",
-                        category,
-                        command.prefix,
-                        "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)",
-                        Pattern.compile("^[^0-9A-Za-z/]$")
-                )
-        )
-
-        category = "connection"
-        addCustomCategoryComment(category, "Connection settings")
-        connect = ConnectOptions(
-                url = getString(
-                        "connectURL",
-                        category,
-                        connect.url,
-                        "The URL or IP address of the bridge server"
-                ),
-                authToken = getString(
-                        "authToken",
-                        category,
-                        connect.authToken,
-                        "Auth token used to connect to the bridge server"
-                ),
-                gateway = getString(
-                        "gateway",
-                        category,
-                        connect.gateway,
-                        "MatterBridge gateway"
-                ),
-                autoConnect = getBoolean(
-                        "autoConnect",
-                        category,
-                        connect.autoConnect,
-                        "Connect the relay on startup"
-                )
-        )
-
-        category = "debug"
-        addCustomCategoryComment(category, "Options to help you figure out what happens and why, because computers can be silly")
-        debug = DebugOptions(
-                logLevel = getStringValidValues(
-                        "logLevel",
-                        category,
-                        debug.logLevel,
-                        "MatterLink log level",
-                        arrayOf("INFO", "DEBUG", "TRACE")
-                )
-        )
-
-        category = "incoming"
-        addCustomCategoryComment(category, "Gateway -> Server" +
-                "\nOptions all about receiving messages from the API" +
-                "\nFormatting options: " +
-                "\nAvailable variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}")
-        incoming = IncomingOption(
-                chat = getString(
-                        "chat",
-                        category,
-                        incoming.chat,
-                        "Generic chat event, just talking"
-                ),
-                joinPart = getString(
-                        "joinPart",
-                        category,
-                        incoming.joinPart,
-                        "Join and part events from other gateways"
-                ),
-                action = getString(
-                        "action",
-                        category,
-                        incoming.action,
-                        "User actions (/me) sent by users from other gateways"
-                ),
-                stripColors = getBoolean(
-                        "stripColors",
-                        category,
-                        incoming.stripColors,
-                        "strip colors from incoming text"
-                )
-        )
-
-        category = "outgoing"
-        addCustomCategoryComment(category, "Server -> Gateway" +
-                "\nOptions all about sending messages to the API")
-
-        outgoing = OutgoingOptions(
-                systemUser = getString(
-                        "systemUser",
-                        category,
-                        outgoing.systemUser,
-                        "Name of the server user (used by death and advancement messages and the /say command)"
-                ),
-                //outgoing events toggle
-                advancements = getBoolean(
-                        "advancements",
-                        category,
-                        outgoing.advancements,
-                        "Relay player achievements / advancements"
-                ),
-                announceConnect = getBoolean(
-                        "announceConnect",
-                        category,
-                        outgoing.announceConnect,
-                        "announce successful connection to the gateway"
-                ),
-                announceDisconnect = getBoolean(
-                        "announceDisconnect",
-                        category,
-                        outgoing.announceConnect,
-                        "announce intention to disconnect / reconnect"
-                ),
-                stripColors = getBoolean(
-                        "stripColors",
-                        category,
-                        outgoing.stripColors,
-                        "strip colors from nicknames and messages"
-                )
-        )
-
-        category = "outgoing.death"
-        addCustomCategoryComment(category, "Death messages settings")
-        outgoing.death = DeathOptions(
-
-                enable = getBoolean(
-                        "enable",
-                        category,
-                        outgoing.death.enable,
-                        "Relay player death messages"
-                ),
-                damageType = getBoolean(
-                        "damageType",
-                        category,
-                        outgoing.death.damageType,
-                        "Enable Damage type symbols on death messages"
-                ),
-                damageTypeMapping = getStringList(
-                        "damageTypeMapping",
-                        category,
-                        outgoing.death.damageTypeMapping.map { entry ->
-                            "${entry.key}=${entry.value}"
-                        }
-                                .toTypedArray(),
-                        "Damage type mapping for death cause, " +
-                                "\nseparate value and key with '=', " +
-                                "\nseparate multiple values with spaces\n"
-                ).associate {
-                    val key = it.substringBefore('=')
-                    val value = it.substringAfter('=')
-                    Pair(key, value)
+    companion object {
+        val jankson = Jankson
+                .builder()
+                .registerTypeAdapter(MatterLinkConfig::class.java) {
+                    MatterLinkConfig(
+                            command = it.getOrDefault(
+                                    "command",
+                                    CommandOptions(),
+                                    "User commands"
+                            ),
+                            connect = it.getOrDefault(
+                                    "connect",
+                                    ConnectOptions(),
+                                    "Connection Settings"
+                            ),
+                            debug = it.getOrDefault(
+                                    "debug",
+                                    DebugOptions(),
+                                    "Options to help you figure out what happens and why, because computers can be silly"
+                            ),
+                            incoming = it.getOrDefault(
+                                    "incoming",
+                                    IncomingOptions(),
+                                    """
+     Gateway -> Server
+     Options all about receiving messages from the API
+     Formatting options:
+     Available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}
+     """.trimIndent()
+                            ),
+                            outgoing = it.getOrDefault(
+                                    "outgoing",
+                                    OutgoingOptions(),
+                                    """
+     Server -> Gateway
+     Options all about sending messages to the API
+     """.trimIndent()
+                            ),
+                            update = it.getOrDefault(
+                                    "update",
+                                    UpdateOptions(),
+                                    "Update Settings"
+                            )
+                    )
                 }
-        )
-
-        category = "outgoing.join&part"
-        addCustomCategoryComment(category, "relay join and part messages to the gatway" +
-                "\nFormatting options: " +
-                "\nAvailable variables: {username}, {username:antiping}")
-        outgoing.joinPart = JoinPartOptions(
-                enable = getBoolean(
-                        "enable",
-                        category,
-                        outgoing.joinPart.enable,
-                        "Relay when a player joins / parts the game" +
-                                "\nany receiving end still needs to be configured with showJoinPart = true" +
-                                "\nto display the messages"
-                ),
-                joinServer = getString(
-                        "joinServer",
-                        category,
-                        outgoing.joinPart.joinServer,
-                        "user join message sent to other gateways, available variables: {username}, {username:antiping}"
-                ),
-                partServer = getString(
-                        "partServer",
-                        category,
-                        outgoing.joinPart.partServer,
-                        "user part message sent to other gateways, available variables: {username}, {username:antiping}"
-                )
-        )
-
-
-
-        category = "update"
-        addCustomCategoryComment(category, "Update Settings")
-        update = UpdateOptions(
-                enable = getBoolean(
-                        "enable",
-                        category,
-                        update.enable,
-                        "Enable Update checking"
-                )
-        )
-
-
-        MessageHandlerInst.config.url = connect.url
-        MessageHandlerInst.config.token = connect.authToken
-        MessageHandlerInst.config.gateway = connect.gateway
-        MessageHandlerInst.config.reconnectWait = connect.reconnectWait
-
-        MessageHandlerInst.config.systemUser = outgoing.systemUser
-        MessageHandlerInst.config.announceConnect = outgoing.announceConnect
-        MessageHandlerInst.config.announceDisconnect = outgoing.announceDisconnect
+                .registerTypeAdapter(CommandOptions::class.java) {
+                    with(CommandOptions()) {
+                        CommandOptions(
+                                enable = it.getOrDefault(
+                                        "enable",
+                                        enable,
+                                        "Enable MC bridge commands"
+                                ),
+                                prefix = it.getOrDefault(
+                                        "prefix",
+                                        prefix,
+                                        "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)"
+                                )
+                        )
+                    }
+                }
+                .registerTypeAdapter(ConnectOptions::class.java) {
+                    with(ConnectOptions()) {
+                        ConnectOptions(
+                                url = it.getOrDefault(
+                                        "url",
+                                        url,
+                                        "The URL or IP address of the bridge server"
+                                ),
+                                authToken = it.getOrDefault(
+                                        "authToken",
+                                        authToken,
+                                        "Auth token used to connect to the bridge server"
+                                ),
+                                gateway = it.getOrDefault(
+                                        "gateway",
+                                        gateway,
+                                        "MatterBridge gateway"
+                                ),
+                                autoConnect = it.getOrDefault(
+                                        "autoConnect",
+                                        autoConnect,
+                                        "Connect the relay on startup"
+                                )
+                        )
+                    }
+                }
+                .registerTypeAdapter(DebugOptions::class.java) {
+                    with(DebugOptions()) {
+                        DebugOptions(
+                                logLevel = it.getOrDefault("loglevel", logLevel, "MatterLink log level")
+                        )
+                    }
+                }
+                .registerTypeAdapter(IncomingOptions::class.java) {
+                    with(IncomingOptions()) {
+                        IncomingOptions(
+                                chat = it.getOrDefault(
+                                        "chat",
+                                        chat,
+                                        "Generic chat event, just talking"
+                                ),
+                                joinPart = it.getOrDefault(
+                                        "joinPart",
+                                        joinPart,
+                                        "Join and part events from other gateways"
+                                ),
+                                action = it.getOrDefault(
+                                        "action",
+                                        action,
+                                        "User actions (/me) sent by users from other gateways"
+                                ),
+                                stripColors = it.getOrDefault(
+                                        "stripColors",
+                                        stripColors,
+                                        "strip colors from incoming text"
+                                )
+                        )
+                    }
+                }
+                .registerTypeAdapter(OutgoingOptions::class.java) {
+                    with(OutgoingOptions()) {
+                        OutgoingOptions(
+                                systemUser = it.getOrDefault(
+                                        "systemUser",
+                                        systemUser,
+                                        "Name of the server user (used by death and advancement messages and the /say command)"
+                                ),
+                                advancements = it.getOrDefault(
+                                        "advancements",
+                                        advancements,
+                                        "Relay player achievements / advancements"
+                                ),
+                                announceConnect = it.getOrDefault(
+                                        "announceConnect",
+                                        announceConnect,
+                                        "announce successful connection to the gateway"
+                                ),
+                                announceDisconnect = it.getOrDefault(
+                                        "announceDisconnect",
+                                        announceConnect,
+                                        "announce intention to disconnect / reconnect"
+                                ),
+                                stripColors = it.getOrDefault(
+                                        "stripColors",
+                                        stripColors,
+                                        "strip colors from nicknames and messages"
+                                ),
+                                death = it.getOrDefault(
+                                        "death",
+                                        DeathOptions(),
+                                        "Death messages settings"
+                                ),
+                                joinPart = it.getOrDefault(
+                                        "joinPart",
+                                        JoinPartOptions(),
+                                        "relay join and part messages to the gatway"
+                                )
+                        )
+                    }
+                }
+                .registerTypeAdapter(DeathOptions::class.java) { jsonObj ->
+                    with(DeathOptions()) {
+                        DeathOptions(
+                                enable = jsonObj.getOrDefault(
+                                        "enable",
+                                        enable,
+                                        "Relay player death messages"
+                                ),
+                                damageType = jsonObj.getOrDefault(
+                                        "damageType",
+                                        damageType,
+                                        "Enable Damage type symbols on death messages"
+                                ),
+                                damageTypeMapping = (jsonObj.getObject("damageTypeMapping")
+                                        ?: Marshaller.getFallback().serialize(damageTypeMapping) as JsonObject)
+                                        .let {
+                                            jsonObj.setComment(
+                                                    "damageTypMapping",
+                                                    "Damage type mapping for death cause"
+                                            )
+                                            it.mapValues { (key, element) ->
+                                                it.getOrDefault(key, damageTypeMapping[key] ?: emptyArray(), key)
+                                                        .apply { it[key] }.apply {
+                                                            jsonObj["damageTypeMapping"] = it
+                                                        }
+                                            }
+                                        }
+                        )
+                    }
+                }
+                .registerTypeAdapter(JoinPartOptions::
+                class.java)
+                {
+                    with(JoinPartOptions()) {
+                        JoinPartOptions(
+                                enable = it.getOrDefault(
+                                        "enable",
+                                        enable,
+                                        "Relay when a player joins / parts the game" +
+                                                "\nany receiving end still needs to be configured with showJoinPart = true" +
+                                                "\nto display the messages"
+                                ),
+                                joinServer = it.getOrDefault(
+                                        "joinServer",
+                                        joinServer,
+                                        "user join message sent to other gateways, available variables: {username}, {username:antiping}"
+                                ),
+                                partServer = it.getOrDefault(
+                                        "partServer",
+                                        partServer,
+                                        "user part message sent to other gateways, available variables: {username}, {username:antiping}"
+                                )
+                        )
+                    }
+                }
+                .registerTypeAdapter(UpdateOptions::
+                class.java)
+                {
+                    with(UpdateOptions()) {
+                        UpdateOptions(
+                                enable = it.getOrDefault(
+                                        "enable",
+                                        enable,
+                                        "Enable Update checking"
+                                )
+                        )
+                    }
+                }
+                .build()
     }
 
-    abstract fun load(): BaseConfig
+    fun load(): MatterLinkConfig {
+        val jsonObject = try {
+            jankson.load(configFile)
+        } catch (e: SyntaxError) {
+            instance.error("error loading config: ${e.completeMessage}")
+            Marshaller.getFallback().serialize(MatterLinkConfig()) as JsonObject
+        } catch (e: FileNotFoundException) {
+            instance.error("creating config file $configFile")
+            configFile.createNewFile()
+            Marshaller.getFallback().serialize(MatterLinkConfig()) as JsonObject
+        }
+        instance.info("finished loading $jsonObject")
+
+        val tmpCfg = try {
+            cfgDirectory.resolve("debug.matterlink.hjson").writeText(jsonObject.toJson(false, true))
+            jankson.fromJson(jsonObject, MatterLinkConfig::class.java).apply {
+                configFile.writeText(jsonObject.toJson(true, true))
+                instance.info("loaded config: $this")
+            }
+        } catch (e: SyntaxError) {
+            instance.error("error parsing config: ${e.completeMessage} ${e.stackTraceString}")
+            MatterLinkConfig()
+        } catch (e: IllegalStateException) {
+            instance.error(e.stackTraceString)
+            MatterLinkConfig()
+        }
+
+
+//        val defaultJsonObject = jankson.load("{}")
+//        jankson.fromJson(defaultJsonObject, MatterLinkConfig::class.java)
+//        val nonDefault = jsonObject.getDelta(defaultJsonObject)
+
+        MessageHandlerInst.config.url = cfg.connect.url
+        MessageHandlerInst.config.token = cfg.connect.authToken
+        MessageHandlerInst.config.gateway = cfg.connect.gateway
+        MessageHandlerInst.config.reconnectWait = cfg.connect.reconnectWait
+
+        MessageHandlerInst.config.systemUser = cfg.outgoing.systemUser
+        MessageHandlerInst.config.announceConnect = cfg.outgoing.announceConnect
+        MessageHandlerInst.config.announceDisconnect = cfg.outgoing.announceDisconnect
+
+        return tmpCfg
+    }
 }
