@@ -35,7 +35,8 @@ data class BaseConfig(val rootDir: File) {
 
     data class CommandOptions(
             val prefix: Char = '!',
-            val enable: Boolean = true
+            val enable: Boolean = true,
+            val permissionRequests: Boolean = true
     )
 
     data class ConnectOptions(
@@ -172,6 +173,11 @@ data class BaseConfig(val rootDir: File) {
                                         "prefix",
                                         prefix,
                                         "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)"
+                                ),
+                                permissionRequests = it.getOrDefault(
+                                        "permissionRequests",
+                                        permissionRequests,
+                                        "Enable the 'req' command for requestion permissions from chat"
                                 )
                         )
                     }
