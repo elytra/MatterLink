@@ -6,6 +6,7 @@ import blue.endless.jankson.JsonPrimitive
 import blue.endless.jankson.impl.SyntaxError
 import matterlink.bridge.command.CommandType
 import matterlink.bridge.command.CustomCommand
+import matterlink.getOrDefault
 import matterlink.instance
 import java.io.File
 import java.io.FileNotFoundException
@@ -111,7 +112,7 @@ object CommandConfig {
         jsonObject.forEach { key, element ->
             instance.trace("loading command '$key'")
             val command = jsonObject.get(CustomCommand::class.java, key)
-            if(command != null)
+            if (command != null)
                 commands[key] = command
             else {
                 instance.error("could not parse key: $key, value: '$element' as CustomCommand")
@@ -124,20 +125,22 @@ object CommandConfig {
             val command = commands[k]
             if (command == null || command.defaultCommand == true) {
                 commands[k] = defCommand
-                val element = jankson.marshaller.serialize(defCommand)
-                jsonObject.putDefault(k, element, comment)
+                jsonObject.getOrDefault(k, defCommand, comment)
             }
         }
 
         instance.debug("loaded jsonObj: $jsonObject")
         instance.debug("loaded commandMap: $commands")
 
-        val nonDefaultJsonObj = jsonObject.getDelta(jankson.marshaller.serialize(default.mapValues { it.value.second }) as JsonObject)
-
+        val defaultJsonObject = jankson.marshaller.serialize(CustomCommand.DEFAULT) as JsonObject
+        val nonDefaultJsonObj = jsonObject.clone()
+        jsonObject.forEach { key, element ->
+            if (element is JsonObject) {
+                nonDefaultJsonObj[key] = element.getDelta(defaultJsonObject)
+            }
+        }
         configFile.writeText(nonDefaultJsonObj.toJson(true, true))
 
         return true
     }
-
-
 }

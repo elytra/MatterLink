@@ -10,7 +10,6 @@ import matterlink.instance
 import matterlink.stackTraceString
 import java.io.File
 import java.io.FileNotFoundException
-import kotlin.system.exitProcess
 
 lateinit var cfg: BaseConfig.MatterLinkConfig
 lateinit var baseCfg: BaseConfig
@@ -374,15 +373,18 @@ data class BaseConfig(val rootDir: File) {
                 instance.info("loaded config: $this")
             }
         } catch (e: SyntaxError) {
-            instance.error("error parsing config: ${e.completeMessage} ${e.stackTraceString}")
+            instance.error("error parsing config: ${e.completeMessage} ")
+            instance.error(e.stackTraceString)
+            cfgDirectory.resolve("error.matterlink.hjson").writeText(jsonObject.toJson(false, true))
             MatterLinkConfig()
         } catch (e: IllegalStateException) {
             instance.error(e.stackTraceString)
+            cfgDirectory.resolve("error.matterlink.hjson").writeText(jsonObject.toJson(false, true))
             MatterLinkConfig()
         } catch (e: NullPointerException) {
             instance.error("error loading config: ${e.stackTraceString}")
+            cfgDirectory.resolve("error.matterlink.hjson").writeText(jsonObject.toJson(false, true))
             MatterLinkConfig()
-            exitProcess(-1)
         }
 
 //        val defaultJsonObject = jankson.load("{}")

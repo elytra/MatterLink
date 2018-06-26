@@ -41,51 +41,41 @@ object PermissionConfig {
     fun loadPermFile(): Boolean {
         permissionRequests.clear()
 
+        val defaultJsonObject = JsonObject().apply {
+            default.forEach { platform, userMap ->
+                val jsonUserMap = this.getOrDefault(platform, JsonObject())
+                if (jsonUserMap is JsonObject) {
+                    userMap.forEach { user, (powerlevel, comment) ->
+                        instance.trace("loading platform: $platform user: $user powerlevel: $powerlevel")
+                        val element = Marshaller.getFallback().serialize(powerlevel)
+                        jsonUserMap.putDefault(user, element, comment.takeUnless { it.isBlank() })
+                    }
+                    this[platform] = jsonUserMap
+                } else {
+                    instance.error("cannot parse platform: $platform , value: '$jsonUserMap' as Map, skipping")
+                }
+            }
+        }
+
+        var save = true
         jsonObject = try {
             jankson.load(configFile)
         } catch (e: SyntaxError) {
             instance.error("error parsing config: ${e.completeMessage}")
-            JsonObject()
+            save = false
+            defaultJsonObject
         } catch (e: FileNotFoundException) {
+            instance.error("cannot find config: $configFile .. creating sample permissions mapping")
             configFile.createNewFile()
-            JsonObject()
+            defaultJsonObject
         }
 
-        default.forEach { platform, userMap ->
-            val jsonUserMap = jsonObject.getOrDefault(platform, JsonObject())
-            if(jsonUserMap is JsonObject) {
-                userMap.forEach { user, (powerlevel, comment) ->
-                    instance.trace("loading platform: $platform user: $user powerlevel: $powerlevel")
-                    val element = Marshaller.getFallback().serialize(powerlevel)
-                    jsonUserMap.putDefault(user, element, comment.takeUnless { it.isBlank() })
-                }
-                jsonObject[platform] = jsonUserMap
-            } else {
-                instance.error("cannot parse platform: $platform , value: '$jsonUserMap' as Map, skipping")
-            }
-        }
-
-        jsonObject.forEach { platform, jsonUserMap ->
-            val userMap = perms[platform] ?: mutableMapOf()
-            if (jsonUserMap is JsonObject) {
-                jsonUserMap.forEach { user, powerlevel ->
-                    instance.info("$platform $user $powerlevel")
-                    userMap[user] = jsonUserMap.get(Double::class.java, user) ?: 0.0
-                }
-            }
-            perms[platform] = userMap
-        }
-
-        configFile.writeText(jsonObject.toJson(true, true))
+        load(save)
 
         return true
     }
 
-    fun add(platform: String, userid: String, powerlevel: Double, comment: String? = null) {
-        val platformObject = jsonObject.getObject(platform) ?: JsonObject()
-        platformObject.putDefault(userid, powerlevel, comment)
-        jsonObject[platform] = platformObject
-
+    private fun load(save: Boolean = true) {
         perms.clear()
         jsonObject.forEach { platform, jsonUserMap ->
             val userMap = perms[platform] ?: mutableMapOf()
@@ -99,6 +89,15 @@ object PermissionConfig {
         }
         instance.info("Permissions reloaded")
 
-        configFile.writeText(jsonObject.toJson(true, true))
+        if (save)
+            configFile.writeText(jsonObject.toJson(true, true))
+    }
+
+    fun add(platform: String, userid: String, powerlevel: Double, comment: String? = null) {
+        val platformObject = jsonObject.getObject(platform) ?: JsonObject()
+        platformObject.putDefault(userid, powerlevel, comment)
+        jsonObject[platform] = platformObject
+
+        load()
     }
 }

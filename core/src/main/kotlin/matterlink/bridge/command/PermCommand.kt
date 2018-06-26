@@ -36,7 +36,7 @@ object PermCommand : IBridgeCommand {
         if(currentPowerlevel < 0.0) {
             MessageHandlerInst.transmit(
                     ApiMessage(
-                            text = "Your poermission level is $currentPowerlevel seems like someone banned you from making any more requests"
+                            text = "Your level is $currentPowerlevel seems like someone banned you from making any more requests"
                     )
             )
             return true
