@@ -4,7 +4,6 @@ import blue.endless.jankson.Jankson
 import blue.endless.jankson.JsonObject
 import blue.endless.jankson.impl.Marshaller
 import blue.endless.jankson.impl.SyntaxError
-import matterlink.getOrDefault
 import matterlink.instance
 import java.io.File
 import java.io.FileNotFoundException
@@ -84,7 +83,7 @@ object PermissionConfig {
 
     fun add(platform: String, userid: String, powerlevel: Double, comment: String? = null) {
         val platformObject = jsonObject.getObject(platform) ?: JsonObject()
-        platformObject.getOrDefault(userid, powerlevel, comment)
+        platformObject.putDefault(userid, powerlevel, comment)
         jsonObject[platform] = platformObject
 
         perms.clear()

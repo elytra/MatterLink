@@ -56,7 +56,8 @@ val Exception.stackTraceString: String
         return sw.toString()
     }
 
-inline fun <reified T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? = null): T {
-    instance.info("type: ${T::class.java.name} key: $key default: $default")
-    return putDefault(key, default, comment)!!
+fun <T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? = null): T {
+    instance.info("type: ${default.javaClass.name} key: $key json: >>>${this.getObject(key)?.toJson()}<<< default: $default")
+    putDefault(key, default, comment)!!
+    return get(default.javaClass, key)!!
 }
