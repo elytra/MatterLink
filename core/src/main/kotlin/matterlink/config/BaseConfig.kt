@@ -53,8 +53,8 @@ data class BaseConfig(val rootDir: File) {
 
     data class IncomingOptions(
             val chat: String = "<{username}> {text}",
-            val joinPart: String = "",//"§6-- {username} {text}",
-            val action: String = "",//"§5* {username} {text}",
+            val joinPart: String = "§6-- {username} {text}",
+            val action: String = "§5* {username} {text}",
             var stripColors: Boolean = true
     )
 
@@ -66,8 +66,8 @@ data class BaseConfig(val rootDir: File) {
             val advancements: Boolean = true,
             var stripColors: Boolean = true,
 
-            var death: DeathOptions = DeathOptions(),
-            var joinPart: JoinPartOptions = JoinPartOptions()
+            var joinPart: JoinPartOptions = JoinPartOptions(),
+            var death: DeathOptions = DeathOptions()
     )
 
     data class DeathOptions(
@@ -88,8 +88,8 @@ data class BaseConfig(val rootDir: File) {
                     "flyIntoWall" to arrayOf("\uD83D\uDCA8"), //💨
                     "outOfWorld" to arrayOf("\u2734"), //✴
                     "generic" to arrayOf("\uD83D\uDC7B"), //👻
-                    "magic" to arrayOf("✨ ⚚"),
-                    "indirectMagic" to arrayOf("✨ ⚚"),
+                    "magic" to arrayOf("✨", "⚚"),
+                    "indirectMagic" to arrayOf("✨", "⚚"),
                     "wither" to arrayOf("\uD83D\uDD71"), //🕱
                     "anvil" to arrayOf(),
                     "fallingBlock" to arrayOf(),
