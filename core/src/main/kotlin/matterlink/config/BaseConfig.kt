@@ -7,6 +7,7 @@ import blue.endless.jankson.impl.SyntaxError
 import matterlink.bridge.MessageHandlerInst
 import matterlink.getOrDefault
 import matterlink.instance
+import matterlink.registerTypeAdapter
 import matterlink.stackTraceString
 import java.io.File
 import java.io.FileNotFoundException
@@ -119,7 +120,7 @@ data class BaseConfig(val rootDir: File) {
     companion object {
         val jankson = Jankson
                 .builder()
-                .registerTypeAdapter(MatterLinkConfig::class.java) {
+                .registerTypeAdapter {
                     MatterLinkConfig(
                             command = it.getOrDefault(
                                     "command",
@@ -161,7 +162,7 @@ data class BaseConfig(val rootDir: File) {
                             )
                     )
                 }
-                .registerTypeAdapter(CommandOptions::class.java) {
+                .registerTypeAdapter {
                     with(CommandOptions()) {
                         CommandOptions(
                                 enable = it.getOrDefault(
@@ -182,7 +183,7 @@ data class BaseConfig(val rootDir: File) {
                         )
                     }
                 }
-                .registerTypeAdapter(ConnectOptions::class.java) {
+                .registerTypeAdapter {
                     with(ConnectOptions()) {
                         ConnectOptions(
                                 url = it.getOrDefault(
@@ -208,14 +209,14 @@ data class BaseConfig(val rootDir: File) {
                         )
                     }
                 }
-                .registerTypeAdapter(DebugOptions::class.java) {
+                .registerTypeAdapter {
                     with(DebugOptions()) {
                         DebugOptions(
                                 logLevel = it.getOrDefault("loglevel", logLevel, "MatterLink log level")
                         )
                     }
                 }
-                .registerTypeAdapter(IncomingOptions::class.java) {
+                .registerTypeAdapter {
                     with(IncomingOptions()) {
                         IncomingOptions(
                                 chat = it.getOrDefault(
@@ -241,7 +242,7 @@ data class BaseConfig(val rootDir: File) {
                         )
                     }
                 }
-                .registerTypeAdapter(OutgoingOptions::class.java) {
+                .registerTypeAdapter {
                     with(OutgoingOptions()) {
                         OutgoingOptions(
                                 systemUser = it.getOrDefault(
@@ -282,7 +283,7 @@ data class BaseConfig(val rootDir: File) {
                         )
                     }
                 }
-                .registerTypeAdapter(DeathOptions::class.java) { jsonObj ->
+                .registerTypeAdapter { jsonObj ->
                     with(DeathOptions()) {
                         DeathOptions(
                                 enable = jsonObj.getOrDefault(
@@ -312,9 +313,7 @@ data class BaseConfig(val rootDir: File) {
                         )
                     }
                 }
-                .registerTypeAdapter(JoinPartOptions::
-                class.java)
-                {
+                .registerTypeAdapter {
                     with(JoinPartOptions()) {
                         JoinPartOptions(
                                 enable = it.getOrDefault(
@@ -337,9 +336,7 @@ data class BaseConfig(val rootDir: File) {
                         )
                     }
                 }
-                .registerTypeAdapter(UpdateOptions::
-                class.java)
-                {
+                .registerTypeAdapter {
                     with(UpdateOptions()) {
                         UpdateOptions(
                                 enable = it.getOrDefault(

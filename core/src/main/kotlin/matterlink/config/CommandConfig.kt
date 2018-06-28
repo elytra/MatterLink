@@ -8,6 +8,8 @@ import matterlink.bridge.command.CommandType
 import matterlink.bridge.command.CustomCommand
 import matterlink.getOrDefault
 import matterlink.instance
+import matterlink.registerPrimitiveTypeAdapter
+import matterlink.registerTypeAdapter
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -74,7 +76,7 @@ object CommandConfig {
     fun readConfig(): Boolean {
         val jankson = Jankson
                 .builder()
-                .registerTypeAdapter(CustomCommand::class.java) { jsonObj ->
+                .registerTypeAdapter { jsonObj ->
                     with(CustomCommand.DEFAULT) {
                         CustomCommand(
                                 type = jsonObj.get(CommandType::class.java, "type") ?: type,
@@ -89,7 +91,7 @@ object CommandConfig {
                         )
                     }
                 }
-                .registerPrimitiveTypeAdapter(Regex::class.java) {
+                .registerPrimitiveTypeAdapter {
                     it.toString().toRegex()
                 }
                 .build()

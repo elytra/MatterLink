@@ -1,5 +1,6 @@
 package matterlink
 
+import blue.endless.jankson.Jankson
 import blue.endless.jankson.JsonObject
 import matterlink.config.cfg
 import java.io.PrintWriter
@@ -60,3 +61,7 @@ fun <T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? 
 //    instance.info("type: ${default.javaClass.name} key: $key json: >>>${this.getObject(key)?.toJson()}<<< default: $default")
     return putDefault(key, default, comment)!!
 }
+
+inline fun <reified T: Any> Jankson.Builder.registerTypeAdapter(noinline adapter: (JsonObject) -> T) = this.registerTypeAdapter(T::class.java, adapter)
+
+inline fun <reified T: Any> Jankson.Builder.registerPrimitiveTypeAdapter(noinline adapter: (Any) -> T) = this.registerPrimitiveTypeAdapter(T::class.java, adapter)
