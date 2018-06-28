@@ -1,3 +1,9 @@
+[![Discord](https://img.shields.io/discord/176780432371744769.svg?style=for-the-badge&label=%23ai-dev&logo=discord)](http://discord.gg/Fm5EST)
+[![Discord](https://img.shields.io/discord/342696338556977153.svg?style=for-the-badge&logo=discord)](https://discord.gg/hXqNgq5)
+[![Download 1.12.2](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.12.2)](https://curse.nikky.moe/api/url/287323?version=1.12.2)
+[![Jenkins](https://img.shields.io/jenkins/s/https/ci.elytradev.com/job/elytra/job/MatterLink/job/master.svg?style=for-the-badge&label=Jenkins%20Build)](https://ci.elytradev.com/job/elytra/job/MatterLink/job/master/lastSuccessfulBuild/artifact/)
+[![Patreon](https://img.shields.io/badge/Patreon-Nikkyai-red.svg?style=for-the-badge)](https://www.patreon.com/NikkyAi)
+
 # MatterLink
 
 - [Downloads](#downloads)
