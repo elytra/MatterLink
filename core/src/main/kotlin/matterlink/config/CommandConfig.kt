@@ -96,8 +96,8 @@ object CommandConfig {
                 }
                 .build()
 
-        jankson.marshaller.registerSerializer(Regex::class.java) {
-            JsonPrimitive(it.pattern)
+        jankson.marshaller.registerSerializer(Regex::class.java) { regex, marshaller ->
+            JsonPrimitive(regex.pattern)
         }
 
         val jsonObject = try {

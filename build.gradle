@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version '1.2.41'
+    id "org.jetbrains.kotlin.jvm" version '1.2.51'
     id 'idea'
 }
 
@@ -28,11 +28,6 @@ subprojects {
         maven {
             name = "shadowfacts"
             url = "http://maven.shadowfacts.net/"
-        }
-        ivy {
-            //Resolves jankson
-            name "endless.blue dependency mirror";
-            artifactPattern "https://endless.blue/files/ivy/[module]-[revision].[ext]";
         }
     }
 
