@@ -1,3 +1,5 @@
+import net.minecraftforge.gradle.user.TaskSourceCopy
+
 buildscript {
     repositories {
         jcenter()
@@ -46,31 +48,36 @@ shadowJar {
     exclude 'dummyThing'
 }
 
+// Mad hacks to make source replacements work for Kotlin
+// source: https://github.com/PaleoCrafter/VanillaImmersion/blob/ee82ecafb76659cf7d7822a722c8f63f43f41d01/build.gradle#L119
+for (set in sourceSets) {
+    def taskName = "source${set.name.capitalize()}Kotlin"
+    def dir = new File(project.getBuildDir(), "sources/${set.name}/kotlin")
+    task(taskName, type: TaskSourceCopy) {
+        source = set.getKotlin()
+        output = dir
+    }
+    def compileTask = tasks[set.getCompileTaskName("kotlin")]
+    compileTask.source = dir
+    compileTask.dependsOn taskName
+    def dirPath = dir.toPath()
+    compileKotlin.include {
+        return it.file.toPath().startsWith(dirPath)
+    }
+}
+sourceJar.from sourceSets.main.kotlin
+
 minecraft {
     version = project.mc_version + "-" + project.forge_version
     runDir = "run"
 
     mappings = project.mcp_mappings
-}
 
-compileKotlin.doFirst {
-    def target = "src/main/kotlin/matterlink/gen"
-    copy {
-        from("src/templates/kotlin/matterlink/Constants.kt")
-        into(target)
-    }
-    ant.replaceregexp(match: '@MODVERSION@', replace: project.mod_version, flags: 'g', byline: true) {
-        fileset(dir: target, includes: 'Constants.kt')
-    }
-    ant.replaceregexp(match: '@MCVERSION@', replace: project.mc_version, flags: 'g', byline: true) {
-        fileset(dir: target, includes: 'Constants.kt')
-    }
-    ant.replaceregexp(match: '@FORGELIN-VERSION@', replace: project.forgelin_version, flags: 'g', byline: true) {
-        fileset(dir: target, includes: 'Constants.kt')
-    }
-    ant.replaceregexp(match: '@FORGE-VERSION@', replace: project.forge_version, flags: 'g', byline: true) {
-        fileset(dir: target, includes: 'Constants.kt')
-    }
+    replaceIn 'Constants.kt'
+    replace '@MODVERSION@', project.mod_version
+    replace '@MCVERSION@', project.mc_version
+    replace '@FORGELIN-VERSION@', project.forgelin_version
+    replace '@FORGE-VERSION@', project.forge_version
 }
 
 processResources {

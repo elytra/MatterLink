@@ -358,6 +358,7 @@ data class BaseConfig(val rootDir: File) {
             jankson.marshaller.serialize(MatterLinkConfig()) as JsonObject
         } catch (e: FileNotFoundException) {
             instance.error("creating config file $configFile")
+            configFile.absoluteFile.parentFile.mkdirs()
             configFile.createNewFile()
             jankson.marshaller.serialize(MatterLinkConfig()) as JsonObject
         }
