@@ -4,9 +4,6 @@ pipeline {
 	    stage("init") {
 	        steps {
 	            sh 'git submodule update --init --recursive'
-	            sh 'find . -name gen -delete'
-	            sh 'find . -name gen -exec ls -lr {} \\;'
-	            sh 'find . -name build -exec ls -lr {} \\;'
 	        }
 	    }
 	    stage("1.7.10") {
