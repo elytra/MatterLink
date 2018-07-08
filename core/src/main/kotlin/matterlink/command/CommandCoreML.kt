@@ -11,7 +11,7 @@ object CommandCoreML {
 
     val aliases = listOf("matterlink")
 
-    val usage = "ml <connect|disconnect|reload|auth>"
+    val usage = "ml <connect|disconnect|reload|permAccept>"
 
     fun execute(args: Array<String>, user: String, uuid: String?): String {
         val cmd = args[0].toLowerCase()

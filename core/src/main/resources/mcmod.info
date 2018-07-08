@@ -1,11 +1,11 @@
 [{
   "modid": "matterlink",
   "name": "MatterLink",
-  "description": "Minecraft Server Matterbridge link",
+  "description": "Minecraft Server Matterbridge link, Multi-Platform chat",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "https://github.com/elytra/MatterLink",
-  "authorList":["Arcanitor", "NikkyAi"],
-  "credits": "Blame Nikky for talking me into this.",
+  "authorList":["NikkyAi", "Arcanitor"],
+  "credits": "Blame Nikky for talking me into this. \n42wim for creating matterbridge \nUna, Falkreon and capitalthree's patience",
   "dependencies": ["forgelin"]
 }]
