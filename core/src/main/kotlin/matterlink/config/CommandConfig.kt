@@ -54,7 +54,7 @@ object CommandConfig {
             "whoami" to ("this shows you some of the other response macros"
                     to CustomCommand(
                     type = CommandType.RESPONSE,
-                    response = "server: `{server}` userid: `{userid}` user: `{user}`",
+                    response = "name: `{user}` userid: `{userid}` platform: `{platform}` username: `{username}` uuid: `{uuid}`",
                     help = "Print debug user data",
                     timeout = 200,
                     defaultCommand = true
@@ -73,7 +73,7 @@ object CommandConfig {
 
     val commands: CommandMap = hashMapOf()
 
-    fun readConfig(): Boolean {
+    fun loadFile() {
         val jankson = Jankson
                 .builder()
                 .registerTypeAdapter { jsonObj ->
@@ -96,7 +96,7 @@ object CommandConfig {
                 }
                 .build()
 
-        jankson.marshaller.registerSerializer(Regex::class.java) { regex, marshaller ->
+        jankson.marshaller.registerSerializer(Regex::class.java) { regex, _ ->
             JsonPrimitive(regex.pattern)
         }
 
@@ -142,7 +142,5 @@ object CommandConfig {
             }
         }
         configFile.writeText(nonDefaultJsonObj.toJson(true, true))
-
-        return true
     }
 }

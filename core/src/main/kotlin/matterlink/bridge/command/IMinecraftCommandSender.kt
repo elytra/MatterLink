@@ -4,7 +4,7 @@ import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.stripColorOut
 
-abstract class IMinecraftCommandSender(val user: String, val userId: String, val server: String, val op: Boolean) {
+abstract class IMinecraftCommandSender(val user: String, val userId: String, val server: String, val uuid: String?, val username: String?, val op: Boolean) {
     /**
      * @param   cmdString The command to execute with its arguments
      *
@@ -12,12 +12,13 @@ abstract class IMinecraftCommandSender(val user: String, val userId: String, val
      */
     abstract fun execute(cmdString: String): Boolean
 
-    val accountName = "$user (id=$userId server=$server)"
+    val displayName = username ?: user
+    val accountName = "$user (id=$userId server=$server uuid=$uuid)"
 
     fun canExecute(commandName: String): Boolean {
-        if(op) return true
+        if (op) return true
         val command = BridgeCommandRegistry[commandName] ?: return false
-        return command.canExecute(userId, server)
+        return command.canExecute(uuid)
     }
 
     var reply: String = ""

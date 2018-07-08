@@ -1,10 +1,15 @@
 package matterlink
 
 import blue.endless.jankson.Jankson
+import blue.endless.jankson.JsonArray
+import blue.endless.jankson.JsonElement
 import blue.endless.jankson.JsonObject
+import blue.endless.jankson.impl.Marshaller
 import matterlink.config.cfg
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.util.*
+import kotlin.streams.asSequence
 
 private const val ZWSP: Char = '\u200b'
 
@@ -57,11 +62,39 @@ val Exception.stackTraceString: String
         return sw.toString()
     }
 
+fun randomString(length: Long = 6, source: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ") = Random().ints(length, 0, source.length)
+        .asSequence()
+        .map(source::get)
+        .joinToString("")
+
 fun <T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? = null): T {
 //    instance.info("type: ${default.javaClass.name} key: $key json: >>>${this.getObject(key)?.toJson()}<<< default: $default")
     return putDefault(key, default, comment)!!
 }
 
-inline fun <reified T: Any> Jankson.Builder.registerTypeAdapter(noinline adapter: (JsonObject) -> T) = this.registerTypeAdapter(T::class.java, adapter)
+inline fun <reified T : Any> Jankson.fromJson(obj: JsonObject): T = this.fromJson(obj, T::class.java)
 
-inline fun <reified T: Any> Jankson.Builder.registerPrimitiveTypeAdapter(noinline adapter: (Any) -> T) = this.registerPrimitiveTypeAdapter(T::class.java, adapter)
+inline fun <reified T : Any> Jankson.Builder.registerTypeAdapter(noinline adapter: (JsonObject) -> T) = this.registerTypeAdapter(T::class.java, adapter)
+
+inline fun <reified T : Any> Jankson.Builder.registerPrimitiveTypeAdapter(noinline adapter: (Any) -> T) = this.registerPrimitiveTypeAdapter(T::class.java, adapter)
+
+inline fun <reified T : Any> Jankson.Builder.registerSerializer(noinline serializer: (T, Marshaller) -> JsonElement) = this.registerSerializer(T::class.java, serializer)
+
+inline fun <reified T : Any> Marshaller.registerSerializer(noinline serializer: (T) -> JsonElement) = this.registerSerializer(T::class.java, serializer)
+
+inline fun <reified T : Any> Marshaller.registerSerializer(noinline serializer: (T, Marshaller) -> JsonElement) = this.registerSerializer(T::class.java, serializer)
+
+inline fun <reified T : Any> JsonObject.getReified(key: String): T? = this.get(T::class.java, key)
+
+inline fun <reified T : Any> JsonObject.getList(key: String): List<T>? {
+    return this[key]?.let { array ->
+        when (array) {
+            is JsonArray -> {
+                array.indices.map { i ->
+                    array.get(T::class.java, i) ?: throw NullPointerException("cannot parse ${array.get(i)}")
+                }
+            }
+            else -> null
+        }
+    }
+}

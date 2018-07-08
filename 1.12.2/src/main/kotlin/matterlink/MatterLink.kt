@@ -1,9 +1,13 @@
 package matterlink
 
-import matterlink.command.CommandMatterlink
+import com.mojang.authlib.GameProfile
+import jline.internal.Log.warn
+import matterlink.command.AuthCommand
+import matterlink.command.MatterLinkCommand
 import matterlink.command.MatterLinkCommandSender
 import matterlink.config.BaseConfig
 import matterlink.config.cfg
+import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.FMLCommonHandler
@@ -14,6 +18,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
+import java.util.*
 
 lateinit var logger: Logger
 
@@ -27,6 +32,7 @@ lateinit var logger: Logger
         dependencies = DEPENDENCIES
 )
 object MatterLink : IMatterLink() {
+
     init {
         instance = this
     }
@@ -47,7 +53,8 @@ object MatterLink : IMatterLink() {
     @Mod.EventHandler
     fun serverStarting(event: FMLServerStartingEvent) {
         log("DEBUG", "Registering server commands")
-        event.registerServerCommand(CommandMatterlink())
+        event.registerServerCommand(MatterLinkCommand())
+        event.registerServerCommand(AuthCommand())
         start()
     }
 
@@ -61,10 +68,55 @@ object MatterLink : IMatterLink() {
         FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(msg))
     }
 
+    override fun wrappedSendToPlayer(user: String, msg: String) {
+        val profile = profileByName(user) ?: profileByUUID(user) ?: run {
+            error("cannot find player by name or uuid $user")
+            return
+        }
+        val player = playerByProfile(profile) ?: run {
+            error("${profile.name} is not online")
+            return
+        }
+        player.sendMessage(TextComponentString(msg))
+    }
+
+    override fun isOnline(username: String) = FMLCommonHandler.instance().minecraftServerInstance.onlinePlayerNames.contains(username)
+
+    private fun playerByProfile(gameProfile: GameProfile): EntityPlayerMP?
+            = FMLCommonHandler.instance().minecraftServerInstance.playerList.getPlayerByUUID(gameProfile.id)
+
+
+    private fun profileByUUID(uuid: String): GameProfile? = try {
+        FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.getProfileByUUID(UUID.fromString(uuid))
+    } catch (e: IllegalArgumentException) {
+        warn("cannot find profile by uuid $uuid")
+        null
+    }
+
+    private fun profileByName(username: String): GameProfile? = try {
+        FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.getGameProfileForUsername(username)
+    } catch (e: IllegalArgumentException) {
+        warn("cannot find profile by username $username")
+        null
+    }
+
+    override fun nameToUUID(username: String) = profileByName(username)?.id?.toString()
+
+    override fun uuidToName(uuid: String?): String? {
+        return uuid?.let { profileByUUID(it)?.name }
+    }
+
     override fun log(level: String, formatString: String, vararg data: Any) =
             logger.log(Level.toLevel(level, Level.INFO), formatString, *data)
 
-    override fun commandSenderFor(user: String, userId: String, server: String, op: Boolean) = MatterLinkCommandSender(user, userId, server, op)
+    override fun commandSenderFor(
+            user: String,
+            userId: String,
+            server: String,
+            uuid: String?,
+            username: String?,
+            op: Boolean
+    ) = MatterLinkCommandSender(user, userId, server, uuid, username, op)
 
     override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION

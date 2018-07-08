@@ -8,9 +8,13 @@ import net.minecraft.util.ChunkCoordinates
 import net.minecraft.util.IChatComponent
 import net.minecraft.world.World
 
-class MatterLinkCommandSender(user: String, userId: String, server: String, op: Boolean) : IMinecraftCommandSender(user, userId, server, op), ICommandSender {
-
-    private var level: Int = 0
+class MatterLinkCommandSender(
+        user: String,
+        userId: String,
+        server: String,
+        uuid: String?,
+        username: String?,
+        op: Boolean) : IMinecraftCommandSender(user, userId, server, uuid, username, op), ICommandSender {
 
     override fun execute(cmdString: String): Boolean {
         return 0 < MinecraftServer.getServer().commandManager.executeCommand(
@@ -20,7 +24,7 @@ class MatterLinkCommandSender(user: String, userId: String, server: String, op: 
     }
 
     override fun getFormattedCommandSenderName(): IChatComponent {
-        return ChatComponentText(user)
+        return ChatComponentText(displayName)
     }
 
     override fun getCommandSenderName() = accountName

@@ -13,8 +13,13 @@ import net.minecraft.world.World
 import net.minecraftforge.fml.common.FMLCommonHandler
 import javax.annotation.Nonnull
 
-class MatterLinkCommandSender(user: String, userId: String, server: String, op: Boolean) : IMinecraftCommandSender(user, userId, server, op), ICommandSender {
-    private var level: Int = 0
+class MatterLinkCommandSender(
+        user: String,
+        userId: String,
+        server: String,
+        uuid: String?,
+        username: String?,
+        op: Boolean) : IMinecraftCommandSender(user, userId, server, uuid, username, op), ICommandSender {
 
     override fun execute(cmdString: String): Boolean {
         return 0 < FMLCommonHandler.instance().minecraftServerInstance.commandManager.executeCommand(
@@ -24,7 +29,7 @@ class MatterLinkCommandSender(user: String, userId: String, server: String, op: 
     }
 
     override fun getDisplayName(): ITextComponent {
-        return TextComponentString(user)
+        return TextComponentString(displayName)
     }
 
     override fun getName() = accountName

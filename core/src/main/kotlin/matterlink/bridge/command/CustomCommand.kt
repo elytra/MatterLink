@@ -2,7 +2,6 @@ package matterlink.bridge.command
 
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
-import matterlink.handlers.TickHandler
 import matterlink.instance
 import matterlink.lazyFormat
 import matterlink.stripColorIn
@@ -14,21 +13,16 @@ data class CustomCommand(
         val response: String? = null,
         override val permLevel: Double = 0.0,
         override val help: String = "",
-        val timeout: Int = 20,
+        override val timeout: Int = 20,
         val defaultCommand: Boolean? = null,
         val execOp: Boolean? = null,
         val argumentsRegex: Regex? = null
-) : IBridgeCommand {
-    val alias: String
-        get() = BridgeCommandRegistry.getName(this)!!
+) : IBridgeCommand() {
 
-    @Transient
-    private var lastUsed: Int = 0
-
-    override fun execute(alias: String, user: String, userId: String, server: String, args: String): Boolean {
-        if(argumentsRegex != null) {
+    override fun execute(alias: String, user: String, userId: String, platform: String, uuid: String?, args: String): Boolean {
+        if (argumentsRegex != null) {
             instance.debug("testing '$args' against '${argumentsRegex.pattern}'")
-            if(!argumentsRegex.matches(args)) {
+            if (!argumentsRegex.matches(args)) {
                 MessageHandlerInst.transmit(
                         ApiMessage(
                                 text = "$user sent invalid input to command $alias".stripColorOut
@@ -38,34 +32,20 @@ data class CustomCommand(
             }
         }
 
-        if (TickHandler.tickCounter - lastUsed < timeout) {
-            instance.debug("dropped command $alias")
-            return true //eat command silently
-        }
-
-        if (!canExecute(userId, server)) {
-            MessageHandlerInst.transmit(
-                    ApiMessage(
-                            text = "$user is not permitted to perform command: $alias".stripColorOut
-                    )
-            )
-            return false
-        }
-
-        lastUsed = TickHandler.tickCounter
-
+        val username = instance.uuidToName(uuid)
 
         return when (type) {
             CommandType.EXECUTE -> {
                 // uses a new commandsender for each use
-                val commandSender = instance.commandSenderFor(user, userId, server, execOp ?: false)
-                val cmd = execute?.lazyFormat(getReplacements(user, userId, server, args))?.stripColorIn ?: return false
+                val commandSender = instance.commandSenderFor(user, userId, platform, uuid, username, execOp ?: false)
+                val cmd = execute?.lazyFormat(getReplacements(user, userId, platform, uuid, args))?.stripColorIn
+                        ?: return false
                 commandSender.execute(cmd) || commandSender.reply.isNotBlank()
             }
             CommandType.RESPONSE -> {
                 MessageHandlerInst.transmit(
                         ApiMessage(
-                                text = (response?.lazyFormat(getReplacements(user, userId, server, args))
+                                text = (response?.lazyFormat(getReplacements(user, userId, platform, uuid, args))
                                         ?: "")
                         )
                 )
@@ -90,11 +70,13 @@ data class CustomCommand(
     companion object {
         val DEFAULT = CustomCommand()
 
-        fun getReplacements(user: String, userId: String, server: String, args: String): Map<String, () -> String> = mapOf(
+        fun getReplacements(user: String, userId: String, platform: String, uuid: String?, args: String): Map<String, () -> String> = mapOf(
                 "{uptime}" to instance::getUptimeAsString,
                 "{user}" to { user },
                 "{userid}" to { userId },
-                "{server}" to { server },
+                "{uuid}" to { uuid.toString() },
+                "{username}" to { uuid?.let { instance.uuidToName(it) }.toString() },
+                "{platform}" to { platform },
                 "{args}" to { args }
         )
     }

@@ -13,9 +13,14 @@ abstract class IMatterLink {
     abstract val modVersion: String
     abstract val forgeVersion: String
 
-    abstract fun commandSenderFor(user: String, userId: String, server: String, op: Boolean): IMinecraftCommandSender
+    abstract fun commandSenderFor(user: String, userId: String, server: String, uuid: String?, username: String?, op: Boolean): IMinecraftCommandSender
 
     abstract fun wrappedSendToPlayers(msg: String)
+
+    abstract fun wrappedSendToPlayer(user: String, msg: String)
+    abstract fun isOnline(username: String): Boolean
+    abstract fun nameToUUID(username: String): String?
+    abstract fun uuidToName(uuid: String?): String?
 
     fun start() {
         MessageHandlerInst.logger = { level, msg ->
@@ -85,4 +90,5 @@ abstract class IMatterLink {
     fun registerBridgeCommands() {
         BridgeCommandRegistry.reloadCommands()
     }
+
 }

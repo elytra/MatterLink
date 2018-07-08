@@ -1,16 +1,23 @@
 package matterlink.bridge.command
 
 import matterlink.api.ApiMessage
+import matterlink.bridge.MessageHandlerInst
 import matterlink.config.CommandConfig
+import matterlink.config.IdentitiesConfig
 import matterlink.config.PermissionConfig
 import matterlink.config.cfg
 import matterlink.instance
+import matterlink.stripColorOut
 import java.util.*
 
 object BridgeCommandRegistry {
 
     private val commandMap: HashMap<String, IBridgeCommand> = hashMapOf()
 
+    /**
+     *
+     * @return consume message flag
+     */
     fun handleCommand(input: ApiMessage): Boolean {
         if (!cfg.command.enable || input.text.isBlank()) return false
 
@@ -19,7 +26,24 @@ object BridgeCommandRegistry {
         val cmd = input.text.substring(1).split(' ', ignoreCase = false, limit = 2)
         val args = if (cmd.size == 2) cmd[1] else ""
 
-        return commandMap[cmd[0]]?.execute(cmd[0], input.username, input.userid, input.account, args) ?: false
+        val uuid = IdentitiesConfig.getUUID(input.account, input.userid)
+
+        return commandMap[cmd[0]]?.let {
+            if (!it.reachedTimeout()) {
+                instance.debug("dropped command ${it.alias}")
+                return false
+            }
+            it.preExecute() // resets the tickCounter
+            if (!it.canExecute(uuid)) {
+                MessageHandlerInst.transmit(
+                        ApiMessage(
+                                text = "${input.username} is not permitted to perform command: ${cmd[0]}".stripColorOut
+                        )
+                )
+                return false
+            }
+            it.execute(cmd[0], input.username, input.userid, input.account, uuid, args)
+        } ?: false
     }
 
     fun register(alias: String, cmd: IBridgeCommand): Boolean {
@@ -56,11 +80,15 @@ object BridgeCommandRegistry {
 
     fun reloadCommands() {
         commandMap.clear()
-        val permStatus = PermissionConfig.loadPermFile()
         register("help", HelpCommand)
-        if(cfg.command.permissionRequests)
-            register("req", PermCommand)
-        val cmdStatus = CommandConfig.readConfig()
+        if (cfg.command.authRequests)
+            register("auth", AuthBridgeCommand)
+        if (cfg.command.permisionRequests)
+            register("request", RequestPermissionsCommand)
+        PermissionConfig.loadFile()
+        CommandConfig.loadFile()
+        IdentitiesConfig.loadFile()
+
         CommandConfig.commands.forEach { (alias, command) ->
             register(alias, command)
         }

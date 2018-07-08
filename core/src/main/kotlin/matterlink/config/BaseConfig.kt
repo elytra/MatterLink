@@ -37,7 +37,10 @@ data class BaseConfig(val rootDir: File) {
     data class CommandOptions(
             val prefix: Char = '!',
             val enable: Boolean = true,
-            val permissionRequests: Boolean = true
+            val authRequests: Boolean = true,
+            val permisionRequests: Boolean = true,
+            val defaultPermUnauthenticated: Double = 0.0,
+            val defaultPermAuthenticated: Double = 1.0
     )
 
     data class ConnectOptions(
@@ -175,10 +178,25 @@ data class BaseConfig(val rootDir: File) {
                                         prefix,
                                         "Prefix for MC bridge commands. Accepts a single character (not alphanumeric or /)"
                                 ),
-                                permissionRequests = it.getOrDefault(
-                                        "permissionRequests",
-                                        permissionRequests,
-                                        "Enable the 'req' command for requestion permissions from chat"
+                                authRequests = it.getOrDefault(
+                                        "authRequests",
+                                        authRequests,
+                                        "Enable the 'auth' command for linking chat accounts to uuid / ingame account"
+                                ),
+                                permisionRequests = it.getOrDefault(
+                                        "permisionRequests",
+                                        authRequests,
+                                        "Enable the 'request' command for requestion permissions from chat"
+                                ),
+                                defaultPermUnauthenticated = it.getOrDefault(
+                                        "defaultPermUnauthenticated",
+                                        defaultPermUnauthenticated,
+                                        "default permission level for unauthenticated players"
+                                ),
+                                defaultPermAuthenticated = it.getOrDefault(
+                                        "defaultPermAuthenticated",
+                                        defaultPermAuthenticated,
+                                        "default permission level for players that hve linked their accounts"
                                 )
                         )
                     }
