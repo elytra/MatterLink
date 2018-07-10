@@ -1,6 +1,7 @@
 package matterlink
 
 import com.mojang.authlib.GameProfile
+import matterlink.bridge.command.IBridgeCommand
 import matterlink.command.MatterLinkCommand
 import matterlink.command.MatterLinkCommandSender
 import matterlink.config.BaseConfig
@@ -107,12 +108,9 @@ object MatterLink : IMatterLink() {
 
     override fun commandSenderFor(
             user: String,
-            userId: String,
-            server: String,
-            uuid: String?,
-            username: String?,
+            env: IBridgeCommand.CommandEnvironment,
             op: Boolean
-    ) = MatterLinkCommandSender(user, userId, server, uuid, username, op)
+    ) = MatterLinkCommandSender(user, env, op)
 
     override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION

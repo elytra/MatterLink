@@ -10,19 +10,17 @@ object HelpCommand : IBridgeCommand() {
     override val permLevel: Double
         get() = cfg.command.defaultPermUnauthenticated
 
-    override fun execute(alias: String, user: String, userId: String, platform: String, uuid: String?, args: String): Boolean {
+    override fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean {
         val msg: String = when {
             args.isEmpty() ->
-                "Available commands: ${BridgeCommandRegistry.getCommandList(IBridgeCommand.getPermLevel(uuid))}"
+                "Available commands: ${BridgeCommandRegistry.getCommandList(IBridgeCommand.getPermLevel(env.uuid))}"
             else -> args.split(" ", ignoreCase = false)
                     .joinToString(separator = "\n") {
                         "$it: ${BridgeCommandRegistry.getHelpString(it)}"
                     }
         }
-        MessageHandlerInst.transmit(
-                ApiMessage(
-                        text = msg.stripColorOut
-                ),
+        env.respond(
+                text = msg,
                 cause = "Help Requested $args"
         )
         return true

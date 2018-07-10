@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent
 import cpw.mods.fml.common.event.FMLPreInitializationEvent
 import cpw.mods.fml.common.event.FMLServerStartingEvent
 import cpw.mods.fml.common.event.FMLServerStoppingEvent
+import matterlink.bridge.command.IBridgeCommand
 import matterlink.command.MatterLinkCommand
 import matterlink.command.MatterLinkCommandSender
 import matterlink.config.BaseConfig
@@ -110,12 +111,9 @@ class MatterLink : IMatterLink() {
 
     override fun commandSenderFor(
             user: String,
-            userId: String,
-            server: String,
-            uuid: String?,
-            username: String?,
+            env: IBridgeCommand.CommandEnvironment,
             op: Boolean
-    ) = MatterLinkCommandSender(user, userId, server, uuid, username, op)
+    ) = MatterLinkCommandSender(user, env, op)
 
     override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION

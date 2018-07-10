@@ -1,29 +1,30 @@
 package matterlink.bridge.command
 
-import matterlink.api.ApiMessage
-import matterlink.bridge.MessageHandlerInst
 import matterlink.config.PermissionConfig
 import matterlink.config.PermissionRequest
 import matterlink.config.cfg
 import matterlink.randomString
 
 object RequestPermissionsCommand : IBridgeCommand() {
-    override val help: String = "Requests permissions on the bridge. Syntax: request [permissionLevel]"
+    val syntax = " Syntax: request [permissionLevel]"
+    override val help: String = "Requests permissions on the bridge. $syntax"
     override val permLevel: Double
         get() = cfg.command.defaultPermAuthenticated
 
-    override fun execute(alias: String, user: String, userId: String, platform: String, uuid: String?, args: String): Boolean {
+    override fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean {
 
+        val uuid = env.uuid
         if (uuid == null) {
-            respond("$user is not authenticated (userid: $userId platform: $platform)")
+            env.respond("$user is not authenticated ($env)")
             return true
         }
 
         val argList = args.split(' ', limit = 2)
         val requestedLevelArg = argList.getOrNull(0)
-        val requestedlevel = requestedLevelArg?.let {
+        val requestedLevel = requestedLevelArg?.takeIf { it.isNotEmpty() }?.let {
             it.toDoubleOrNull() ?: run {
-                respond("cannot parse permlevel")
+                env.respond("cannot parse permlevel '$requestedLevelArg'\n" +
+                        syntax)
                 return true
             }
         }
@@ -32,19 +33,9 @@ object RequestPermissionsCommand : IBridgeCommand() {
 
         val requestId = user.toLowerCase()
 
-        PermissionConfig.permissionRequests.put(requestId, PermissionRequest(uuid = uuid, user = user, nonce = nonce, powerlevel = requestedlevel))
-        respond("please ask a op to accept your permission elevation with `/ml permAccept $requestId $nonce [powerlevel]`")
+        PermissionConfig.permissionRequests.put(requestId, PermissionRequest(uuid = uuid, user = user, nonce = nonce, powerlevel = requestedLevel))
+        env.respond("please ask a op to accept your permission elevation with `/ml permAccept $requestId $nonce [permLevel]`")
 
         return true
     }
-
-
-    private fun respond(text: String) {
-        MessageHandlerInst.transmit(
-                ApiMessage(
-                        text = text
-                )
-        )
-    }
-
 }

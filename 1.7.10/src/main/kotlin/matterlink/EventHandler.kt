@@ -41,10 +41,11 @@ object EventHandler {
     @SubscribeEvent
     fun chatEvent(e: ServerChatEvent) {
         if(e.isCanceled) return
-        ChatProcessor.sendToBridge(
+        e.isCanceled = ChatProcessor.sendToBridge(
                 user = e.player.displayName,
                 msg = e.message,
-                event = ""
+                event = "",
+                uuid = e.player.gameProfile.id.toString()
         )
     }
 

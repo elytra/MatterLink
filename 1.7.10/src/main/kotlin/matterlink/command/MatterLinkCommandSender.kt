@@ -1,5 +1,6 @@
 package matterlink.command
 
+import matterlink.bridge.command.IBridgeCommand
 import matterlink.bridge.command.IMinecraftCommandSender
 import net.minecraft.command.ICommandSender
 import net.minecraft.server.MinecraftServer
@@ -10,11 +11,8 @@ import net.minecraft.world.World
 
 class MatterLinkCommandSender(
         user: String,
-        userId: String,
-        server: String,
-        uuid: String?,
-        username: String?,
-        op: Boolean) : IMinecraftCommandSender(user, userId, server, uuid, username, op), ICommandSender {
+        env: IBridgeCommand.CommandEnvironment,
+        op: Boolean) : IMinecraftCommandSender(user, env, op), ICommandSender {
 
     override fun execute(cmdString: String): Boolean {
         return 0 < MinecraftServer.getServer().commandManager.executeCommand(

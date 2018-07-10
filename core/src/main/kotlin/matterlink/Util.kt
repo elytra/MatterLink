@@ -30,11 +30,11 @@ fun String.mapFormat(env: Map<String, String>): String {
     return result
 }
 
-fun String.lazyFormat(env: Map<String, () -> String>): String {
+fun String.lazyFormat(env: Map<String, () -> String?>): String {
     var result = this
     env.forEach { key, value ->
         if (result.contains(key)) {
-            result = result.replace(key, value())
+            result = result.replace(key, value().toString())
         }
     }
     return result

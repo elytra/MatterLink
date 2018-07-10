@@ -26,7 +26,7 @@ object CommandConfig {
                     to CustomCommand(
                     type = CommandType.EXECUTE,
                     execute = "forge tps",
-                    help = "Print server tps",
+                    help = "Print platform tps",
                     timeout = 200,
                     defaultCommand = true
             )),
@@ -41,14 +41,14 @@ object CommandConfig {
                     to CustomCommand(
                     type = CommandType.EXECUTE,
                     execute = "seed",
-                    help = "Print server world seed",
+                    help = "Print platform world seed",
                     defaultCommand = true
             )),
             "uptime" to ("this is a reponse command, it uses the uptime function, time since the mod was first loaded"
                     to CustomCommand(
                     type = CommandType.RESPONSE,
                     response = "{uptime}",
-                    help = "Print server uptime",
+                    help = "Print platform uptime",
                     defaultCommand = true
             )),
             "whoami" to ("this shows you some of the other response macros"

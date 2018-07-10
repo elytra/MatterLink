@@ -73,7 +73,7 @@ object PasteUtil {
         http.doOutput = true
 
         val out = jankson.toJson(paste)
-                .toJson(false, false).apply { println(this) }
+                .toJson(false, false)
                 .toByteArray()
 
         http.setFixedLengthStreamingMode(out.size)

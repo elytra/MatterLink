@@ -6,17 +6,54 @@ import matterlink.config.PermissionConfig
 import matterlink.config.cfg
 import matterlink.handlers.TickHandler
 import matterlink.instance
+import matterlink.stripColorOut
 
 abstract class IBridgeCommand {
     abstract val help: String
     abstract val permLevel: Double
     open val timeout: Int = 20
 
-    protected var lastUsed: Int = 0
+    sealed class CommandEnvironment {
+        abstract val uuid: String?
+        abstract val username: String?
+
+        data class BridgeEnv(
+                val name: String,
+                val userId: String,
+                val platform: String,
+                override val uuid: String?
+        ) : CommandEnvironment() {
+            override val username: String?
+                get() = instance.uuidToName(uuid)
+        }
+        data class GameEnv(
+                override val username: String,
+                override val uuid: String
+        ) : CommandEnvironment()
+
+        fun respond(text: String, cause: String = "") {
+            when(this) {
+                is BridgeEnv -> {
+                    MessageHandlerInst.transmit(
+                            ApiMessage(
+                                    text = text.stripColorOut
+                            ),
+                            cause = cause
+                    )
+                }
+                is GameEnv -> {
+                    instance.wrappedSendToPlayer(uuid, text)
+                }
+            }
+
+        }
+    }
+
+
+    private var lastUsed: Int = 0
 
     val alias: String
         get() = BridgeCommandRegistry.getName(this)!!
-
 
     fun reachedTimeout(): Boolean {
         return (TickHandler.tickCounter - lastUsed > timeout)
@@ -30,7 +67,7 @@ abstract class IBridgeCommand {
      *
      * @return consume message flag
      */
-    abstract fun execute(alias: String, user: String, userId: String, platform: String, uuid: String?, args: String): Boolean
+    abstract fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean
 
     fun canExecute(uuid: String?): Boolean {
         instance.trace("canExecute this: $this  uuid: $uuid permLevel: $permLevel")

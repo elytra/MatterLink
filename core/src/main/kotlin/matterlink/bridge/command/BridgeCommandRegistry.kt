@@ -28,6 +28,7 @@ object BridgeCommandRegistry {
 
         val uuid = IdentitiesConfig.getUUID(input.account, input.userid)
 
+        val env = IBridgeCommand.CommandEnvironment.BridgeEnv(input.username, input.userid, input.account, uuid)
         return commandMap[cmd[0]]?.let {
             if (!it.reachedTimeout()) {
                 instance.debug("dropped command ${it.alias}")
@@ -35,14 +36,39 @@ object BridgeCommandRegistry {
             }
             it.preExecute() // resets the tickCounter
             if (!it.canExecute(uuid)) {
-                MessageHandlerInst.transmit(
-                        ApiMessage(
-                                text = "${input.username} is not permitted to perform command: ${cmd[0]}".stripColorOut
-                        )
+                env.respond(
+                        text = "${input.username} is not permitted to perform command: ${cmd[0]}"
                 )
                 return false
             }
-            it.execute(cmd[0], input.username, input.userid, input.account, uuid, args)
+            it.execute(cmd[0], input.username, env, args)
+        } ?: false
+    }
+
+    fun handleCommand(text: String, username: String, uuid: String): Boolean {
+        if (!cfg.command.enable || text.isBlank()) return false
+
+        if (text[0] != cfg.command.prefix || text.length < 2) return false
+
+        val cmd = text.substring(1).split(' ', ignoreCase = false, limit = 2)
+        val args = if (cmd.size == 2) cmd[1] else ""
+
+        val env = IBridgeCommand.CommandEnvironment.GameEnv(username, uuid)
+
+        return commandMap[cmd[0]]?.let {
+            if (!it.reachedTimeout()) {
+                instance.debug("dropped command ${it.alias}")
+                return false
+            }
+            it.preExecute() // resets the tickCounter
+            if (!it.canExecute(uuid)) {
+                env.respond(
+                        text = "$username is not permitted to perform command: ${cmd[0]}"
+                )
+                return false
+            }
+
+            it.execute(cmd[0], username, env, args)
         } ?: false
     }
 
@@ -102,4 +128,5 @@ object BridgeCommandRegistry {
         }
         return null
     }
+
 }

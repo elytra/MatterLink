@@ -2,6 +2,7 @@ package matterlink
 
 import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
+import matterlink.bridge.command.IBridgeCommand
 import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
@@ -13,7 +14,7 @@ abstract class IMatterLink {
     abstract val modVersion: String
     abstract val forgeVersion: String
 
-    abstract fun commandSenderFor(user: String, userId: String, server: String, uuid: String?, username: String?, op: Boolean): IMinecraftCommandSender
+    abstract fun commandSenderFor(user: String, env: IBridgeCommand.CommandEnvironment, op: Boolean): IMinecraftCommandSender
 
     abstract fun wrappedSendToPlayers(msg: String)
 

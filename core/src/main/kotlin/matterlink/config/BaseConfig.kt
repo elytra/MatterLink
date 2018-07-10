@@ -113,8 +113,8 @@ data class BaseConfig(val rootDir: File) {
 
     data class JoinPartOptions(
             val enable: Boolean = true,
-            val joinServer: String = "{username:antiping} has connected to the server",
-            val partServer: String = "{username:antiping} has disconnected from the server"
+            val joinServer: String = "{username:antiping} has connected to the platform",
+            val partServer: String = "{username:antiping} has disconnected from the platform"
     )
 
     data class UpdateOptions(
@@ -208,12 +208,12 @@ data class BaseConfig(val rootDir: File) {
                                 url = it.getOrDefault(
                                         "url",
                                         url,
-                                        "The URL or IP address of the bridge server"
+                                        "The URL or IP address of the bridge platform"
                                 ),
                                 authToken = it.getOrDefault(
                                         "authToken",
                                         authToken,
-                                        "Auth token used to connect to the bridge server"
+                                        "Auth token used to connect to the bridge platform"
                                 ),
                                 gateway = it.getOrDefault(
                                         "gateway",
@@ -267,7 +267,7 @@ data class BaseConfig(val rootDir: File) {
                                 systemUser = it.getOrDefault(
                                         "systemUser",
                                         systemUser,
-                                        "Name of the server user (used by death and advancement messages and the /say command)"
+                                        "Name of the platform user (used by death and advancement messages and the /say command)"
                                 ),
                                 advancements = it.getOrDefault(
                                         "advancements",
