@@ -22,7 +22,8 @@ object HelpCommand : IBridgeCommand() {
         MessageHandlerInst.transmit(
                 ApiMessage(
                         text = msg.stripColorOut
-                )
+                ),
+                cause = "Help Requested $args"
         )
         return true
     }

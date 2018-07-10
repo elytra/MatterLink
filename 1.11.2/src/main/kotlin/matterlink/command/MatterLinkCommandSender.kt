@@ -25,7 +25,9 @@ class MatterLinkCommandSender(
         return 0 < FMLCommonHandler.instance().minecraftServerInstance.commandManager.executeCommand(
                 this,
                 cmdString
-        )
+        ).apply {
+            sendReply(cmdString)
+        }
     }
 
     override fun getDisplayName(): ITextComponent {
@@ -48,7 +50,7 @@ class MatterLinkCommandSender(
     }
 
     override fun sendMessage(@Nonnull component: ITextComponent?) {
-        sendReply(component!!.unformattedComponentText)
+        appendReply(component!!.unformattedComponentText)
     }
 
     override fun sendCommandFeedback(): Boolean {

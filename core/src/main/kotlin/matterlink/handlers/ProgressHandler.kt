@@ -14,7 +14,8 @@ object ProgressHandler {
         MessageHandlerInst.transmit(
                 ApiMessage(
                         text = "$usr $message $display".stripColorOut
-                )
+                ),
+                cause = "Progress Event by $usr"
         )
     }
 }

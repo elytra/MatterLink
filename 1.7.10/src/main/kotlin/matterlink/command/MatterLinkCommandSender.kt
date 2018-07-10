@@ -20,7 +20,9 @@ class MatterLinkCommandSender(
         return 0 < MinecraftServer.getServer().commandManager.executeCommand(
                 this,
                 cmdString
-        )
+        ).apply {
+            sendReply(cmdString)
+        }
     }
 
     override fun getFormattedCommandSenderName(): IChatComponent {
@@ -39,7 +41,7 @@ class MatterLinkCommandSender(
     }
 
     override fun addChatMessage(component: IChatComponent) {
-        sendReply(component.unformattedText)
+        appendReply(component.unformattedText)
     }
 
     override fun getCommandSenderPosition(): ChunkCoordinates = ChunkCoordinates(0, 0, 0)

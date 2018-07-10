@@ -52,26 +52,27 @@ data class BaseConfig(val rootDir: File) {
     )
 
     data class DebugOptions(
-            var logLevel: String = "INFO"
+            val logLevel: String = "INFO"
     )
 
     data class IncomingOptions(
             val chat: String = "<{username}> {text}",
             val joinPart: String = "§6-- {username} {text}",
             val action: String = "§5* {username} {text}",
-            var stripColors: Boolean = true
+            val stripColors: Boolean = true
     )
 
     data class OutgoingOptions(
             val systemUser: String = "Server",
             //outgoing toggles
-            var announceConnect: Boolean = true,
-            var announceDisconnect: Boolean = true,
+            val announceConnect: Boolean = true,
+            val announceDisconnect: Boolean = true,
             val advancements: Boolean = true,
-            var stripColors: Boolean = true,
+            val stripColors: Boolean = true,
+            val pasteEEKey: String = "",
 
-            var joinPart: JoinPartOptions = JoinPartOptions(),
-            var death: DeathOptions = DeathOptions()
+            val joinPart: JoinPartOptions = JoinPartOptions(),
+            val death: DeathOptions = DeathOptions()
     )
 
     data class DeathOptions(
@@ -287,6 +288,11 @@ data class BaseConfig(val rootDir: File) {
                                         "stripColors",
                                         stripColors,
                                         "strip colors from nicknames and messages"
+                                ),
+                                pasteEEKey = it.getOrDefault(
+                                        "pasteEEKey",
+                                        pasteEEKey,
+                                        "paste.ee api key, leave empty to use application default"
                                 ),
                                 death = it.getOrDefault(
                                         "death",

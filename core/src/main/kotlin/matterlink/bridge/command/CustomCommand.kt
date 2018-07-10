@@ -40,14 +40,15 @@ data class CustomCommand(
                 val commandSender = instance.commandSenderFor(user, userId, platform, uuid, username, execOp ?: false)
                 val cmd = execute?.lazyFormat(getReplacements(user, userId, platform, uuid, args))?.stripColorIn
                         ?: return false
-                commandSender.execute(cmd) || commandSender.reply.isNotBlank()
+                commandSender.execute(cmd) || commandSender.reply.isNotEmpty()
             }
             CommandType.RESPONSE -> {
                 MessageHandlerInst.transmit(
                         ApiMessage(
                                 text = (response?.lazyFormat(getReplacements(user, userId, platform, uuid, args))
                                         ?: "")
-                        )
+                        ),
+                        cause = "response to command: $alias"
                 )
                 true
             }

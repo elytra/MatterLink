@@ -21,7 +21,8 @@ object JoinLeaveHandler {
                     ApiMessage(
                             text = msg,
                             event = JOIN_LEAVE
-                    )
+                    ),
+                    cause = "$player joined"
             )
         }
     }
@@ -38,7 +39,8 @@ object JoinLeaveHandler {
                     ApiMessage(
                             text = msg,
                             event = JOIN_LEAVE
-                    )
+                    ),
+                    cause = "$player left"
             )
         }
     }

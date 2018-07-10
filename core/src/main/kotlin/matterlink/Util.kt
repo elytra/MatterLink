@@ -73,6 +73,7 @@ fun <T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? 
 }
 
 inline fun <reified T : Any> Jankson.fromJson(obj: JsonObject): T = this.fromJson(obj, T::class.java)
+inline fun <reified T : Any> Jankson.fromJson(json: String): T = this.fromJson(json, T::class.java)
 
 inline fun <reified T : Any> Jankson.Builder.registerTypeAdapter(noinline adapter: (JsonObject) -> T) = this.registerTypeAdapter(T::class.java, adapter)
 
