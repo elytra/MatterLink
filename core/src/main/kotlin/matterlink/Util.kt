@@ -8,6 +8,7 @@ import blue.endless.jankson.impl.Marshaller
 import matterlink.config.cfg
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.lang.Thread.yield
 import java.util.*
 import kotlin.streams.asSequence
 
@@ -62,10 +63,8 @@ val Exception.stackTraceString: String
         return sw.toString()
     }
 
-fun randomString(length: Long = 6, source: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ") = Random().ints(length, 0, source.length)
-        .asSequence()
-        .map(source::get)
-        .joinToString("")
+fun randomString(length: Int = 6): String =
+        java.util.UUID.randomUUID().toString().replace("-", "").take(length)
 
 fun <T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? = null): T {
 //    instance.info("type: ${default.javaClass.name} key: $key json: >>>${this.getObject(key)?.toJson()}<<< default: $default")

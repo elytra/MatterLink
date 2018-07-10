@@ -70,6 +70,7 @@ data class BaseConfig(val rootDir: File) {
             val advancements: Boolean = true,
             val stripColors: Boolean = true,
             val pasteEEKey: String = "",
+            val inlineLimit: Int = 5,
 
             val joinPart: JoinPartOptions = JoinPartOptions(),
             val death: DeathOptions = DeathOptions()
@@ -294,6 +295,11 @@ data class BaseConfig(val rootDir: File) {
                                         pasteEEKey,
                                         "paste.ee api key, leave empty to use application default"
                                 ),
+                                inlineLimit = it.getOrDefault(
+                                        "inlineLimit",
+                                        inlineLimit,
+                                        "messages with more lines than this will get shortened via paste.ee"
+                                ),
                                 death = it.getOrDefault(
                                         "death",
                                         DeathOptions(),
@@ -386,7 +392,7 @@ data class BaseConfig(val rootDir: File) {
             configFile.createNewFile()
             jankson.marshaller.serialize(MatterLinkConfig()) as JsonObject
         }
-        instance.info("finished loading $jsonObject")
+        instance.info("finished loading base config")
 
         val tmpCfg = try {
             //cfgDirectory.resolve("debug.matterlink.hjson").writeText(jsonObject.toJson(false, true))

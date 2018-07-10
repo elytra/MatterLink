@@ -3,7 +3,6 @@ package matterlink.bridge.command
 import matterlink.instance
 import matterlink.lazyFormat
 import matterlink.stripColorIn
-import matterlink.stripColorOut
 
 data class CustomCommand(
         val type: CommandType = CommandType.RESPONSE,
@@ -70,8 +69,8 @@ data class CustomCommand(
                 },
                 "{uuid}" to {
                     when (env) {
-                        is CommandEnvironment.BridgeEnv -> env.uuid
-                        is CommandEnvironment.GameEnv -> env.uuid
+                        is CommandEnvironment.BridgeEnv -> env.uuid.toString()
+                        is CommandEnvironment.GameEnv -> env.uuid.toString()
                     }
                 },
                 "{username}" to {

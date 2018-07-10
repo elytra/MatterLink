@@ -5,12 +5,13 @@ import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.instance
 import matterlink.stripColorOut
+import java.util.*
 
 object ChatProcessor {
     /**
      * @return cancel message flag
      */
-    fun sendToBridge(user: String, msg: String, event: String, uuid: String? = null): Boolean {
+    fun sendToBridge(user: String, msg: String, event: String, uuid: UUID? = null): Boolean {
         val message = msg.trim()
         if(uuid != null && BridgeCommandRegistry.handleCommand(message, user, uuid)) return true
         when {

@@ -5,6 +5,7 @@ import matterlink.config.IdentitiesConfig
 import matterlink.config.cfg
 import matterlink.instance
 import matterlink.randomString
+import java.util.*
 
 object AuthBridgeCommand : IBridgeCommand() {
     val syntax = "Syntax: auth [username]"
@@ -18,9 +19,10 @@ object AuthBridgeCommand : IBridgeCommand() {
             return true
         }
 
-        if (env.uuid != null) {
-            val name = instance.uuidToName(env.uuid)
-            env.respond("you are already authenticated as name: $name uuid: ${env.uuid}")
+        val uuid = env.uuid
+        if (uuid != null) {
+            val name = instance.uuidToName(uuid)
+            env.respond("you are already authenticated as name: $name uuid: $uuid")
             return true
         }
 
@@ -34,8 +36,8 @@ object AuthBridgeCommand : IBridgeCommand() {
 
         var targetUserName = target
 
-        val targetUUid: String = instance.nameToUUID(target) ?: run {
-            targetUserName = instance.uuidToName(target) ?: run {
+        val targetUUid: String = instance.nameToUUID(target)?.toString() ?: run {
+            targetUserName = instance.uuidToName(UUID.fromString(target)) ?: run {
                 env.respond("cannot find player by username/uuid $target")
                 return true
             }

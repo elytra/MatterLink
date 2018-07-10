@@ -6,6 +6,7 @@ import matterlink.bridge.command.IBridgeCommand
 import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
+import java.util.*
 
 lateinit var instance: IMatterLink
 
@@ -18,10 +19,11 @@ abstract class IMatterLink {
 
     abstract fun wrappedSendToPlayers(msg: String)
 
-    abstract fun wrappedSendToPlayer(user: String, msg: String)
+    abstract fun wrappedSendToPlayer(username: String, msg: String)
+    abstract fun wrappedSendToPlayer(uuid: UUID, msg: String)
     abstract fun isOnline(username: String): Boolean
-    abstract fun nameToUUID(username: String): String?
-    abstract fun uuidToName(uuid: String?): String?
+    abstract fun nameToUUID(username: String): UUID?
+    abstract fun uuidToName(uuid: UUID): String?
 
     fun start() {
         MessageHandlerInst.logger = { level, msg ->

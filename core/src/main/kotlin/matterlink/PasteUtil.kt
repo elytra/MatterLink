@@ -41,27 +41,27 @@ object PasteUtil {
                                 ?: "invalid"
                 )
             }
-            .registerSerializer { paste: Paste, marshaller: Marshaller ->
-                JsonObject().apply {
-                    with(paste) {
-                        if (description.isNotBlank())
-                            this@apply["description"] = marshaller.serialize(description)
-                        if (encrypted)
-                            this@apply["encrypted"] = marshaller.serialize(encrypted)
-                        this@apply["sections"] = marshaller.serialize(sections)
-                    }
-                }
-            }
-            .registerSerializer { section: PasteSection, marshaller: Marshaller ->
-                JsonObject().apply {
-                    with(section) {
-                        if (name.isNotBlank())
-                            this@apply["name"] = marshaller.serialize(name)
-                        this@apply["syntax"] = marshaller.serialize(syntax)
-                        this@apply["contents"] = marshaller.serialize(contents.replace("\n", "\\n"))
-                    }
-                }
-            }
+//            .registerSerializer { paste: Paste, marshaller: Marshaller ->
+//                JsonObject().apply {
+//                    with(paste) {
+//                        if (description.isNotBlank())
+//                            this@apply["description"] = marshaller.serialize(description)
+//                        if (encrypted)
+//                            this@apply["encrypted"] = marshaller.serialize(encrypted)
+//                        this@apply["sections"] = marshaller.serialize(sections)
+//                    }
+//                }
+//            }
+//            .registerSerializer { section: PasteSection, marshaller: Marshaller ->
+//                JsonObject().apply {
+//                    with(section) {
+//                        if (name.isNotBlank())
+//                            this@apply["name"] = marshaller.serialize(name)
+//                        this@apply["syntax"] = marshaller.serialize(syntax)
+//                        this@apply["contents"] = marshaller.serialize(contents.replace("\n", "\\n"))
+//                    }
+//                }
+//            }
             .build()
 
     fun paste(paste: Paste, key: String = ""): PasteResponse {

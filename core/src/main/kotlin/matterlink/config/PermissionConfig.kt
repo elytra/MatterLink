@@ -9,12 +9,13 @@ import matterlink.getReified
 import matterlink.instance
 import java.io.File
 import java.io.FileNotFoundException
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 typealias PermissionMap = Map<String, Double>
 
 data class PermissionRequest(
-        val uuid: String,
+        val uuid: UUID,
         val user: String,
         val nonce: String,
         val powerlevel: Double? = null
@@ -77,8 +78,8 @@ object PermissionConfig {
             configFile.writeText(jsonObject.toJson(true, true))
     }
 
-    fun add(uuid: String, powerlevel: Double, comment: String? = null) {
-        jsonObject.putDefault(uuid, powerlevel, comment)
+    fun add(uuid: UUID, powerlevel: Double, comment: String? = null) {
+        jsonObject.putDefault(uuid.toString(), powerlevel, comment)
         load()
     }
 }

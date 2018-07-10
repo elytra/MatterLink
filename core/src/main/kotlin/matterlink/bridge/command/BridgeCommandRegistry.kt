@@ -45,7 +45,7 @@ object BridgeCommandRegistry {
         } ?: false
     }
 
-    fun handleCommand(text: String, username: String, uuid: String): Boolean {
+    fun handleCommand(text: String, username: String, uuid: UUID): Boolean {
         if (!cfg.command.enable || text.isBlank()) return false
 
         if (text[0] != cfg.command.prefix || text.length < 2) return false

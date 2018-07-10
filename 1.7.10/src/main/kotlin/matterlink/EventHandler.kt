@@ -45,7 +45,7 @@ object EventHandler {
                 user = e.player.displayName,
                 msg = e.message,
                 event = "",
-                uuid = e.player.gameProfile.id.toString()
+                uuid = e.player.gameProfile.id
         )
     }
 

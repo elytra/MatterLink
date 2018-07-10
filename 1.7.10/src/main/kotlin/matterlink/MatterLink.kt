@@ -67,9 +67,21 @@ class MatterLink : IMatterLink() {
         MinecraftServer.getServer().configurationManager.sendChatMsg(ChatComponentText(msg))
     }
 
-    override fun wrappedSendToPlayer(user: String, msg: String) {
-        val profile = profileByName(user) ?: profileByUUID(user) ?: run {
-            error("cannot find player by name or uuid $user")
+    override fun wrappedSendToPlayer(username: String, msg: String) {
+        val profile = profileByName(username) ?: run {
+            error("cannot find player by name $username")
+            return
+        }
+        val player = playerByProfile(profile) ?: run {
+            error("${profile.name} is not online")
+            return
+        }
+        player.addChatMessage(ChatComponentText(msg))
+    }
+
+    override fun wrappedSendToPlayer(uuid: UUID, msg: String) {
+        val profile = profileByUUID(uuid) ?: run {
+            error("cannot find player by uuid $uuid")
             return
         }
         val player = playerByProfile(profile) ?: run {
@@ -86,8 +98,8 @@ class MatterLink : IMatterLink() {
         return FMLCommonHandler.instance().minecraftServerInstance.configurationManager.createPlayerForUser(gameProfile)
     }
 
-    private fun profileByUUID(uuid: String): GameProfile? = try {
-        FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.func_152652_a(UUID.fromString(uuid))
+    private fun profileByUUID(uuid: UUID): GameProfile? = try {
+        FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.func_152652_a(uuid)
     } catch (e: IllegalArgumentException) {
         warn("cannot find profile by uuid $uuid")
         null
@@ -100,11 +112,9 @@ class MatterLink : IMatterLink() {
         null
     }
 
-    override fun nameToUUID(username: String) = profileByName(username)?.id?.toString()
+    override fun nameToUUID(username: String): UUID? = profileByName(username)?.id
 
-    override fun uuidToName(uuid: String?): String? {
-        return uuid?.let { profileByUUID(it)?.name }
-    }
+    override fun uuidToName(uuid: UUID): String? = profileByUUID(uuid)?.name
 
     override fun log(level: String, formatString: String, vararg data: Any) =
             logger.log(Level.toLevel(level, Level.INFO), formatString, *data)

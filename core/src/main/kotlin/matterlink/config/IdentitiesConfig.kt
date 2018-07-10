@@ -11,6 +11,7 @@ import matterlink.getOrDefault
 import matterlink.instance
 import java.io.File
 import java.io.FileNotFoundException
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 typealias IdentMap = Map<String, Map<String, List<String>>>
@@ -114,13 +115,13 @@ object IdentitiesConfig {
     }
 
     //TODO: rewrite, store ident map differently in memory
-    fun getUUID(platform: String, userid: String): String? {
+    fun getUUID(platform: String, userid: String): UUID? {
         return idents.entries.firstOrNull { (uuid, usermap) ->
             usermap.entries.any { (_platform, userids) ->
                 if (platform.equals(_platform, true))
                     instance.info("platform: $_platform userids: $userids")
                 platform.equals(_platform, true) && userids.contains(userid)
             }
-        }?.key
+        }?.key?.let { UUID.fromString(it) }
     }
 }

@@ -7,6 +7,7 @@ import matterlink.config.cfg
 import matterlink.handlers.TickHandler
 import matterlink.instance
 import matterlink.stripColorOut
+import java.util.*
 
 abstract class IBridgeCommand {
     abstract val help: String
@@ -14,25 +15,26 @@ abstract class IBridgeCommand {
     open val timeout: Int = 20
 
     sealed class CommandEnvironment {
-        abstract val uuid: String?
+        abstract val uuid: UUID?
         abstract val username: String?
 
         data class BridgeEnv(
                 val name: String,
                 val userId: String,
                 val platform: String,
-                override val uuid: String?
+                override val uuid: UUID?
         ) : CommandEnvironment() {
             override val username: String?
-                get() = instance.uuidToName(uuid)
+                get() = uuid?.let { instance.uuidToName(uuid) }
         }
+
         data class GameEnv(
                 override val username: String,
-                override val uuid: String
+                override val uuid: UUID
         ) : CommandEnvironment()
 
         fun respond(text: String, cause: String = "") {
-            when(this) {
+            when (this) {
                 is BridgeEnv -> {
                     MessageHandlerInst.transmit(
                             ApiMessage(
@@ -69,7 +71,7 @@ abstract class IBridgeCommand {
      */
     abstract fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean
 
-    fun canExecute(uuid: String?): Boolean {
+    fun canExecute(uuid: UUID?): Boolean {
         instance.trace("canExecute this: $this  uuid: $uuid permLevel: $permLevel")
         val canExec = getPermLevel(uuid) >= permLevel
         instance.trace("canExecute return $canExec")
@@ -79,9 +81,9 @@ abstract class IBridgeCommand {
     open fun validate() = true
 
     companion object {
-        fun getPermLevel(uuid: String?): Double {
-            if(uuid == null) return cfg.command.defaultPermUnauthenticated
-            return PermissionConfig.perms[uuid] ?: cfg.command.defaultPermAuthenticated
+        fun getPermLevel(uuid: UUID?): Double {
+            if (uuid == null) return cfg.command.defaultPermUnauthenticated
+            return PermissionConfig.perms[uuid.toString()] ?: cfg.command.defaultPermAuthenticated
         }
     }
 }
