@@ -1,5 +1,13 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath group: "org.jetbrains.kotlin", name: "kotlin-gradle-plugin", version: kotlin_version
+    }
+}
+
 plugins {
-    id "org.jetbrains.kotlin.jvm" version '1.2.41'
     id 'idea'
 }
 
@@ -28,6 +36,11 @@ subprojects {
         maven {
             name = "shadowfacts"
             url = "http://maven.shadowfacts.net/"
+        }
+        ivy {
+            //Resolves baubles and jankson
+            name = "endless.blue dependency mirror"
+            artifactPattern "https://endless.blue/files/ivy/[module]-[revision].[ext]"
         }
     }
 

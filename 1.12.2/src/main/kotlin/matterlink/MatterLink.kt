@@ -41,7 +41,6 @@ object MatterLink : IMatterLink() {
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent) {
         logger = event.modLog as org.apache.logging.log4j.core.Logger
-        logger.level = Level.DEBUG
         logger.info("Building bridge!")
 
         cfg = BaseConfig(event.modConfigurationDirectory).load()
@@ -98,7 +97,6 @@ object MatterLink : IMatterLink() {
 
     private fun playerByProfile(gameProfile: GameProfile): EntityPlayerMP? = FMLCommonHandler.instance().minecraftServerInstance.playerList.getPlayerByUUID(gameProfile.id)
 
-
     private fun profileByUUID(uuid: UUID): GameProfile? = try {
         FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.getProfileByUUID(uuid)
     } catch (e: IllegalArgumentException) {
@@ -116,9 +114,6 @@ object MatterLink : IMatterLink() {
     override fun nameToUUID(username: String): UUID? = profileByName(username)?.id
 
     override fun uuidToName(uuid: UUID): String? = profileByUUID(uuid)?.name
-
-//    override fun log(level: String, formatString: String, vararg data: Any) =
-//            logger.log(Level.toLevel(level, Level.INFO), formatString, *data)
 
     override fun commandSenderFor(
             user: String,

@@ -1,22 +1,24 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        maven {
+            url = 'http://files.minecraftforge.net/maven'
+        }
         mavenCentral()
         maven {
-            url = "https://plugins.gradle.org/m2/"
+            url = 'https://plugins.gradle.org/m2/'
         }
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
-        classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.0.10"
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '1.2-SNAPSHOT'
+        classpath group: 'gradle.plugin.com.matthewprenger', name: 'CurseGradle', version: cursegradle_version
     }
 }
 
 apply plugin: 'forge'
 apply plugin: 'com.matthewprenger.cursegradle'
 
-version = project.mc_version + "-" + project.mod_version
+version = project.mc_version + '-' + project.mod_version
 
 archivesBaseName = project.mod_name
 
@@ -29,28 +31,26 @@ configurations {
 
 dependencies {
     shade project(':core')
-    shade project(":api")
-    shade project(":Jankson")
+    shade project(':api')
+    shade project(':Jankson')
 }
 
 minecraft {
-    version = project.mc_version + "-" + project.forge_version + "-" + project.mc_version
-    runDir = "run"
+    version = project.mc_version + '-' + project.forge_version + '-' + project.mc_version
+    runDir = 'run'
 
     mappings = project.mcp_mappings
 
-    srgExtra "PK: kotlin matterlink/repack/kotlin"
-    srgExtra "PK: org/jetbrains/annotations matterlink/repack/org/jetbrains/annotations"
-//    srgExtra "PK: org/apache/http matterlink/repack/org/apache/http"
-//    srgExtra "PK: org/apache/commons matterlink/repack/org/apache/commons"
-    srgExtra "PK: org/intellij matterlink/repack/org/intellij"
-    srgExtra "PK: blue/endless matterlink/repack/blue/endless"
+    srgExtra 'PK: kotlin matterlink/repack/kotlin'
+    srgExtra 'PK: org/jetbrains/annotations matterlink/repack/org/jetbrains/annotations'
+    srgExtra 'PK: org/intellij matterlink/repack/org/intellij'
+    srgExtra 'PK: blue/endless matterlink/repack/blue/endless'
 }
 
 compileKotlin.doFirst {
-    def target = "src/main/kotlin/matterlink/gen"
+    def target = 'src/main/kotlin/matterlink/gen'
     copy {
-        from("src/templates/kotlin/matterlink/Constants.kt")
+        from('src/templates/kotlin/matterlink/Constants.kt')
         into(target)
     }
     ant.replaceregexp(match: '@MODVERSION@', replace: project.mod_version, flags: 'g', byline: true) {
@@ -69,11 +69,11 @@ compileKotlin.doFirst {
 
 processResources {
     // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.mod_version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property 'version', project.mod_version
+    inputs.property 'mcversion', project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
-    from(project(":core").sourceSets.main.resources.srcDirs) {
+    from(project(':core').sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
 
         // replace version and mcversion
@@ -81,7 +81,7 @@ processResources {
     }
 
     // copy everything else except the mcmod.info
-    from(project(":core").sourceSets.main.resources.srcDirs) {
+    from(project(':core').sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
 }
@@ -89,8 +89,8 @@ processResources {
 jar {
     configurations.shade.each { dep ->
         from(project.zipTree(dep)) {
-            exclude "META-INF", "META-INF/**"
-            exclude "com/google/gson", "com/google/gson/**"
+            exclude 'META-INF', 'META-INF/**'
+            exclude 'com/google/gson', 'com/google/gson/**'
         }
     }
 }
@@ -104,7 +104,7 @@ curseforge {
         releaseType = project.curse_release_type
         if (project.hasProperty('changelog_file')) {
             println("changelog = $changelog_file")
-            changelogType = "markdown"
+            changelogType = 'markdown'
             changelog = file(changelog_file)
         }
         mainArtifact(jar) {

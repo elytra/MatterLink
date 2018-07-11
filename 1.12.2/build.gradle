@@ -1,27 +1,29 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        maven {
+            url = 'http://files.minecraftforge.net/maven'
+        }
         mavenCentral()
         maven {
             url = 'https://oss.sonatype.org/content/groups/public'
         }
         maven {
-            url = "https://plugins.gradle.org/m2/"
+            url = 'https://plugins.gradle.org/m2/'
         }
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
-        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.0"
-        classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.0.10"
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '2.3-SNAPSHOT'
+        classpath group: 'com.github.jengelman.gradle.plugins', name: 'shadow', version: shadow_version
+        classpath group: 'gradle.plugin.com.matthewprenger', name: 'CurseGradle', version: cursegradle_version
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'com.matthewprenger.cursegradle'
 
-version = project.mc_version + "-" + project.mod_version
+version = project.mc_version + '-' + project.mod_version
 
 archivesBaseName = project.mod_name
 
@@ -29,26 +31,26 @@ sourceCompatibility = targetCompatibility = '1.8'
 
 dependencies {
     compile project(':core')
-    compile group: "net.shadowfacts", name: "Forgelin", version: project.forgelin_version
+    compile group: 'net.shadowfacts', name: 'Forgelin', version: project.forgelin_version
 }
 
 shadowJar {
-    classifier ''
+    classifier = ''
 
-    relocate "blue.endless", "matterlink.repack.blue.endless"
+    relocate 'blue.endless', 'matterlink.repack.blue.endless'
 
     dependencies {
         include project(':core')
-        include project(":api")
-        include project(":Jankson")
+        include project(':api')
+        include project(':Jankson')
     }
 
     exclude 'dummyThing'
 }
 
 minecraft {
-    version = project.mc_version + "-" + project.forge_version
-    runDir = "run"
+    version = project.mc_version + '-' + project.forge_version
+    runDir = 'run'
 
     mappings = project.mcp_mappings
 
@@ -80,7 +82,7 @@ processResources {
 }
 
 sourceJar {
-    classifier 'sources'
+    classifier = 'sources'
     // copy all the minecraftforge specific classes
     from sourceSets.main.allSource
 
@@ -105,7 +107,7 @@ curseforge {
         releaseType = project.curse_release_type
         if (project.hasProperty('changelog_file')) {
             println("changelog = $changelog_file")
-            changelogType = "markdown"
+            changelogType = 'markdown'
             changelog = file(changelog_file)
         }
         relations {
