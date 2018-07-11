@@ -67,7 +67,7 @@ fun randomString(length: Int = 6): String =
         java.util.UUID.randomUUID().toString().replace("-", "").take(length)
 
 fun <T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? = null): T {
-//    instance.info("type: ${default.javaClass.name} key: $key json: >>>${this.getObject(key)?.toJson()}<<< default: $default")
+//    logger.info("type: ${default.javaClass.name} key: $key json: >>>${this.getObject(key)?.toJson()}<<< default: $default")
     return putDefault(key, default, comment)!!
 }
 

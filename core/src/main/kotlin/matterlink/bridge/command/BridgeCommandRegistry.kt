@@ -7,6 +7,7 @@ import matterlink.config.IdentitiesConfig
 import matterlink.config.PermissionConfig
 import matterlink.config.cfg
 import matterlink.instance
+import matterlink.logger
 import matterlink.stripColorOut
 import java.util.*
 
@@ -31,7 +32,7 @@ object BridgeCommandRegistry {
         val env = IBridgeCommand.CommandEnvironment.BridgeEnv(input.username, input.userid, input.account, uuid)
         return commandMap[cmd[0]]?.let {
             if (!it.reachedTimeout()) {
-                instance.debug("dropped command ${it.alias}")
+                logger.debug("dropped command ${it.alias}")
                 return false
             }
             it.preExecute() // resets the tickCounter
@@ -57,7 +58,7 @@ object BridgeCommandRegistry {
 
         return commandMap[cmd[0]]?.let {
             if (!it.reachedTimeout()) {
-                instance.debug("dropped command ${it.alias}")
+                logger.debug("dropped command ${it.alias}")
                 return false
             }
             it.preExecute() // resets the tickCounter
@@ -74,11 +75,11 @@ object BridgeCommandRegistry {
 
     fun register(alias: String, cmd: IBridgeCommand): Boolean {
         if (alias.isBlank() || commandMap.containsKey(alias)) {
-            instance.error("Failed to register command: '$alias'")
+            logger.error("Failed to register command: '$alias'")
             return false
         }
         if (!cmd.validate()) {
-            instance.error("Failed to validate command: '$alias'")
+            logger.error("Failed to validate command: '$alias'")
             return false
         }
         //TODO: maybe write alias to command here ?

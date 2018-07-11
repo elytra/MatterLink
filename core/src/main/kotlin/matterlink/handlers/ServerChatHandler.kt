@@ -5,6 +5,7 @@ import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.format
 import matterlink.config.cfg
 import matterlink.instance
+import matterlink.logger
 import matterlink.stripColorIn
 
 object ServerChatHandler {
@@ -14,7 +15,7 @@ object ServerChatHandler {
      */
     fun writeIncomingToChat() {
         if (MessageHandlerInst.queue.isNotEmpty())
-            instance.debug("incoming: " + MessageHandlerInst.queue.toString())
+            logger.debug("incoming: " + MessageHandlerInst.queue.toString())
         val nextMessage = MessageHandlerInst.queue.poll() ?: null
 
         if (nextMessage?.gateway == cfg.connect.gateway) {
@@ -32,11 +33,11 @@ object ServerChatHandler {
                         val user = nextMessage.username
                         val text = nextMessage.text
                         val json = nextMessage.encode()
-                        instance.debug("Threw out message with unhandled event: ${nextMessage.event}")
-                        instance.debug(" Message contents:")
-                        instance.debug(" User: $user")
-                        instance.debug(" Text: $text")
-                        instance.debug(" JSON: $json")
+                        logger.debug("Threw out message with unhandled event: ${nextMessage.event}")
+                        logger.debug(" Message contents:")
+                        logger.debug(" User: $user")
+                        logger.debug(" Text: $text")
+                        logger.debug(" JSON: $json")
                         return
                     }
                 }

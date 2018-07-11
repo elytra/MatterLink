@@ -11,7 +11,7 @@ object MessageHandlerInst : MessageHandler() {
     }
 
     fun transmit(msg: ApiMessage, cause: String, maxLines: Int = cfg.outgoing.inlineLimit) {
-        if (msg.text.count { it == '\n' } >= maxLines) {
+        if (msg.text.lines().count() >= maxLines) {
             try {
                 val response = PasteUtil.paste(
                         Paste(
@@ -20,15 +20,15 @@ object MessageHandlerInst : MessageHandler() {
                                         PasteSection(
                                                 name = "log.txt",
                                                 syntax = "text",
-                                                contents = msg.text.replace("\n", "\\n")
+                                                contents = msg.text
                                         )
                                 )
                         )
                 )
                 msg.text = msg.text.substringBefore('\n')
-                        .take(20) + "...  " + response.link
+                        .take(25) + "...  " + response.link
             } catch(e: Exception) {
-                instance.error(e.stackTraceString)
+                logger.error(e.stackTraceString)
             }
         }
         super.transmit(msg)

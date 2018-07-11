@@ -4,11 +4,8 @@ import blue.endless.jankson.Jankson
 import blue.endless.jankson.JsonObject
 import blue.endless.jankson.impl.Marshaller
 import blue.endless.jankson.impl.SyntaxError
+import matterlink.*
 import matterlink.bridge.MessageHandlerInst
-import matterlink.getOrDefault
-import matterlink.instance
-import matterlink.registerTypeAdapter
-import matterlink.stackTraceString
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -20,13 +17,12 @@ data class BaseConfig(val rootDir: File) {
     val configFile: File = cfgDirectory.resolve("matterlink.hjson")
 
     init {
-        instance.info("Reading bridge blueprints... from {}", rootDir)
+        logger.info("Reading bridge blueprints... from {}", rootDir)
         baseCfg = this
     }
 
     data class MatterLinkConfig(
             val connect: ConnectOptions = ConnectOptions(),
-            val debug: DebugOptions = DebugOptions(),
             val incoming: IncomingOptions = IncomingOptions(),
             val outgoing: OutgoingOptions = OutgoingOptions(),
             val command: CommandOptions = CommandOptions(),
@@ -49,10 +45,6 @@ data class BaseConfig(val rootDir: File) {
             val gateway: String = "minecraft",
             val autoConnect: Boolean = true,
             val reconnectWait: Long = 500
-    )
-
-    data class DebugOptions(
-            val logLevel: String = "INFO"
     )
 
     data class IncomingOptions(
@@ -136,11 +128,6 @@ data class BaseConfig(val rootDir: File) {
                                     "connect",
                                     ConnectOptions(),
                                     "Connection Settings"
-                            ),
-                            debug = it.getOrDefault(
-                                    "debug",
-                                    DebugOptions(),
-                                    "Options to help you figure out what happens and why, because computers can be silly"
                             ),
                             incoming = it.getOrDefault(
                                     "incoming",
@@ -226,13 +213,6 @@ data class BaseConfig(val rootDir: File) {
                                         autoConnect,
                                         "Connect the relay on startup"
                                 )
-                        )
-                    }
-                }
-                .registerTypeAdapter {
-                    with(DebugOptions()) {
-                        DebugOptions(
-                                logLevel = it.getOrDefault("loglevel", logLevel, "MatterLink log level")
                         )
                     }
                 }
@@ -384,33 +364,34 @@ data class BaseConfig(val rootDir: File) {
         val jsonObject = try {
             jankson.load(configFile)
         } catch (e: SyntaxError) {
-            instance.error("error loading config: ${e.completeMessage}")
+            logger.error("error loading config: ${e.completeMessage}")
             jankson.marshaller.serialize(MatterLinkConfig()) as JsonObject
         } catch (e: FileNotFoundException) {
-            instance.error("creating config file $configFile")
+            logger.error("creating config file $configFile")
             configFile.absoluteFile.parentFile.mkdirs()
             configFile.createNewFile()
             jankson.marshaller.serialize(MatterLinkConfig()) as JsonObject
         }
-        instance.info("finished loading base config")
+        logger.info("finished loading base config")
 
         val tmpCfg = try {
             //cfgDirectory.resolve("debug.matterlink.hjson").writeText(jsonObject.toJson(false, true))
             jankson.fromJson(jsonObject, MatterLinkConfig::class.java).apply {
                 configFile.writeText(jsonObject.toJson(true, true))
-                instance.info("loaded config: $this")
+                logger.info("loaded config: Main config")
+                logger.debug("loaded config: $this")
             }
         } catch (e: SyntaxError) {
-            instance.error("error parsing config: ${e.completeMessage} ")
-            instance.error(e.stackTraceString)
+            logger.error("error parsing config: ${e.completeMessage} ")
+            logger.error(e.stackTraceString)
             cfgDirectory.resolve("error.matterlink.hjson").writeText(jsonObject.toJson(false, true))
             MatterLinkConfig()
         } catch (e: IllegalStateException) {
-            instance.error(e.stackTraceString)
+            logger.error(e.stackTraceString)
             cfgDirectory.resolve("error.matterlink.hjson").writeText(jsonObject.toJson(false, true))
             MatterLinkConfig()
         } catch (e: NullPointerException) {
-            instance.error("error loading config: ${e.stackTraceString}")
+            logger.error("error loading config: ${e.stackTraceString}")
             cfgDirectory.resolve("error.matterlink.hjson").writeText(jsonObject.toJson(false, true))
             MatterLinkConfig()
         }

@@ -2,6 +2,7 @@ package matterlink.bridge.command
 
 import matterlink.instance
 import matterlink.lazyFormat
+import matterlink.logger
 import matterlink.stripColorIn
 
 data class CustomCommand(
@@ -18,7 +19,7 @@ data class CustomCommand(
 
     override fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean {
         if (argumentsRegex != null) {
-            instance.debug("testing '$args' against '${argumentsRegex.pattern}'")
+            logger.debug("testing '$args' against '${argumentsRegex.pattern}'")
             if (!argumentsRegex.matches(args)) {
                 env.respond("$user sent invalid input to command $alias")
                 return false

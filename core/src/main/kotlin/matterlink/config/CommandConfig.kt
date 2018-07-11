@@ -4,12 +4,9 @@ import blue.endless.jankson.Jankson
 import blue.endless.jankson.JsonObject
 import blue.endless.jankson.JsonPrimitive
 import blue.endless.jankson.impl.SyntaxError
+import matterlink.*
 import matterlink.bridge.command.CommandType
 import matterlink.bridge.command.CustomCommand
-import matterlink.getOrDefault
-import matterlink.instance
-import matterlink.registerPrimitiveTypeAdapter
-import matterlink.registerTypeAdapter
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -103,7 +100,7 @@ object CommandConfig {
         val jsonObject = try {
             jankson.load(configFile)
         } catch (e: SyntaxError) {
-            instance.error("error parsing config: ${e.completeMessage}")
+            logger.error("error parsing config: ${e.completeMessage}")
             JsonObject()
         } catch (e: FileNotFoundException) {
             configFile.createNewFile()
@@ -112,13 +109,13 @@ object CommandConfig {
         // clear commands
         commands.clear()
         jsonObject.forEach { key, element ->
-            instance.trace("loading command '$key'")
+            logger.trace("loading command '$key'")
             val command = jsonObject.get(CustomCommand::class.java, key)
             if (command != null)
                 commands[key] = command
             else {
-                instance.error("could not parse key: $key, value: '$element' as CustomCommand")
-                instance.error("skipping $key")
+                logger.error("could not parse key: $key, value: '$element' as CustomCommand")
+                logger.error("skipping $key")
             }
         }
 
@@ -131,8 +128,8 @@ object CommandConfig {
             }
         }
 
-        instance.debug("loaded jsonObj: $jsonObject")
-        instance.debug("loaded commandMap: $commands")
+        logger.debug("loaded jsonObj: $jsonObject")
+        logger.debug("loaded commandMap: $commands")
 
         val defaultJsonObject = jankson.marshaller.serialize(CustomCommand.DEFAULT) as JsonObject
         val nonDefaultJsonObj = jsonObject.clone()

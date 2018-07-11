@@ -49,15 +49,10 @@ object EventHandler {
     @SubscribeEvent
     @JvmStatic
     fun commandEvent(e: CommandEvent) {
-        instance.log("DEBUG","commandEvent ${e.sender.javaClass.simpleName}")
-        instance.log("DEBUG","commandEvent ${e.sender.javaClass.typeName}")
-        instance.log("DEBUG","command ${e.command.aliases}")
-        instance.log("DEBUG","command ${e.command.name}")
         val sender = when {
             e.sender is DedicatedServer -> cfg.outgoing.systemUser
             else -> e.sender.displayName.unformattedText
         }
-        instance.log("DEBUG","sender $sender")
         val args = e.parameters.joinToString(" ")
         val type = when {
             e.command is CommandEmote -> USER_ACTION

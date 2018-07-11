@@ -7,6 +7,7 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import matterlink.getReified
 import matterlink.instance
+import matterlink.logger
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
@@ -49,11 +50,11 @@ object PermissionConfig {
         jsonObject = try {
             jankson.load(configFile)
         } catch (e: SyntaxError) {
-            instance.error("error parsing config: ${e.completeMessage}")
+            logger.error("error parsing config: ${e.completeMessage}")
             save = false
             defaultJsonObject
         } catch (e: FileNotFoundException) {
-            instance.error("cannot find config: $configFile .. creating sample permissions mapping")
+            logger.error("cannot find config: $configFile .. creating sample permissions mapping")
             configFile.createNewFile()
             defaultJsonObject
         }
@@ -66,13 +67,13 @@ object PermissionConfig {
         for ((uuid, powerlevel) in jsonObject) {
             val tmpLevel = jsonObject.getReified<Double>(uuid)
             if (tmpLevel == null) {
-                instance.warn("cannot parse permission uuid: $uuid level: $powerlevel")
+                logger.warn("cannot parse permission uuid: $uuid level: $powerlevel")
                 continue
             }
             tmpPerms[uuid] = tmpLevel
         }
 
-        instance.info("Permissions reloaded")
+        logger.info("Permissions reloaded")
 
         if (save)
             configFile.writeText(jsonObject.toJson(true, true))

@@ -21,8 +21,6 @@ import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
 import java.util.*
 
-lateinit var logger: Logger
-
 @Mod(
         modid = MODID,
         name = NAME, version = MODVERSION,
@@ -39,7 +37,7 @@ class MatterLink : IMatterLink() {
         MinecraftForge.EVENT_BUS.register(EventHandler)
         FMLCommonHandler.instance().bus().register(EventHandler)
 
-        logger = event.modLog
+        logger = event.modLog as org.apache.logging.log4j.core.Logger
         logger.info("Building bridge!")
 
         cfg = BaseConfig(event.modConfigurationDirectory).load()
@@ -69,11 +67,11 @@ class MatterLink : IMatterLink() {
 
     override fun wrappedSendToPlayer(username: String, msg: String) {
         val profile = profileByName(username) ?: run {
-            error("cannot find player by name $username")
+            logger.error("cannot find player by name $username")
             return
         }
         val player = playerByProfile(profile) ?: run {
-            error("${profile.name} is not online")
+            logger.error("${profile.name} is not online")
             return
         }
         player.addChatMessage(ChatComponentText(msg))
@@ -81,11 +79,11 @@ class MatterLink : IMatterLink() {
 
     override fun wrappedSendToPlayer(uuid: UUID, msg: String) {
         val profile = profileByUUID(uuid) ?: run {
-            error("cannot find player by uuid $uuid")
+            logger.error("cannot find player by uuid $uuid")
             return
         }
         val player = playerByProfile(profile) ?: run {
-            error("${profile.name} is not online")
+            logger.error("${profile.name} is not online")
             return
         }
         player.addChatMessage(ChatComponentText(msg))
@@ -101,23 +99,20 @@ class MatterLink : IMatterLink() {
     private fun profileByUUID(uuid: UUID): GameProfile? = try {
         FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.func_152652_a(uuid)
     } catch (e: IllegalArgumentException) {
-        warn("cannot find profile by uuid $uuid")
+        logger.warn("cannot find profile by uuid $uuid")
         null
     }
 
     private fun profileByName(username: String): GameProfile? = try {
         FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.getGameProfileForUsername(username)
     } catch (e: IllegalArgumentException) {
-        warn("cannot find profile by username $username")
+        logger.warn("cannot find profile by username $username")
         null
     }
 
     override fun nameToUUID(username: String): UUID? = profileByName(username)?.id
 
     override fun uuidToName(uuid: UUID): String? = profileByUUID(uuid)?.name
-
-    override fun log(level: String, formatString: String, vararg data: Any) =
-            logger.log(Level.toLevel(level, Level.INFO), formatString, *data)
 
     override fun commandSenderFor(
             user: String,

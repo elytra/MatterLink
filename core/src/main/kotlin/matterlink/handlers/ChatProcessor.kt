@@ -4,6 +4,7 @@ import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.instance
+import matterlink.logger
 import matterlink.stripColorOut
 import java.util.*
 
@@ -23,7 +24,7 @@ object ChatProcessor {
                     ),
                     cause = "Message from $user"
             )
-            else -> instance.warn("WARN: dropped blank message by '$user'")
+            else -> logger.warn("WARN: dropped blank message by '$user'")
         }
         return false
     }

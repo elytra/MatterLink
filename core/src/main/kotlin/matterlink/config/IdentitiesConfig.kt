@@ -7,8 +7,7 @@ import blue.endless.jankson.impl.SyntaxError
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import matterlink.getList
-import matterlink.getOrDefault
-import matterlink.instance
+import matterlink.logger
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
@@ -53,13 +52,13 @@ object IdentitiesConfig {
                 val jsonUserMap = this.putDefault(uuid, JsonObject(), uuidComment)
                 if (jsonUserMap is JsonObject) {
                     userMap.forEach { platform, (user, comment) ->
-                        instance.trace("loading uuid: $uuid platform: $platform user: $user")
+                        logger.trace("loading uuid: $uuid platform: $platform user: $user")
                         val element = Marshaller.getFallback().serialize(user)
                         jsonUserMap.putDefault(platform, element, comment.takeUnless { it.isBlank() })
                     }
                     this[uuid] = jsonUserMap
                 } else {
-                    instance.error("cannot parse uuid: $uuid , value: '$jsonUserMap' as Map, skipping")
+                    logger.error("cannot parse uuid: $uuid , value: '$jsonUserMap' as Map, skipping")
                 }
             }
         }
@@ -68,11 +67,11 @@ object IdentitiesConfig {
         jsonObject = try {
             jankson.load(configFile)
         } catch (e: SyntaxError) {
-            instance.error("error parsing config: ${e.completeMessage}")
+            logger.error("error parsing config: ${e.completeMessage}")
             save = false
             defaultJsonObject
         } catch (e: FileNotFoundException) {
-            instance.error("cannot find config: $configFile .. creating sample permissions mapping")
+            logger.error("cannot find config: $configFile .. creating sample permissions mapping")
             configFile.createNewFile()
             defaultJsonObject
         }
@@ -86,7 +85,7 @@ object IdentitiesConfig {
             val identMap: MutableMap<String, List<String>> = tmpIdents[uuid]?.toMutableMap() ?: mutableMapOf()
             if (jsonIdentifier is JsonObject) {
                 jsonIdentifier.forEach { platform, user ->
-                    instance.info("$uuid $platform $user")
+                    logger.info("$uuid $platform $user")
                     identMap[platform] = jsonIdentifier.getList(platform) ?: emptyList()
                 }
             }
@@ -94,7 +93,7 @@ object IdentitiesConfig {
         }
         idents = tmpIdents.toMap()
 
-        instance.info("Identities loaded")
+        logger.info("Identities loaded")
 
         if (save)
             configFile.writeText(jsonObject.toJson(true, true))
@@ -119,7 +118,7 @@ object IdentitiesConfig {
         return idents.entries.firstOrNull { (uuid, usermap) ->
             usermap.entries.any { (_platform, userids) ->
                 if (platform.equals(_platform, true))
-                    instance.info("platform: $_platform userids: $userids")
+                    logger.info("platform: $_platform userids: $userids")
                 platform.equals(_platform, true) && userids.contains(userid)
             }
         }?.key?.let { UUID.fromString(it) }

@@ -6,6 +6,7 @@ import matterlink.config.PermissionConfig
 import matterlink.config.cfg
 import matterlink.handlers.TickHandler
 import matterlink.instance
+import matterlink.logger
 import matterlink.stripColorOut
 import java.util.*
 
@@ -72,9 +73,9 @@ abstract class IBridgeCommand {
     abstract fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean
 
     fun canExecute(uuid: UUID?): Boolean {
-        instance.trace("canExecute this: $this  uuid: $uuid permLevel: $permLevel")
+        logger.trace("canExecute this: $this  uuid: $uuid permLevel: $permLevel")
         val canExec = getPermLevel(uuid) >= permLevel
-        instance.trace("canExecute return $canExec")
+        logger.trace("canExecute return $canExec")
         return canExec
     }
 

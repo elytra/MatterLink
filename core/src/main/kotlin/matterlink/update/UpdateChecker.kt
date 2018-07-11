@@ -6,6 +6,7 @@ import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 import matterlink.instance
+import matterlink.logger
 import java.io.BufferedReader
 import java.net.HttpURLConnection
 import java.net.URL
@@ -25,11 +26,11 @@ class UpdateChecker : Thread() {
 
     override fun run() {
         if (instance.modVersion.contains("-build")) {
-            instance.debug("Not checking updates on Jenkins build")
+            logger.debug("Not checking updates on Jenkins build")
             return
         }
         if (instance.modVersion.contains("-dev")) {
-            instance.debug("Not checking updates on developer build")
+            logger.debug("Not checking updates on developer build")
             return
         }
 
@@ -37,14 +38,14 @@ class UpdateChecker : Thread() {
                 .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
                 .create()
 
-        instance.info("Checking for new versions...")
+        logger.info("Checking for new versions...")
 
         val url = URL("https://cursemeta.dries007.net/api/v2/direct/GetAllFilesForAddOn/287323")
         val con = url.openConnection() as HttpURLConnection
 
         with(instance) {
             val useragent = "MatterLink/$modVersion MinecraftForge/$mcVersion-$forgeVersion (https://github.com/elytra/MatterLink)"
-            instance.debug("setting User-Agent: '$useragent'")
+            logger.debug("setting User-Agent: '$useragent'")
             con.setRequestProperty("User-Agent", useragent)
         }
 
@@ -55,7 +56,7 @@ class UpdateChecker : Thread() {
 
             //put all of the buffer content onto the string
             val content = buffer.readText()
-            instance.trace("updateData: $content")
+            logger.trace("updateData: $content")
 
             gson.fromJson(content, Array<CurseFile>::class.java)
                     .filter {
@@ -64,7 +65,7 @@ class UpdateChecker : Thread() {
                     .sortedByDescending { it.fileName.substringAfterLast(" ") }
 
         } else {
-            instance.error("Could not check for updates!")
+            logger.error("Could not check for updates!")
             return
         }
 
@@ -78,13 +79,13 @@ class UpdateChecker : Thread() {
 
         val possibleUpdates = mutableListOf<CurseFile>()
         apiUpdateList.forEach {
-            instance.debug(it.toString())
+            logger.debug(it.toString())
             val version = it.fileName.substringAfterLast("-").split('.').map { it.toInt() }
             var bigger = false
             version.forEachIndexed { index, chunk ->
                 if (!bigger) {
                     val currentChunk = modVersionChunks.getOrNull(index) ?: 0
-                    instance.debug("$chunk > $currentChunk")
+                    logger.debug("$chunk > $currentChunk")
                     if (chunk < currentChunk)
                         return@forEach
 
@@ -102,12 +103,12 @@ class UpdateChecker : Thread() {
         val count = possibleUpdates.count()
         val version = if (count == 1) "version" else "versions"
 
-        instance.info("Matterlink out of date! You are $count $version behind")
+        logger.info("Matterlink out of date! You are $count $version behind")
         possibleUpdates.forEach {
-            instance.info("version: {} download: {}", it.fileName, it.downloadURL)
+            logger.info("version: {} download: {}", it.fileName, it.downloadURL)
         }
 
-        instance.warn("Mod out of date! New $version available at ${latest.downloadURL}")
+        logger.warn("Mod out of date! New $version available at ${latest.downloadURL}")
         MessageHandlerInst.transmit(
                 ApiMessage(
                         text = "MatterLink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}"

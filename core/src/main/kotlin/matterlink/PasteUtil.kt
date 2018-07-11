@@ -85,7 +85,7 @@ object PasteUtil {
         }
 
         val textResponse = http.inputStream.bufferedReader().use { it.readText() }
-        instance.debug("response: $textResponse")
+        logger.debug("response: $textResponse")
 //        val jsonObject = jankson.load(http.inputStream)
         return jankson.fromJson(textResponse)
     }

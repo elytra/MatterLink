@@ -1,14 +1,17 @@
 package matterlink
 
+import matterlink.api.MessageHandler
 import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.IBridgeCommand
 import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
+import org.apache.logging.log4j.core.Logger
 import java.util.*
 
 lateinit var instance: IMatterLink
+lateinit var logger: Logger
 
 abstract class IMatterLink {
     abstract val mcVersion: String
@@ -26,16 +29,17 @@ abstract class IMatterLink {
     abstract fun uuidToName(uuid: UUID): String?
 
     fun start() {
-        MessageHandlerInst.logger = { level, msg ->
-            when (level) {
-                "FATAL" -> fatal(msg)
-                "ERROR" -> error(msg)
-                "WARN" -> warn(msg)
-                "INFO" -> info(msg)
-                "DEBUG" -> debug(msg)
-                "TRACE" -> trace(msg)
-            }
-        }
+//        MessageHandlerInst.logger = { level, msg ->
+//            when (level) {
+//                "FATAL" -> logger.fatal(msg)
+//                "ERROR" -> logger.error(msg)
+//                "WARN" -> logger.warn(msg)
+//                "INFO" -> logger.info(msg)
+//                "DEBUG" -> logger.debug(msg)
+//                "TRACE" -> logger.trace(msg)
+//            }
+//        }
+        MessageHandlerInst.logger = logger
         serverStartTime = System.currentTimeMillis()
 
         if (cfg.connect.autoConnect)
@@ -47,22 +51,22 @@ abstract class IMatterLink {
         MessageHandlerInst.stop("Server shutting down, disconnecting from matterbridge API")
     }
 
-    abstract fun log(level: String, formatString: String, vararg data: Any)
+//    abstract fun log(level: String, formatString: String, vararg data: Any)
 
-    fun fatal(formatString: String, vararg data: Any) = log("FATAL", formatString, *data)
-    fun error(formatString: String, vararg data: Any) = log("ERROR", formatString, *data)
-    fun warn(formatString: String, vararg data: Any) = log("WARN", formatString, *data)
-    fun info(formatString: String, vararg data: Any) = log("INFO", formatString, *data)
-
-    fun debug(formatString: String, vararg data: Any) {
-        if (cfg.debug.logLevel == "DEBUG" || cfg.debug.logLevel == "TRACE")
-            log("INFO", "DEBUG: " + formatString.replace("\n", "\nDEBUG: "), *data)
-    }
-
-    fun trace(formatString: String, vararg data: Any) {
-        if (cfg.debug.logLevel == "TRACE")
-            log("INFO", "TRACE: " + formatString.replace("\n", "\nTRACE: "), *data)
-    }
+//    fun fatal(formatString: String, vararg data: Any) = log("FATAL", formatString, *data)
+//    fun error(formatString: String, vararg data: Any) = log("ERROR", formatString, *data)
+//    fun warn(formatString: String, vararg data: Any) = log("WARN", formatString, *data)
+//    fun info(formatString: String, vararg data: Any) = log("INFO", formatString, *data)
+//
+//    fun debug(formatString: String, vararg data: Any) {
+//        if (cfg.debug.logLevel == "DEBUG" || cfg.debug.logLevel == "TRACE")
+//            log("INFO", "DEBUG: " + formatString.replace("\n", "\nDEBUG: "), *data)
+//    }
+//
+//    fun trace(formatString: String, vararg data: Any) {
+//        if (cfg.debug.logLevel == "TRACE")
+//            log("INFO", "TRACE: " + formatString.replace("\n", "\nTRACE: "), *data)
+//    }
 
     /**
      * in milliseconds
