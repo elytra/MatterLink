@@ -56,6 +56,14 @@ object CommandConfig {
                     timeout = 200,
                     defaultCommand = true
             )),
+            "version" to ("are you out of date huh ?"
+                    to CustomCommand(
+                    type = CommandType.RESPONSE,
+                    response = "{version}",
+                    help = "are you out of date huh ?",
+                    timeout = 200,
+                    defaultCommand = true
+            )),
             "exec" to ("this uses arguments in a passed-through command, you could restrict the arguments with a regex"
                     to CustomCommand(
                     type = CommandType.EXECUTE,

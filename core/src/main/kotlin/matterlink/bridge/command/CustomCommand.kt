@@ -86,7 +86,8 @@ data class CustomCommand(
                         else -> null
                     }
                 },
-                "{args}" to { args }
+                "{args}" to { args },
+                "{version}" to { instance.modVersion }
         )
     }
 }
