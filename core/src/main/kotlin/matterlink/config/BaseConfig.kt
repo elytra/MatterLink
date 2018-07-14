@@ -4,8 +4,11 @@ import blue.endless.jankson.Jankson
 import blue.endless.jankson.JsonObject
 import blue.endless.jankson.impl.Marshaller
 import blue.endless.jankson.impl.SyntaxError
-import matterlink.*
 import matterlink.bridge.MessageHandlerInst
+import matterlink.getOrDefault
+import matterlink.logger
+import matterlink.registerTypeAdapter
+import matterlink.stackTraceString
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -65,6 +68,7 @@ data class BaseConfig(val rootDir: File) {
             val inlineLimit: Int = 5,
 
             val joinPart: JoinPartOptions = JoinPartOptions(),
+            var avatar: AvatarOptions = AvatarOptions(),
             val death: DeathOptions = DeathOptions()
     )
 
@@ -102,6 +106,13 @@ data class BaseConfig(val rootDir: File) {
                     "explosion" to arrayOf("\uD83D\uDCA3", "\uD83D\uDCA5"), //💣 💥
                     "explosion.player" to arrayOf("\uD83D\uDCA3", "\uD83D\uDCA5") //💣 💥
             )
+    )
+
+    data class AvatarOptions(
+            val enable: Boolean = true,
+            val urlTemplate: String = "https://visage.surgeplay.com/head/512/{uuid}",
+            // https://www.freepik.com/free-icon/right-arrow-angle-and-horizontal-down-line-code-signs_732795.htm
+            val systemUserAvatar: String = "https://image.freepik.com/free-icon/right-arrow-angle-and-horizontal-down-line-code-signs_318-53994.jpg"
     )
 
     data class JoinPartOptions(
@@ -285,6 +296,11 @@ data class BaseConfig(val rootDir: File) {
                                         DeathOptions(),
                                         "Death messages settings"
                                 ),
+                                avatar = it.getOrDefault(
+                                        "avatar",
+                                        AvatarOptions(),
+                                        "Avatar options"
+                                ),
                                 joinPart = it.getOrDefault(
                                         "joinPart",
                                         JoinPartOptions(),
@@ -320,6 +336,22 @@ data class BaseConfig(val rootDir: File) {
                                                         }
                                             }
                                         }
+                        )
+                    }
+                }
+                .registerTypeAdapter {
+                    with(AvatarOptions()) {
+                        AvatarOptions(
+                                enable = it.getOrDefault(
+                                        "enable",
+                                        enable,
+                                        "enable ingame avatar"
+                                ),
+                                urlTemplate = it.getOrDefault(
+                                        "urlTemplate",
+                                        urlTemplate,
+                                        "template for constructing the user avatar url using the uuid"
+                                )
                         )
                     }
                 }

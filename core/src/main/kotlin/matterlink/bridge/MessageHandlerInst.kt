@@ -11,6 +11,16 @@ object MessageHandlerInst : MessageHandler() {
     }
 
     fun transmit(msg: ApiMessage, cause: String, maxLines: Int = cfg.outgoing.inlineLimit) {
+        if (msg.username.isEmpty()) {
+            msg.username = cfg.outgoing.systemUser
+
+            if(msg.avatar.isEmpty() && cfg.outgoing.avatar.enable) {
+                msg.avatar = cfg.outgoing.avatar.systemUserAvatar
+            }
+        }
+        if (msg.gateway.isEmpty())
+            msg.gateway = cfg.connect.gateway
+
         if (msg.text.lines().count() >= maxLines) {
             try {
                 val response = PasteUtil.paste(
