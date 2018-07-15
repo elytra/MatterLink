@@ -16,6 +16,7 @@ lateinit var logger: Logger
 abstract class IMatterLink {
     abstract val mcVersion: String
     abstract val modVersion: String
+    abstract val buildNumber: Int
     abstract val forgeVersion: String
 
     abstract fun commandSenderFor(user: String, env: IBridgeCommand.CommandEnvironment, op: Boolean): IMinecraftCommandSender

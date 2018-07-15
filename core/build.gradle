@@ -25,6 +25,8 @@ dependencies {
     compile group: 'com.google.code.gson', name: 'gson', version: '+'
     compile group: 'com.google.guava', name: 'guava', version: '+'
 
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '+'
+
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: project.kotlin_version
 }
 

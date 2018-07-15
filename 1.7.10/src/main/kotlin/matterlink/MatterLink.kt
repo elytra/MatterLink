@@ -17,8 +17,6 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ChatComponentText
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.common.MinecraftForge
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.Logger
 import java.util.*
 
 @Mod(
@@ -122,5 +120,6 @@ class MatterLink : IMatterLink() {
 
     override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION
+    override val buildNumber = BUILD_NUMBER
     override val forgeVersion = ForgeVersion.getVersion()
 }

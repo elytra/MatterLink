@@ -7,6 +7,7 @@ import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 import matterlink.instance
 import matterlink.logger
+import voodoo.util.jenkins.JenkinsServer
 import java.io.BufferedReader
 import java.net.HttpURLConnection
 import java.net.URL
@@ -25,8 +26,33 @@ class UpdateChecker : Thread() {
     }
 
     override fun run() {
-        if (instance.modVersion.contains("-build")) {
-            logger.debug("Not checking updates on Jenkins build")
+        if (instance.buildNumber > 0) {
+            val server = JenkinsServer("https://ci.elytradev.com")
+            val job = server.getJob("elytra/MatterLink/master", "MatterLink/${instance.modVersion}")
+                    ?: run {
+                        logger.error("failed obtaining job: elytra/MatterLink/master")
+                        return
+                    }
+            //TODO: add job name to constants at build time
+            val build = job.lastSuccessfulBuild ?: run {
+                logger.error("no successful build found")
+                return
+            }
+            with(build) {
+                when {
+                    number > instance.buildNumber -> {
+                        logger.warn("Mod out of date! New build $number available at $url")
+                        val difference = number - build.number
+                        MessageHandlerInst.transmit(
+                                ApiMessage(
+                                        text = "MatterLink out of date! You are $difference builds behind! Please download new version from $url"
+                                )
+                        )
+                    }
+                    number < instance.buildNumber -> logger.error("lastSuccessfulBuild: $number is older than installed build: ${instance.buildNumber}")
+                    else -> logger.info("you are up to date")
+                }
+            }
             return
         }
         if (instance.modVersion.contains("-dev")) {

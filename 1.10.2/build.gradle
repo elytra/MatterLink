@@ -78,6 +78,7 @@ minecraft {
     replace '@MCVERSION@', project.mc_version
     replace '@FORGELIN-VERSION@', project.forgelin_version
     replace '@FORGE-VERSION@', project.forge_version
+    replace '-1//@BUILD_NUMBER@', System.env.BUILD_NUMBER ?: -1
 }
 
 processResources {

@@ -65,6 +65,9 @@ compileKotlin.doFirst {
     ant.replaceregexp(match: '@FORGE-VERSION@', replace: project.forge_version, flags: 'g', byline: true) {
         fileset(dir: target, includes: 'Constants.kt')
     }
+    ant.replaceregexp(match: '@BUILD_NUMBER@', replace: System.env.BUILD_NUMBER ?: -1, flags: 'g', byline: true) {
+        fileset(dir: target, includes: 'Constants.kt')
+    }
 }
 
 processResources {

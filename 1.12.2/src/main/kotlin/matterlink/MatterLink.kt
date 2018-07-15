@@ -123,5 +123,6 @@ object MatterLink : IMatterLink() {
 
     override val mcVersion: String = MCVERSION
     override val modVersion: String = MODVERSION
+    override val buildNumber = BUILD_NUMBER
     override val forgeVersion = ForgeVersion.getVersion()
 }

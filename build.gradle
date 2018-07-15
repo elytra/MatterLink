@@ -18,6 +18,7 @@ subprojects {
     if (System.env.BUILD_NUMBER) {
         mod_version += "-${System.env.BUILD_NUMBER}"
     } else if (!project.hasProperty('release')) {
+//        mod_version += "-dev"
         mod_version += "-dev"
     }
 
