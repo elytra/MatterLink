@@ -61,12 +61,12 @@ class UpdateChecker : Thread() {
         }
 
         val gson = GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+//                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
                 .create()
 
         logger.info("Checking for new versions...")
 
-        val url = URL("https://cursemeta.dries007.net/api/v2/direct/GetAllFilesForAddOn/287323")
+        val url = URL("https://staging_cursemeta.dries007.net/api/v3/direct/addon/287323/files")
         val con = url.openConnection() as HttpURLConnection
 
         with(instance) {
