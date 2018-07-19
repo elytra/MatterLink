@@ -28,7 +28,11 @@ subprojects {
             excludeDirs += [file("run")]
         }
     }
-
+    if(name == 'Jankson') {
+        sonarqube {
+            skipProject = true
+        }
+    }
     repositories {
         jcenter()
         maven {
