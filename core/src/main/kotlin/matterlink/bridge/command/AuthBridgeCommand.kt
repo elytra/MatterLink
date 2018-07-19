@@ -37,8 +37,13 @@ object AuthBridgeCommand : IBridgeCommand() {
         var targetUserName = target
 
         val targetUUid: String = instance.nameToUUID(target)?.toString() ?: run {
-            targetUserName = instance.uuidToName(UUID.fromString(target)) ?: run {
-                env.respond("cannot find player by username/uuid $target")
+            try {
+                targetUserName = instance.uuidToName(UUID.fromString(target)) ?: run {
+                    env.respond("cannot find player by username/uuid $target")
+                    return true
+                }
+            } catch (e: IllegalArgumentException) {
+                env.respond("invalid username/uuid $target")
                 return true
             }
             target

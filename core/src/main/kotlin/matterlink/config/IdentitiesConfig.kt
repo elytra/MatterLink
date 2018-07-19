@@ -8,6 +8,7 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import matterlink.getList
 import matterlink.logger
+import matterlink.stackTraceString
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
@@ -121,6 +122,14 @@ object IdentitiesConfig {
                     logger.info("platform: $_platform userids: $userids")
                 platform.equals(_platform, true) && userids.contains(userid)
             }
-        }?.key?.let { UUID.fromString(it) }
+        }?.key?.let {
+            try {
+                UUID.fromString(it)
+            } catch (e: IllegalArgumentException) {
+                logger.error("cannot parse UUID: $it")
+                logger.error(e.stackTraceString)
+                null
+            }
+        }
     }
 }
