@@ -8,6 +8,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent
 import cpw.mods.fml.common.event.FMLServerStartingEvent
 import cpw.mods.fml.common.event.FMLServerStoppingEvent
 import matterlink.bridge.command.IBridgeCommand
+import matterlink.command.AuthCommand
 import matterlink.command.MatterLinkCommand
 import matterlink.command.MatterLinkCommandSender
 import matterlink.config.BaseConfig
@@ -50,6 +51,7 @@ class MatterLink : IMatterLink() {
     fun serverStarting(event: FMLServerStartingEvent) {
         logger.debug("Registering server commands")
         event.registerServerCommand(MatterLinkCommand())
+        event.registerServerCommand(AuthCommand())
         start()
     }
 

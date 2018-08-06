@@ -44,7 +44,7 @@ fun String.lazyFormat(env: Map<String, () -> String?>): String {
 val String.stripColorOut: String
     get() =
         if (cfg.outgoing.stripColors)
-            this.replace("§.?".toRegex(RegexOption.UNIX_LINES), "")
+            this.replace("[&§][0-9A-FK-OR]".toRegex(RegexOption.IGNORE_CASE), "")
         else
             this
 
