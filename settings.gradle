@@ -1,4 +1,4 @@
 rootProject.name = 'MatterLink'
 include 'core', 'api'
 include 'Jankson'
-include '1.12.2', '1.11.2', '1.10.2', '1.7.10'
+include '1.12.2', '1.11.2', '1.10.2'
