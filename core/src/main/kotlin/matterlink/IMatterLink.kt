@@ -1,13 +1,12 @@
 package matterlink
 
-import matterlink.api.MessageHandler
 import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.IBridgeCommand
 import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
-import org.apache.logging.log4j.core.Logger
+import org.apache.logging.log4j.Logger
 import java.util.*
 
 lateinit var instance: IMatterLink
