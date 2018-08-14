@@ -29,7 +29,7 @@ object BridgeCommandRegistry {
 
         val uuid = IdentitiesConfig.getUUID(input.account, input.userid)
 
-        val env = IBridgeCommand.CommandEnvironment.BridgeEnv(input.username, input.userid, input.account, uuid)
+        val env = IBridgeCommand.CommandEnvironment.BridgeEnv(input.username, input.userid, input.account, input.gateway, uuid)
         return commandMap[cmd[0]]?.let {
             if (!it.reachedTimeout()) {
                 logger.debug("dropped command ${it.alias}")

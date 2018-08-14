@@ -1,6 +1,3 @@
-[submodule "api"]
-	path = api
-	url = https://github.com/NikkyAI/MatterLinkApi.git
 [submodule "Jankson"]
 	path = Jankson
 	url = https://github.com/falkreon/Jankson.git

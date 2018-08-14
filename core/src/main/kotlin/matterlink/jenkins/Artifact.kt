@@ -1,7 +1,5 @@
 package matterlink.jenkins
 
-import com.google.gson.annotations.SerializedName
-
 /**
  * Created by nikky on 03/02/18.
  * @author Nikky

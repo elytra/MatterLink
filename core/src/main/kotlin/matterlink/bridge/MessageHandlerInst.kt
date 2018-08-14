@@ -4,10 +4,22 @@ import matterlink.*
 import matterlink.api.ApiMessage
 import matterlink.api.MessageHandler
 import matterlink.config.cfg
+import matterlink.handlers.ChatEvent
+import matterlink.handlers.LocationHandler
 
 object MessageHandlerInst : MessageHandler() {
     override fun transmit(msg: ApiMessage) {
         transmit(msg, cause = "")
+    }
+
+    override fun sendStatusUpdate(message: String) {
+        LocationHandler.sendToLocations(
+                msg = message,
+                x = 0, y = 0, z = 0, dimension = null,
+                systemuser = true,
+                event = ChatEvent.STATUS,
+                cause = "status update message"
+        )
     }
 
     fun transmit(msg: ApiMessage, cause: String, maxLines: Int = cfg.outgoing.inlineLimit) {
@@ -18,8 +30,10 @@ object MessageHandlerInst : MessageHandler() {
                 msg.avatar = cfg.outgoing.avatar.systemUserAvatar
             }
         }
-        if (msg.gateway.isEmpty())
-            msg.gateway = cfg.connect.gateway
+        if (msg.gateway.isEmpty()) {
+            logger.error("dropped message '$msg' due to missing gateway")
+            return
+        }
 
         if (msg.text.lines().count() >= maxLines) {
             try {
@@ -38,6 +52,7 @@ object MessageHandlerInst : MessageHandler() {
                 msg.text = msg.text.substringBefore('\n')
                         .take(25) + "...  " + response.link
             } catch(e: Exception) {
+                logger.error(cause)
                 logger.error(e.stackTraceString)
             }
         }

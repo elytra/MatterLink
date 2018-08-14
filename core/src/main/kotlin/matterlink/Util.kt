@@ -67,8 +67,10 @@ fun randomString(length: Int = 6): String =
         java.util.UUID.randomUUID().toString().replace("-", "").take(length)
 
 fun <T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? = null): T {
-//    logger.info("type: ${default.javaClass.name} key: $key json: >>>${this.getObject(key)?.toJson()}<<< default: $default")
-    return putDefault(key, default, comment)!!
+    logger.trace("type: ${default.javaClass.name} key: $key json: >>>${this.getObject(key)?.toJson()}<<< default: $default")
+    return putDefault(key, default, comment)!!.also {
+        setComment(key, comment)
+    }
 }
 
 inline fun <reified T : Any> Jankson.fromJson(obj: JsonObject): T = this.fromJson(obj, T::class.java)
@@ -84,7 +86,15 @@ inline fun <reified T : Any> Marshaller.registerSerializer(noinline serializer: 
 
 inline fun <reified T : Any> Marshaller.registerSerializer(noinline serializer: (T, Marshaller) -> JsonElement) = this.registerSerializer(T::class.java, serializer)
 
-inline fun <reified T : Any> JsonObject.getReified(key: String): T? = this.get(T::class.java, key)
+inline fun <reified T : Any> JsonObject.getReified(key: String, comment: String? = null): T? = this.get(T::class.java, key)
+        ?.also { setComment(key, comment) }
+
+inline fun <reified T : Any> JsonObject.getReifiedOrDelete(key: String, comment: String? = null): T? = this.get(T::class.java, key)
+        ?.also { setComment(key, comment) }
+        ?: run {
+            this.remove(key)
+            null
+        }
 
 inline fun <reified T : Any> JsonObject.getList(key: String): List<T>? {
     return this[key]?.let { array ->
@@ -97,4 +107,34 @@ inline fun <reified T : Any> JsonObject.getList(key: String): List<T>? {
             else -> null
         }
     }
+}
+
+inline fun <reified T : Any> JsonObject.getOrPutList(key: String, default: List<T>, comment: String?): List<T> {
+    return this[key]?.let { array ->
+        when (array) {
+            is JsonArray -> {
+                array.indices.map { i ->
+                    array.get(T::class.java, i) ?: throw NullPointerException("cannot parse ${array.get(i)}")
+                }
+            }
+            else -> null
+        }
+    }.also {
+        setComment(key, comment)
+    } ?: this.putDefault(key, default, comment) ?: default
+}
+
+inline fun <reified T : Any> JsonObject.getOrPutMap(key: String, default: Map<String, T>, comment: String?): Map<String, T> {
+    return this[key]?.let { map ->
+        when (map) {
+            is JsonObject -> {
+                map.mapValues { (key, element) ->
+                    map.get(T::class.java, key) ?: throw NullPointerException("cannot parse $element")
+                }
+            }
+            else -> null
+        }
+    }.also {
+        setComment(key, comment)
+    } ?: this.putDefault(key, default, comment) ?: default
 }

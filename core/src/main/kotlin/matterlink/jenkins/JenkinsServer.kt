@@ -1,4 +1,4 @@
-package voodoo.util.jenkins
+package matterlink.jenkins
 
 
 import com.google.gson.Gson
@@ -6,7 +6,6 @@ import matterlink.Result
 import matterlink.header
 import matterlink.httpGet
 import matterlink.responseString
-import matterlink.jenkins.Job
 import matterlink.logger
 
 /**

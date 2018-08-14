@@ -23,6 +23,7 @@ abstract class IBridgeCommand {
                 val name: String,
                 val userId: String,
                 val platform: String,
+                val gateway: String,
                 override val uuid: UUID?
         ) : CommandEnvironment() {
             override val username: String?
@@ -39,6 +40,7 @@ abstract class IBridgeCommand {
                 is BridgeEnv -> {
                     MessageHandlerInst.transmit(
                             ApiMessage(
+                                    gateway = this.gateway,
                                     text = text.stripColorOut
                             ),
                             cause = cause

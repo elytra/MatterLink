@@ -36,8 +36,9 @@ subprojects {
     repositories {
         jcenter()
         maven {
-            name = "unascribed"
+            name = "elytradev"
             url = 'http://unascribed.com/maven/releases'
+            url = 'https://repo.elytradev.com'
         }
         maven {
             name = "shadowfacts"

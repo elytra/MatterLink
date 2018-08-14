@@ -1,13 +1,12 @@
 package matterlink.update
 
-import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 import matterlink.instance
 import matterlink.logger
-import voodoo.util.jenkins.JenkinsServer
+import matterlink.jenkins.JenkinsServer
 import java.io.BufferedReader
 import java.net.HttpURLConnection
 import java.net.URL

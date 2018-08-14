@@ -9,7 +9,9 @@ import matterlink.mapFormat
 import matterlink.stripColorOut
 
 object JoinLeaveHandler {
-    fun handleJoin(player: String) {
+    fun handleJoin(player: String,
+                   x: Int, y: Int, z: Int,
+                   dimension: Int) {
         if (cfg.outgoing.joinPart.enable) {
             val msg = cfg.outgoing.joinPart.joinServer.mapFormat(
                     mapOf(
@@ -17,17 +19,19 @@ object JoinLeaveHandler {
                             "{username:antiping}" to player.stripColorOut.antiping
                     )
             )
-            MessageHandlerInst.transmit(
-                    ApiMessage(
-                            text = msg,
-                            event = JOIN_LEAVE
-                    ),
+            LocationHandler.sendToLocations(
+                    msg = msg,
+                    x = x, y = y, z = z, dimension = dimension,
+                    event = ChatEvent.JOIN,
+                    systemuser = true,
                     cause = "$player joined"
             )
         }
     }
 
-    fun handleLeave(player: String) {
+    fun handleLeave(player: String,
+                    x: Int, y: Int, z: Int,
+                    dimension: Int) {
         if (cfg.outgoing.joinPart.enable) {
             val msg = cfg.outgoing.joinPart.partServer.mapFormat(
                     mapOf(
@@ -35,11 +39,11 @@ object JoinLeaveHandler {
                             "{username:antiping}" to player.stripColorOut.antiping
                     )
             )
-            MessageHandlerInst.transmit(
-                    ApiMessage(
-                            text = msg,
-                            event = JOIN_LEAVE
-                    ),
+            LocationHandler.sendToLocations(
+                    msg = msg,
+                    x = x, y = y, z = z, dimension = dimension,
+                    event = ChatEvent.JOIN,
+                    systemuser = true,
                     cause = "$player left"
             )
         }

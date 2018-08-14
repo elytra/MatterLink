@@ -8,14 +8,17 @@ import matterlink.stripColorOut
 
 object ProgressHandler {
 
-    fun handleProgress(name: String, message: String, display: String) {
+    fun handleProgress(name: String, message: String, display: String,
+                       x: Int, y: Int, z: Int,
+                       dimension: Int) {
         if (!cfg.outgoing.advancements) return
         val usr = name.stripColorOut.antiping
-        MessageHandlerInst.transmit(
-                ApiMessage(
-                        text = "$usr $message $display".stripColorOut
-                ),
-                cause = "Progress Event by $usr"
+        LocationHandler.sendToLocations(
+                msg = "$usr $message $display".stripColorOut,
+                x = x, y = y, z = z, dimension = dimension,
+                event = ChatEvent.ADVANCEMENT,
+                cause = "Progress Event by $usr",
+                systemuser = true
         )
     }
 }

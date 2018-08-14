@@ -39,13 +39,16 @@ dependencies {
 shadowJar {
     classifier = ''
 
-    relocate 'blue.endless', 'matterlink.repack.blue.endless'
-
     dependencies {
-        include project(':core')
-        include project(':api')
-        include project(':Jankson')
+        include project(":core")
+        include project(":api")
+        include project(":Jankson")
+        include dependency(group: 'com.elytradev.concrete', name: 'concrete-common', version: concrete_version)
+        include dependency(group: 'com.elytradev.concrete', name: 'concrete-rulesengine', version: concrete_version)
     }
+
+    relocate 'blue.endless', 'matterlink.repack.blue.endless'
+    relocate 'com.elytradev.concrete', 'matterlink.repack.com.elytradev.concrete'
 
     exclude 'dummyThing'
 }

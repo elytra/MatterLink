@@ -13,7 +13,9 @@ object DeathHandler {
     fun handleDeath(
             player: String,
             deathMessage: String,
-            damageType: String
+            damageType: String,
+            x: Int, y: Int, z: Int,
+            dimension: Int
     ) {
         if (cfg.outgoing.death.enable) {
             var msg = deathMessage.stripColorOut.replace(player, player.stripColorOut.antiping)
@@ -23,7 +25,13 @@ object DeathHandler {
                 val damageEmoji = emojis[random.nextInt(emojis.size)]
                 msg += " $damageEmoji"
             }
-            MessageHandlerInst.transmit(ApiMessage(text = msg), cause = "Death Event of $player")
+            LocationHandler.sendToLocations(
+                    msg = msg,
+                    x = x, y = y, z = z, dimension = dimension,
+                    event = ChatEvent.DEATH,
+                    cause = "Death Event of $player",
+                    systemuser = true
+            )
         }
     }
 }

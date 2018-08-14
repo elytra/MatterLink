@@ -1,4 +1,4 @@
-package matterlink.jenkins;
+package matterlink.jenkins
 
 /**
  * Created by nikky on 03/02/18.

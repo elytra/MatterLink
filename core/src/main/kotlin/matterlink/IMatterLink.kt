@@ -4,6 +4,7 @@ import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.IBridgeCommand
 import matterlink.bridge.command.IMinecraftCommandSender
+import matterlink.config.BaseConfig
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
 import org.apache.logging.log4j.Logger
@@ -97,5 +98,7 @@ abstract class IMatterLink {
     fun registerBridgeCommands() {
         BridgeCommandRegistry.reloadCommands()
     }
+
+    abstract fun collectPlayers(area: Area): Set<UUID>
 
 }

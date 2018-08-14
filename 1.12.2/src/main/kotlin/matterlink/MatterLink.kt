@@ -9,7 +9,9 @@ import matterlink.command.MatterLinkCommandSender
 import matterlink.config.BaseConfig
 import matterlink.config.cfg
 import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.server.MinecraftServer
 import net.minecraft.util.text.TextComponentString
+import net.minecraftforge.common.DimensionManager
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
@@ -109,6 +111,14 @@ object MatterLink : IMatterLink() {
     } catch (e: IllegalArgumentException) {
         warn("cannot find profile by username $username")
         null
+    }
+
+    override fun collectPlayers(area: Area): Set<UUID> {
+        val players = FMLCommonHandler.instance().minecraftServerInstance.playerList.players.filter {
+            ( area.allDimensions || area.dimensions.contains(it.dimension) )
+            && area.testInBounds(it.posX.toInt(), it.posY.toInt(), it.posZ.toInt())
+        }
+        return players.map { it.uniqueID }.toSet()
     }
 
     override fun nameToUUID(username: String): UUID? = profileByName(username)?.id

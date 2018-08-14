@@ -4,13 +4,12 @@ import blue.endless.jankson.Jankson
 import blue.endless.jankson.JsonObject
 import blue.endless.jankson.impl.Marshaller
 import blue.endless.jankson.impl.SyntaxError
+import matterlink.*
 import matterlink.bridge.MessageHandlerInst
-import matterlink.getOrDefault
-import matterlink.logger
-import matterlink.registerTypeAdapter
-import matterlink.stackTraceString
 import java.io.File
 import java.io.FileNotFoundException
+import java.util.*
+import kotlin.collections.LinkedHashMap
 
 lateinit var cfg: BaseConfig.MatterLinkConfig
 lateinit var baseCfg: BaseConfig
@@ -26,12 +25,82 @@ data class BaseConfig(val rootDir: File) {
 
     data class MatterLinkConfig(
             val connect: ConnectOptions = ConnectOptions(),
+            val outgoingDefaults: DefaultSettingsOutgoing = DefaultSettingsOutgoing(),
+            val incomingDefaults: DefaultSettingsIncoming = DefaultSettingsIncoming(),
+            val locations: List<Location> = listOf(
+                    Location(
+                            label = "default",
+                            gateway = "minecraft",
+                            area = Area.Infinite(dimensions = listOf(-1, 0, 1), allDimensions = true),
+                            outgoing = SettingsOutgoing(
+                                    plain = true,
+                                    action = true,
+                                    join = true,
+                                    leave = true,
+                                    advancement = true,
+                                    death = true,
+                                    broadcast = true,
+                                    status = true
+                            ),
+                            incoming = SettingsIncoming(
+                                    plain = true,
+                                    action = true,
+                                    join_leave = true,
+                                    commands = true
+                            )
+                    )
+            ),
             val incoming: IncomingOptions = IncomingOptions(),
             val outgoing: OutgoingOptions = OutgoingOptions(),
             val command: CommandOptions = CommandOptions(),
             val update: UpdateOptions = UpdateOptions()
     )
 
+    data class DefaultSettingsOutgoing(
+            val plain: Boolean = true,
+            val action: Boolean = true,
+            val join: Boolean = false,
+            val leave: Boolean = false,
+            val advancement: Boolean = false,
+            val death: Boolean = false,
+            val broadcast: Boolean = false,
+            val status: Boolean = false
+    )
+
+    data class SettingsOutgoing(
+            val plain: Boolean? = null,
+            val action: Boolean? = null,
+            val join: Boolean? = null,
+            val leave: Boolean? = null,
+            val advancement: Boolean? = null,
+            val death: Boolean? = null,
+            val broadcast: Boolean? = null,
+            val status: Boolean? = null,
+            val skip: List<String> = listOf()
+    )
+
+    data class DefaultSettingsIncoming(
+            val plain: Boolean = true,
+            val action: Boolean = true,
+            val join_leave: Boolean = true,
+            val commands: Boolean = true
+    )
+
+    data class SettingsIncoming(
+            val plain: Boolean? = null,
+            val action: Boolean? = null,
+            val join_leave: Boolean? = null,
+            val commands: Boolean? = null,
+            val skip: List<String> = listOf()
+    )
+
+    data class Location(
+            val label: String = "unlabeled",
+            val gateway: String = "",
+            val area: Area = Area.Infinite(),
+            val outgoing: SettingsOutgoing = SettingsOutgoing(),
+            val incoming: SettingsIncoming = SettingsIncoming()
+    )
 
     data class CommandOptions(
             val prefix: Char = '!',
@@ -45,7 +114,6 @@ data class BaseConfig(val rootDir: File) {
     data class ConnectOptions(
             val url: String = "http://localhost:4242",
             val authToken: String = "",
-            val gateway: String = "minecraft",
             val autoConnect: Boolean = true,
             val reconnectWait: Long = 500
     )
@@ -104,7 +172,9 @@ data class BaseConfig(val rootDir: File) {
                     "thrown" to arrayOf("彡°"),
                     "thorns" to arrayOf("\uD83C\uDF39"), //🌹
                     "explosion" to arrayOf("\uD83D\uDCA3", "\uD83D\uDCA5"), //💣 💥
-                    "explosion.player" to arrayOf("\uD83D\uDCA3", "\uD83D\uDCA5") //💣 💥
+                    "explosion.player" to arrayOf("\uD83D\uDCA3", "\uD83D\uDCA5"), //💣 💥
+                    "ieWireShock" to arrayOf("\uD83D\uDD0C", "\u26A1"), //🔌 ⚡
+                    "immersiverailroading:hitByTrain" to arrayOf("\uD83D\uDE82", "\uD83D\uDE83", "\uD83D\uDE84", "\uD83D\uDE85", "\uD83D\uDE87", "\uD83D\uDE88", "\uD83D\uDE8A") //🚂 🚃 🚄 🚅 🚇 🚈 🚊
             )
     )
 
@@ -117,8 +187,8 @@ data class BaseConfig(val rootDir: File) {
 
     data class JoinPartOptions(
             val enable: Boolean = true,
-            val joinServer: String = "{username:antiping} has connected to the platform",
-            val partServer: String = "{username:antiping} has disconnected from the platform"
+            val joinServer: String = "{username:antiping} has connected to the server",
+            val partServer: String = "{username:antiping} has disconnected from the server"
     )
 
     data class UpdateOptions(
@@ -129,41 +199,191 @@ data class BaseConfig(val rootDir: File) {
         val jankson = Jankson
                 .builder()
                 .registerTypeAdapter {
-                    MatterLinkConfig(
-                            command = it.getOrDefault(
-                                    "command",
-                                    CommandOptions(),
-                                    "User commands"
-                            ),
-                            connect = it.getOrDefault(
-                                    "connect",
-                                    ConnectOptions(),
-                                    "Connection Settings"
-                            ),
-                            incoming = it.getOrDefault(
-                                    "incoming",
-                                    IncomingOptions(),
-                                    """
-     Gateway -> Server
-     Options all about receiving messages from the API
-     Formatting options:
-     Available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}
-     """.trimIndent()
-                            ),
-                            outgoing = it.getOrDefault(
-                                    "outgoing",
-                                    OutgoingOptions(),
-                                    """
-     Server -> Gateway
-     Options all about sending messages to the API
-     """.trimIndent()
-                            ),
-                            update = it.getOrDefault(
-                                    "update",
-                                    UpdateOptions(),
-                                    "Update Settings"
-                            )
-                    )
+                    with(MatterLinkConfig()) {
+                        MatterLinkConfig(
+                                command = it.getOrDefault(
+                                        "command",
+                                        command,
+                                        "User commands"
+                                ),
+                                outgoingDefaults = it.getOrDefault(
+                                        "outgoingDefaults",
+                                        outgoingDefaults,
+                                        "default settings for outgoing"
+                                ),
+                                incomingDefaults = it.getOrDefault(
+                                        "incomingDefaults",
+                                        incomingDefaults,
+                                        "default settings for incoming"
+                                ),
+                                locations = it.getOrPutList(
+                                        "locations",
+                                        locations,
+                                        "list of fixed chat locations"
+                                ),
+                                connect = it.getOrDefault(
+                                        "connect",
+                                        connect,
+                                        "Connection Settings"
+                                ),
+                                incoming = it.getOrDefault(
+                                        "incoming",
+                                        incoming,
+                                        """
+                                         Gateway -> Server
+                                         Options all about receiving messages from the API
+                                         Formatting options:
+                                         Available variables: {username}, {text}, {gateway}, {channel}, {protocol}, {username:antiping}
+                                         """.trimIndent()
+                                ),
+                                outgoing = it.getOrDefault(
+                                        "outgoing",
+                                        outgoing,
+                                        """
+                                         Server -> Gateway
+                                         Options all about sending messages to the API
+                                         """.trimIndent()
+                                ),
+                                update = it.getOrDefault(
+                                        "update",
+                                        update,
+                                        "Update Settings"
+                                )
+                        )
+                    }
+                }
+                .registerTypeAdapter {
+                    with(DefaultSettingsOutgoing()) {
+                        DefaultSettingsOutgoing(
+                                plain = it.getOrDefault(
+                                        "plain",
+                                        plain,
+                                        "plain text messages"
+                                ),
+                                action = it.getOrDefault(
+                                        "action",
+                                        action,
+                                        "action messages"
+                                ),
+                                join = it.getOrDefault(
+                                        "join",
+                                        join,
+                                        "handle join event"
+                                ),
+                                leave = it.getOrDefault(
+                                        "leave",
+                                        leave,
+                                        "handle leave events"
+                                ),
+                                advancement = it.getOrDefault(
+                                        "advancement",
+                                        advancement,
+                                        "handle advancement events"
+                                ),
+                                death = it.getOrDefault(
+                                        "death",
+                                        death,
+                                        "handle death events"
+                                ),
+                                broadcast = it.getOrDefault(
+                                        "broadcast",
+                                        broadcast,
+                                        "handle broadcast command"
+                                ),
+                                status = it.getOrDefault(
+                                        "status",
+                                        status,
+                                        "handles tatus updates"
+                                )
+                        )
+                    }
+                }
+                .registerTypeAdapter {
+                    with(SettingsOutgoing()) {
+                        SettingsOutgoing(
+                                plain = it.getReifiedOrDelete("plain", "transmit join events"),
+                                action = it.getReifiedOrDelete("action", "transmit join events"),
+                                join = it.getReifiedOrDelete("join", "transmit join events"),
+                                leave = it.getReifiedOrDelete("leave", "transmit leave events"),
+                                advancement = it.getReifiedOrDelete("advancement", "transmit advancements"),
+                                death = it.getReifiedOrDelete("death", "transmit death messages"),
+                                broadcast = it.getReifiedOrDelete("say", "transmit broadcasts"),
+                                status = it.getReifiedOrDelete("status", "transmit status updates"),
+                                skip = it.getOrPutList(
+                                        "skip",
+                                        skip,
+                                        "list of other locations to ignore after handling this"
+                                )
+                        )
+                    }
+                }
+
+                .registerTypeAdapter {
+                    with(DefaultSettingsIncoming()) {
+                        DefaultSettingsIncoming(
+                                plain = it.getOrDefault(
+                                        "plain",
+                                        plain,
+                                        "plain text messages"
+                                ),
+                                action = it.getOrDefault(
+                                        "action",
+                                        action,
+                                        "action messages"
+                                ),
+                                join_leave = it.getOrDefault(
+                                        "join_leave",
+                                        join_leave,
+                                        "handle join/leave event"
+                                ),
+                                commands = it.getOrDefault(
+                                        "commands",
+                                        join_leave,
+                                        "receive commands"
+                                )
+                        )
+                    }
+                }
+                .registerTypeAdapter {
+                    with(SettingsIncoming()) {
+                        SettingsIncoming(
+                                plain = it.getReifiedOrDelete("plain", "transmit join events"),
+                                action = it.getReifiedOrDelete("action", "transmit join events"),
+                                join_leave = it.getReifiedOrDelete("join_leave", "transmit join_leave events"),
+                                commands = it.getReifiedOrDelete("commands", "receive commands"),
+                                skip = it.getOrPutList(
+                                        "skip",
+                                        skip,
+                                        "list of other locations to ignore after handling this"
+                                )
+                        )
+                    }
+                }
+                .registerTypeAdapter {
+                    with(Location()) {
+                        Location(
+                                label = it.getOrDefault("label",
+                                        label,
+                                        "location label for identification"
+                                ),
+                                gateway = it.getOrDefault(
+                                        "gateway",
+                                        gateway,
+                                        "matterbridge gateway identifier"
+                                ),
+                                area = Area.parse(it.getObject("area") ?: JsonObject()),
+                                outgoing = it.getOrDefault(
+                                        "outgoing",
+                                        outgoing,
+                                        "Location outgoing settings"
+                                ),
+                                incoming = it.getOrDefault(
+                                        "incoming",
+                                        incoming,
+                                        "incoming settings"
+                                )
+                        )
+                    }
                 }
                 .registerTypeAdapter {
                     with(CommandOptions()) {
@@ -214,15 +434,15 @@ data class BaseConfig(val rootDir: File) {
                                         authToken,
                                         "Auth token used to connect to the bridge platform"
                                 ),
-                                gateway = it.getOrDefault(
-                                        "gateway",
-                                        gateway,
-                                        "MatterBridge gateway"
-                                ),
                                 autoConnect = it.getOrDefault(
                                         "autoConnect",
                                         autoConnect,
                                         "Connect the relay on startup"
+                                ),
+                                reconnectWait = it.getOrDefault(
+                                        "reconnectWait",
+                                        reconnectWait,
+                                        "base delay in milliseconds between attempting reconnects"
                                 )
                         )
                     }
@@ -389,6 +609,25 @@ data class BaseConfig(val rootDir: File) {
                         )
                     }
                 }
+                .registerSerializer { locationSettings: SettingsOutgoing, marshaller: Marshaller ->
+                    val jsonObject = JsonObject()
+                    locationSettings.advancement?.let {
+                        jsonObject["advancements"] = marshaller.serialize(it)
+                    }
+                    locationSettings.death?.let {
+                        jsonObject["death"] = marshaller.serialize(it)
+                    }
+                    locationSettings.join?.let {
+                        jsonObject["joins"] = marshaller.serialize(it)
+                    }
+                    locationSettings.leave?.let {
+                        jsonObject["leaves"] = marshaller.serialize(it)
+                    }
+                    locationSettings.broadcast?.let {
+                        jsonObject["say"] = marshaller.serialize(it)
+                    }
+                    jsonObject
+                }
                 .build()
     }
 
@@ -417,15 +656,15 @@ data class BaseConfig(val rootDir: File) {
             logger.error("error parsing config: ${e.completeMessage} ")
             logger.error(e.stackTraceString)
             cfgDirectory.resolve("error.matterlink.hjson").writeText(jsonObject.toJson(false, true))
-            MatterLinkConfig()
+            if (::cfg.isInitialized) cfg else MatterLinkConfig()
         } catch (e: IllegalStateException) {
             logger.error(e.stackTraceString)
             cfgDirectory.resolve("error.matterlink.hjson").writeText(jsonObject.toJson(false, true))
-            MatterLinkConfig()
+            if (::cfg.isInitialized) cfg else MatterLinkConfig()
         } catch (e: NullPointerException) {
             logger.error("error loading config: ${e.stackTraceString}")
             cfgDirectory.resolve("error.matterlink.hjson").writeText(jsonObject.toJson(false, true))
-            MatterLinkConfig()
+            if (::cfg.isInitialized) cfg else MatterLinkConfig()
         }
 
 //        val defaultJsonObject = jankson.load("{}")
@@ -434,7 +673,6 @@ data class BaseConfig(val rootDir: File) {
 
         MessageHandlerInst.config.url = tmpCfg.connect.url
         MessageHandlerInst.config.token = tmpCfg.connect.authToken
-        MessageHandlerInst.config.gateway = tmpCfg.connect.gateway
         MessageHandlerInst.config.reconnectWait = tmpCfg.connect.reconnectWait
 
         MessageHandlerInst.config.systemUser = tmpCfg.outgoing.systemUser
