@@ -4,6 +4,8 @@ import com.google.gson.GsonBuilder
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
+import matterlink.handlers.ChatEvent
+import matterlink.handlers.LocationHandler
 import matterlink.instance
 import matterlink.logger
 import matterlink.jenkins.JenkinsServer
@@ -42,10 +44,11 @@ class UpdateChecker : Thread() {
                     number > instance.buildNumber -> {
                         logger.warn("Mod out of date! New build $number available at $url")
                         val difference = number - build.number
-                        MessageHandlerInst.transmit(
-                                ApiMessage(
-                                        text = "MatterLink out of date! You are $difference builds behind! Please download new version from $url"
-                                )
+                        LocationHandler.sendToLocations(
+                                msg = "MatterLink out of date! You are $difference builds behind! Please download new version from $url",
+                                x = 0, y =0, z = 0, dimension = null,
+                                event = ChatEvent.STATUS,
+                                cause = "MatterLink update notice"
                         )
                     }
                     number < instance.buildNumber -> logger.error("lastSuccessfulBuild: $number is older than installed build: ${instance.buildNumber}")
@@ -130,7 +133,7 @@ class UpdateChecker : Thread() {
 
         logger.info("Matterlink out of date! You are $count $version behind")
         possibleUpdates.forEach {
-            logger.info("version: {} download: {}", it.fileName, it.downloadURL)
+            logger.info("version: ${it.fileName} download: ${it.downloadURL}")
         }
 
         logger.warn("Mod out of date! New $version available at ${latest.downloadURL}")

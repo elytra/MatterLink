@@ -6,24 +6,19 @@ buildscript {
         }
         mavenCentral()
         maven {
-            url = 'https://oss.sonatype.org/content/groups/public'
-        }
-        maven {
-            url = 'https://plugins.gradle.org/m2/'
+            url 'https://plugins.gradle.org/m2/'
         }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '2.2-SNAPSHOT'
         classpath group: 'com.github.jengelman.gradle.plugins', name: 'shadow', version: shadowVersion
         classpath group: 'gradle.plugin.com.matthewprenger', name: 'CurseGradle', version: cursegradleVersion
-        classpath group: 'com.vanniktech', name: 'gradle-dependency-graph-generator-plugin', version: '0.5.0'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'com.matthewprenger.cursegradle'
-apply plugin: "com.vanniktech.dependency.graph.generator"
 
 version = project.mc_version + '-' + project.modVersion
 
@@ -45,6 +40,27 @@ shadowJar {
     configurations = [project.configurations.shadow]
 }
 
+import net.minecraftforge.gradle.user.TaskSourceCopy
+
+// Mad hacks to make source replacements work for Kotlin
+// source: https://github.com/PaleoCrafter/VanillaImmersion/blob/ee82ecafb76659cf7d7822a722c8f63f43f41d01/build.gradle#L119
+for (set in sourceSets) {
+    def taskName = "source${set.name.capitalize()}Kotlin"
+    def dir = new File(project.getBuildDir(), "sources/${set.name}/kotlin")
+    task(taskName, type: TaskSourceCopy) {
+        source = set.getKotlin()
+        output = dir
+    }
+    def compileTask = tasks[set.getCompileTaskName('kotlin')]
+    compileTask.source = dir
+    compileTask.dependsOn taskName
+    def dirPath = dir.toPath()
+    compileKotlin.include {
+        return it.file.toPath().startsWith(dirPath)
+    }
+}
+sourceJar.from sourceSets.main.kotlin
+
 minecraft {
     version = project.mc_version + '-' + project.forge_version
     runDir = 'run'
@@ -61,11 +77,11 @@ minecraft {
 
 processResources {
     // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.modVersion
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property 'version', project.modVersion
+    inputs.property 'mcversion', project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
-    from(project(":core").sourceSets.main.resources.srcDirs) {
+    from(project(':core').sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
 
         // replace version and mcversion
@@ -73,22 +89,23 @@ processResources {
     }
 
     // copy everything else except the mcmod.info
-    from(project(":core").sourceSets.main.resources.srcDirs) {
+    from(project(':core').sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
 
 }
 
 sourceJar {
-    classifier = 'sources'
+    classifier 'sources'
     // copy all the minecraftforge specific classes
     from sourceSets.main.allSource
 
     // copy everything else except the mcmod.info
-    from(project(":core").sourceSets.main.allSource) {
+    from(project(':core').sourceSets.main.allSource) {
         exclude 'mcmod.info'
     }
 }
+
 
 reobf {
     shadowJar { mappingType = 'SEARGE' }
@@ -102,6 +119,7 @@ curseforge {
     project {
         id = project.curseId
         releaseType = project.curseReleaseType
+        addGameVersion '1.10'
         if (project.hasProperty('changelog_file')) {
             println("changelog = $changelog_file")
             changelogType = 'markdown'

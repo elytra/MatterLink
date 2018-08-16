@@ -19,7 +19,7 @@ data class BaseConfig(val rootDir: File) {
     val configFile: File = cfgDirectory.resolve("matterlink.hjson")
 
     init {
-        logger.info("Reading bridge blueprints... from {}", rootDir)
+        logger.info("Reading bridge blueprints... from $rootDir")
         baseCfg = this
     }
 

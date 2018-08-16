@@ -1,7 +1,6 @@
 package matterlink
 
 import com.mojang.authlib.GameProfile
-import jline.internal.Log.warn
 import matterlink.bridge.command.IBridgeCommand
 import matterlink.command.AuthCommand
 import matterlink.command.MatterLinkCommand
@@ -11,18 +10,15 @@ import matterlink.config.cfg
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.text.TextComponentString
-import net.minecraftforge.common.DimensionManager
 import net.minecraftforge.common.ForgeVersion
+import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.core.config.Configurator
 import java.util.*
-
 
 @Mod(
         modid = MODID,
@@ -34,14 +30,13 @@ import java.util.*
         dependencies = DEPENDENCIES
 )
 object MatterLink : IMatterLink() {
-
     init {
-        Configurator.setLevel(MODID, Level.DEBUG)
         instance = this
     }
 
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent) {
+        MinecraftForge.EVENT_BUS.register(EventHandler)
         logger = with(event.modLog) {
             object : Logger {
                 override fun info(message: String) = this@with.info(message)
@@ -77,19 +72,19 @@ object MatterLink : IMatterLink() {
 
     //FORGE-DEPENDENT
     override fun wrappedSendToPlayers(msg: String) {
-        FMLCommonHandler.instance().minecraftServerInstance.playerList.sendMessage(TextComponentString(msg))
+        FMLCommonHandler.instance().minecraftServerInstance.playerList.sendChatMsg(TextComponentString(msg))
     }
 
     override fun wrappedSendToPlayer(username: String, msg: String) {
         val profile = profileByName(username) ?: run {
-            logger.error("cannot find player by name $username")
+            error("cannot find player by name $username")
             return
         }
         val player = playerByProfile(profile) ?: run {
-            logger.error("${profile.name} is not online")
+            error("${profile.name} is not online")
             return
         }
-        player.sendMessage(TextComponentString(msg))
+        player.addChatMessage(TextComponentString(msg))
     }
 
     override fun wrappedSendToPlayer(uuid: UUID, msg: String) {
@@ -101,32 +96,36 @@ object MatterLink : IMatterLink() {
             logger.error("${profile.name} is not online")
             return
         }
-        player.sendMessage(TextComponentString(msg))
+        player.addChatMessage(TextComponentString(msg))
     }
 
-    override fun isOnline(username: String) = FMLCommonHandler.instance().minecraftServerInstance.onlinePlayerNames.contains(username)
+    override fun isOnline(username: String) = FMLCommonHandler.instance().minecraftServerInstance.playerList.allUsernames.contains(username)
 
     private fun playerByProfile(gameProfile: GameProfile): EntityPlayerMP? = FMLCommonHandler.instance().minecraftServerInstance.playerList.getPlayerByUUID(gameProfile.id)
+
 
     private fun profileByUUID(uuid: UUID): GameProfile? = try {
         FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.getProfileByUUID(uuid)
     } catch (e: IllegalArgumentException) {
-        warn("cannot find profile by uuid $uuid")
+        logger.warn("cannot find profile by uuid $uuid")
         null
     }
 
     private fun profileByName(username: String): GameProfile? = try {
         FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.getGameProfileForUsername(username)
     } catch (e: IllegalArgumentException) {
-        warn("cannot find profile by username $username")
+        logger.warn("cannot find profile by username $username")
         null
     }
 
     override fun collectPlayers(area: Area): Set<UUID> {
-        val players = FMLCommonHandler.instance().minecraftServerInstance.playerList.players.filter {
-            (area.allDimensions || area.dimensions.contains(it.dimension))
-                    && area.testInBounds(it.posX.toInt(), it.posY.toInt(), it.posZ.toInt())
-        }
+        val playerList = FMLCommonHandler.instance().minecraftServerInstance.playerList
+        val players = playerList.allProfiles
+                .map { playerList.getPlayerByUUID(it.id) }
+                .filter {
+                    (area.allDimensions || area.dimensions.contains(it.dimension))
+                            && area.testInBounds(it.posX.toInt(), it.posY.toInt(), it.posZ.toInt())
+                }
         return players.map { it.uniqueID }.toSet()
     }
 

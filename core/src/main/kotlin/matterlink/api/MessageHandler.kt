@@ -1,6 +1,6 @@
 package matterlink.api
 
-import org.apache.logging.log4j.Logger
+import matterlink.Logger
 import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.IOException
@@ -118,7 +118,7 @@ open class MessageHandler {
             if (msg.username.isEmpty())
                 msg.username = config.systemUser
             if (msg.gateway.isEmpty()) {
-                logger.fatal("missing gateway on message: $msg")
+                logger.error("missing gateway on message: $msg")
                 return
             }
             logger.debug("Transmitting: $msg")

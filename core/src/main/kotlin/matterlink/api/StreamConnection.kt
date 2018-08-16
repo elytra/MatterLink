@@ -1,6 +1,6 @@
 package matterlink.api
 
-import org.apache.logging.log4j.LogManager
+import matterlink.Logger
 import java.io.IOException
 import java.io.InputStream
 import java.net.ConnectException
@@ -22,7 +22,13 @@ class StreamConnection(private val rcvQueue: ConcurrentLinkedQueue<ApiMessage>) 
     private var urlConnection: HttpURLConnection? = null
     private val onSuccessCallbacks = LinkedList<(Boolean) -> Unit>()
 
-    var logger = LogManager.getLogger("matterlink.api")
+    var logger =  object : Logger {
+        override fun info(message: String) = println("INFO: $message")
+        override fun debug(message: String) = println("DEBUG: $message")
+        override fun error(message: String) = println("ERROR: $message")
+        override fun warn(message: String) = println("WARN: $message")
+        override fun trace(message: String) = println("TRACE: $message")
+    }
     var host = ""
     var token = ""
 
@@ -85,7 +91,7 @@ class StreamConnection(private val rcvQueue: ConcurrentLinkedQueue<ApiMessage>) 
                         logger.trace( String.format("read %d chars", chars))
                         if (chars > 0) {
                             val added = String(Arrays.copyOfRange(buf, 0, chars))
-                            logger.debug("DEBUG", "json: $added")
+                            logger.debug("json: $added")
                             buffer.append(added)
                             while (buffer.toString().contains("\n")) {
                                 val index = buffer.indexOf("\n")

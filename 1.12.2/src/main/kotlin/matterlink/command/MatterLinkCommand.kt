@@ -1,6 +1,5 @@
 package matterlink.command
 
-import matterlink.logger
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.command.WrongUsageException
@@ -9,7 +8,7 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.util.text.TextComponentString
 
 
-class MatterLinkCommand : CommandBase() {
+object MatterLinkCommand : CommandBase() {
     override fun getName(): String {
         return CommandCoreML.name
     }

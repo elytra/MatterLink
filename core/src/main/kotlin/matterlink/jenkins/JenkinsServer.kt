@@ -1,11 +1,9 @@
 package matterlink.jenkins
 
 
+import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.result.Result
 import com.google.gson.Gson
-import matterlink.Result
-import matterlink.header
-import matterlink.httpGet
-import matterlink.responseString
 import matterlink.logger
 
 /**

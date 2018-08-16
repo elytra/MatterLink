@@ -61,7 +61,7 @@ object ServerChatHandler {
                 ApiMessage.JOIN_LEAVE -> location.incoming.join_leave ?: defaults.join_leave
                 ApiMessage.USER_ACTION -> location.incoming.action ?: defaults.action
                 else -> {
-                    logger.fatal("unknwon event type '${nextMessage.event}' on incoming message")
+                    logger.error("unknown event type '${nextMessage.event}' on incoming message")
                     return
                 }
             }

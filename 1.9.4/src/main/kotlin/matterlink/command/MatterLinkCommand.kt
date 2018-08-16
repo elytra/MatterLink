@@ -8,34 +8,29 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.util.text.TextComponentString
 
 
-object AuthCommand : CommandBase() {
-    override fun getName(): String {
-        return CommandCoreAuth.name
+object MatterLinkCommand : CommandBase() {
+    override fun getCommandName(): String {
+        return CommandCoreML.name
     }
 
-    override fun getUsage(sender: ICommandSender): String {
-        return CommandCoreAuth.usage
+    override fun getCommandUsage(sender: ICommandSender): String {
+        return CommandCoreML.usage
     }
 
-    override fun getAliases(): List<String> {
-        return CommandCoreAuth.aliases
-    }
-
-    override fun getRequiredPermissionLevel(): Int {
-        return 0
+    override fun getCommandAliases(): List<String> {
+        return CommandCoreML.aliases
     }
 
     override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<String>) {
         if (args.isEmpty()) {
-            throw WrongUsageException("Invalid command! Valid uses: ${this.getUsage(sender)}")
+            throw WrongUsageException("Invalid command! Valid uses: ${this.getCommandUsage(sender)}")
         }
 
         val uuid = (sender as? EntityPlayer)?.uniqueID?.toString()
-        val reply = CommandCoreAuth.execute(args, sender.name, uuid)
+        val reply = CommandCoreML.execute(args, sender.name, uuid)
 
         if (reply.isNotEmpty() && sender.sendCommandFeedback()) {
-            sender.sendMessage(TextComponentString(reply))
+            sender.addChatMessage(TextComponentString(reply))
         }
     }
-
 }

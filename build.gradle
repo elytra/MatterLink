@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath group: "org.jetbrains.kotlin", name: "kotlin-gradle-plugin", version: kotlin_version
+        classpath group: "org.jetbrains.kotlin", name: "kotlin-gradle-plugin", version: kotlinVersion
     }
 }
 
@@ -17,10 +17,10 @@ subprojects {
     apply plugin: "idea"
 
     if (System.env.BUILD_NUMBER) {
-        mod_version += "-${System.env.BUILD_NUMBER}"
+        modVersion += "-${System.env.BUILD_NUMBER}"
     } else if (!project.hasProperty('release')) {
-//        mod_version += "-dev"
-        mod_version += "-dev"
+//        modVersion += "-dev"
+        modVersion += "-dev"
     }
 
     idea {
@@ -35,6 +35,10 @@ subprojects {
     }
     repositories {
         jcenter()
+        maven {
+            name = "bintray"
+            url = 'http://jcenter.bintray.com'
+        }
         maven {
             name = "elytradev"
             url = 'http://unascribed.com/maven/releases'

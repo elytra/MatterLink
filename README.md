@@ -28,9 +28,7 @@ Chat with us on IRC: [#matterlink @ irc.esper.net](irc://irc.esper.net/matterlin
 
 [![Download 1.12.2](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.12.2)](https://curse.nikky.moe/api/url/287323?version=1.12.2)
 
-[![Download 1.11.2](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.11.2)](https://curse.nikky.moe/api/url/287323?version=1.11.2)
-
-[![Download 1.10.2](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.10.2)](https://curse.nikky.moe/api/url/287323?version=1.10.2)
+[![Download 1.9.4](https://curse.nikky.moe/api/img/287323?logo&style=for-the-badge&version=1.9.4)](https://curse.nikky.moe/api/url/287323?version=1.9.4)
 
 ## Dependencies
 

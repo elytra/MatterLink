@@ -7,11 +7,11 @@ import matterlink.bridge.command.IMinecraftCommandSender
 import matterlink.config.BaseConfig
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
-import org.apache.logging.log4j.Logger
 import java.util.*
 
-lateinit var instance: IMatterLink
 lateinit var logger: Logger
+
+lateinit var instance: IMatterLink
 
 abstract class IMatterLink {
     abstract val mcVersion: String
@@ -28,6 +28,10 @@ abstract class IMatterLink {
     abstract fun isOnline(username: String): Boolean
     abstract fun nameToUUID(username: String): UUID?
     abstract fun uuidToName(uuid: UUID): String?
+
+    init {
+
+    }
 
     fun start() {
 //        MessageHandlerInst.logger = { level, msg ->
