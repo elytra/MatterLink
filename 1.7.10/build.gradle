@@ -11,17 +11,12 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '1.2-SNAPSHOT'
-        classpath group: 'com.github.jengelman.gradle.plugins', name: 'shadow', version: shadowVersion
         classpath group: 'gradle.plugin.com.matthewprenger', name: 'CurseGradle', version: cursegradleVersion
-        classpath group: 'com.vanniktech', name: 'gradle-dependency-graph-generator-plugin', version: '0.5.0'
     }
 }
 
 apply plugin: 'forge'
-//apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'com.matthewprenger.cursegradle'
-apply plugin: "com.vanniktech.dependency.graph.generator"
-
 
 version = project.mc_version + '-' + project.modVersion
 
@@ -39,6 +34,12 @@ dependencies {
     shade (project(':Jankson')) { transitive = false }
 
     shade group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: kotlinVersion
+    shade(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "feature~chunked-SNAPSHOT")
+    shade(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "feature~chunked-SNAPSHOT")
+    shade(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
+
+    shade(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "1.0.0")
+    shade(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: "0.9.0")
 
     shade group: 'com.github.kittinunf.fuel', name: 'fuel', version: fuelVersion
     shade group: 'com.github.kittinunf.result', name: 'result', version: resultVersion

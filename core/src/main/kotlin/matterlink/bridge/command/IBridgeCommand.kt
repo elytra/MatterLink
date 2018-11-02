@@ -8,7 +8,7 @@ import matterlink.handlers.TickHandler
 import matterlink.instance
 import matterlink.logger
 import matterlink.stripColorOut
-import java.util.*
+import java.util.UUID
 
 abstract class IBridgeCommand {
     abstract val help: String
@@ -20,30 +20,30 @@ abstract class IBridgeCommand {
         abstract val username: String?
 
         data class BridgeEnv(
-                val name: String,
-                val userId: String,
-                val platform: String,
-                val gateway: String,
-                override val uuid: UUID?
+            val name: String,
+            val userId: String,
+            val platform: String,
+            val gateway: String,
+            override val uuid: UUID?
         ) : CommandEnvironment() {
             override val username: String?
                 get() = uuid?.let { instance.uuidToName(uuid) }
         }
 
         data class GameEnv(
-                override val username: String,
-                override val uuid: UUID
+            override val username: String,
+            override val uuid: UUID
         ) : CommandEnvironment()
 
-        fun respond(text: String, cause: String = "") {
+        suspend fun respond(text: String, cause: String = "") {
             when (this) {
                 is BridgeEnv -> {
                     MessageHandlerInst.transmit(
-                            ApiMessage(
-                                    gateway = this.gateway,
-                                    text = text.stripColorOut
-                            ),
-                            cause = cause
+                        ApiMessage(
+                            gateway = this.gateway,
+                            text = text.stripColorOut
+                        ),
+                        cause = cause
                     )
                 }
                 is GameEnv -> {
@@ -72,7 +72,7 @@ abstract class IBridgeCommand {
      *
      * @return consume message flag
      */
-    abstract fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean
+    abstract suspend fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean
 
     fun canExecute(uuid: UUID?): Boolean {
         logger.trace("canExecute this: $this  uuid: $uuid permLevel: $permLevel")

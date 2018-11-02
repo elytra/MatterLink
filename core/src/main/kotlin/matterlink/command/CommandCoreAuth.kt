@@ -1,11 +1,6 @@
 package matterlink.command
 
-import matterlink.bridge.MessageHandlerInst
-import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.config.IdentitiesConfig
-import matterlink.config.PermissionConfig
-import matterlink.config.baseCfg
-import matterlink.config.cfg
 
 object CommandCoreAuth {
     val name = "auth"
@@ -28,17 +23,23 @@ object CommandCoreAuth {
                 val nonce = args.getOrNull(2)?.toUpperCase() ?: run {
                     return "no code passed"
                 }
-                if(request.nonce != nonce) {
+                if (request.nonce != nonce) {
                     return "nonce in request does not match"
                 }
-                if(request.username != user) {
+                if (request.username != user) {
                     return "username in request does not match ${request.username} != $user"
                 }
-                if(request.uuid != uuid) {
+                if (request.uuid != uuid) {
                     return "uuid in request does not match ${request.uuid} != $uuid"
                 }
 
-                IdentitiesConfig.add(request.uuid, request.username, request.platform, request.userid, "Accepted by $user")
+                IdentitiesConfig.add(
+                    request.uuid,
+                    request.username,
+                    request.platform,
+                    request.userid,
+                    "Accepted by $user"
+                )
 
                 IdentitiesConfig.authRequests.invalidate(requestId)
                 "${request.userid} on ${request.platform} is now identified as $user"
@@ -54,13 +55,13 @@ object CommandCoreAuth {
                 val nonce = args.getOrNull(2)?.toUpperCase() ?: run {
                     return "no code passed"
                 }
-                if(request.nonce != nonce) {
+                if (request.nonce != nonce) {
                     return "nonce in request does not match"
                 }
-                if(request.username != user) {
+                if (request.username != user) {
                     return "username in request does not match ${request.username} != $user"
                 }
-                if(request.uuid != uuid) {
+                if (request.uuid != uuid) {
                     return "uuid in request does not match ${request.uuid} != $uuid"
                 }
 

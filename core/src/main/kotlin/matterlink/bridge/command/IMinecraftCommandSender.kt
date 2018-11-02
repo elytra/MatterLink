@@ -1,7 +1,5 @@
 package matterlink.bridge.command
 
-import matterlink.stripColorOut
-
 abstract class IMinecraftCommandSender(val user: String, val env: IBridgeCommand.CommandEnvironment, val op: Boolean) {
     /**
      * @param   cmdString The command to execute with its arguments
@@ -13,7 +11,7 @@ abstract class IMinecraftCommandSender(val user: String, val env: IBridgeCommand
     val displayName = env.username ?: user
     val accountName = when (env) {
         is IBridgeCommand.CommandEnvironment.BridgeEnv -> "$user (id=${env.userId} platform=${env.platform}${env.uuid?.let { " uuid=$it" }
-                ?: ""}${env.username?.let { " username=$it" } ?: ""})"
+            ?: ""}${env.username?.let { " username=$it" } ?: ""})"
         is IBridgeCommand.CommandEnvironment.GameEnv -> "$user (username=${env.username} uuid=${env.uuid})"
     }
 
@@ -37,10 +35,10 @@ abstract class IMinecraftCommandSender(val user: String, val env: IBridgeCommand
         reply += text
     }
 
-    fun sendReply(cmdString: String) {
+    suspend fun sendReply(cmdString: String) {
         env.respond(
-                text = reply.joinToString("\n"),
-                cause = "executed command: $cmdString"
+            text = reply.joinToString("\n"),
+            cause = "executed command: $cmdString"
         )
         finished = true
     }

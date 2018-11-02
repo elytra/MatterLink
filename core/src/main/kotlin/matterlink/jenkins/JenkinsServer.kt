@@ -19,9 +19,9 @@ class JenkinsServer(val url: String) {
     fun getJob(job: String, userAgent: String): Job? {
         val requestURL = getUrl(job) + "/api/json"
         val (_, _, result) = requestURL
-                .httpGet()
-                .header("User-Agent" to userAgent)
-                .responseString()
+            .httpGet()
+            .header("User-Agent" to userAgent)
+            .responseString()
         return when (result) {
             is Result.Success -> {
                 gson.fromJson(result.value, Job::class.java)

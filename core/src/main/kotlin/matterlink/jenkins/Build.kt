@@ -13,15 +13,15 @@ import matterlink.logger
 
 //@JsonIgnoreProperties(ignoreUnknown = true)
 data class Build(
-        val number: Int,
-        val url: String
+    val number: Int,
+    val url: String
 ) {
     fun details(userAgent: String): BuildWithDetails? {
         val (request, response, result) = "$url/api/json"
-                .httpGet()
-                .header("User-Agent" to userAgent)
-                .responseString()
-        return when(result) {
+            .httpGet()
+            .header("User-Agent" to userAgent)
+            .responseString()
+        return when (result) {
             is Result.Success -> {
                 gson.fromJson(result.value, BuildWithDetails::class.java)
             }

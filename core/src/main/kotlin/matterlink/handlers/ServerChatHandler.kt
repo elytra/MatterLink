@@ -7,17 +7,16 @@ import matterlink.bridge.format
 import matterlink.config.cfg
 import matterlink.instance
 import matterlink.logger
-import java.util.*
+import java.util.UUID
 
 object ServerChatHandler {
+    val rcvChannel = MessageHandlerInst.broadcast.openSubscription()
 
     /**
      * This method must be called every server tick with no arguments.
      */
-    fun writeIncomingToChat() {
-        if (MessageHandlerInst.queue.isNotEmpty())
-            logger.debug("incoming: " + MessageHandlerInst.queue.toString())
-        val nextMessage = MessageHandlerInst.queue.poll() ?: return
+    suspend fun writeIncomingToChat() {
+        val nextMessage = rcvChannel.poll() ?: return
 
         val defaults = cfg.incomingDefaults
 
@@ -32,14 +31,14 @@ object ServerChatHandler {
             it.gateway == sourceGateway
         }
 
-        if(nextMessage.event.isEmpty()) {
+        if (nextMessage.event.isEmpty()) {
             // filter command handlers
             val commandLocations = locations.filter {
                 it.incoming.commands ?: cfg.incomingDefaults.commands
             }
 
             // process potential command
-            for (( label, location) in commandLocations) {
+            for ((label, location) in commandLocations) {
                 if (BridgeCommandRegistry.handleCommand(nextMessage)) return
             }
         }
@@ -48,7 +47,7 @@ object ServerChatHandler {
 
         for (location in locations) {
             val label = location.label
-            if(skips.contains(label)) {
+            if (skips.contains(label)) {
                 logger.debug("skipping $label")
                 continue
             }
@@ -99,7 +98,6 @@ object ServerChatHandler {
             //TODO: optimize send to all at once
             instance.wrappedSendToPlayer(it, message)
         }
-
 
 
 //        if (nextMessage?.gateway == cfg.connect.gateway) {

@@ -8,9 +8,7 @@ import blue.endless.jankson.impl.Marshaller
 import matterlink.config.cfg
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.lang.Thread.yield
 import java.util.*
-import kotlin.streams.asSequence
 
 private const val ZWSP: Char = '\u200b'
 
@@ -64,7 +62,7 @@ val Exception.stackTraceString: String
     }
 
 fun randomString(length: Int = 6): String =
-        java.util.UUID.randomUUID().toString().replace("-", "").take(length)
+    java.util.UUID.randomUUID().toString().replace("-", "").take(length)
 
 fun <T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? = null): T {
     logger.trace("type: ${default.javaClass.name} key: $key json: >>>${this.getObject(key)?.toJson()}<<< default: $default")
@@ -76,20 +74,27 @@ fun <T : Any> JsonObject.getOrDefault(key: String, default: T, comment: String? 
 inline fun <reified T : Any> Jankson.fromJson(obj: JsonObject): T = this.fromJson(obj, T::class.java)
 inline fun <reified T : Any> Jankson.fromJson(json: String): T = this.fromJson(json, T::class.java)
 
-inline fun <reified T : Any> Jankson.Builder.registerTypeAdapter(noinline adapter: (JsonObject) -> T) = this.registerTypeAdapter(T::class.java, adapter)
+inline fun <reified T : Any> Jankson.Builder.registerTypeAdapter(noinline adapter: (JsonObject) -> T) =
+    this.registerTypeAdapter(T::class.java, adapter)
 
-inline fun <reified T : Any> Jankson.Builder.registerPrimitiveTypeAdapter(noinline adapter: (Any) -> T) = this.registerPrimitiveTypeAdapter(T::class.java, adapter)
+inline fun <reified T : Any> Jankson.Builder.registerPrimitiveTypeAdapter(noinline adapter: (Any) -> T) =
+    this.registerPrimitiveTypeAdapter(T::class.java, adapter)
 
-inline fun <reified T : Any> Jankson.Builder.registerSerializer(noinline serializer: (T, Marshaller) -> JsonElement) = this.registerSerializer(T::class.java, serializer)
+inline fun <reified T : Any> Jankson.Builder.registerSerializer(noinline serializer: (T, Marshaller) -> JsonElement) =
+    this.registerSerializer(T::class.java, serializer)
 
-inline fun <reified T : Any> Marshaller.registerSerializer(noinline serializer: (T) -> JsonElement) = this.registerSerializer(T::class.java, serializer)
+inline fun <reified T : Any> Marshaller.registerSerializer(noinline serializer: (T) -> JsonElement) =
+    this.registerSerializer(T::class.java, serializer)
 
-inline fun <reified T : Any> Marshaller.registerSerializer(noinline serializer: (T, Marshaller) -> JsonElement) = this.registerSerializer(T::class.java, serializer)
+inline fun <reified T : Any> Marshaller.registerSerializer(noinline serializer: (T, Marshaller) -> JsonElement) =
+    this.registerSerializer(T::class.java, serializer)
 
-inline fun <reified T : Any> JsonObject.getReified(key: String, comment: String? = null): T? = this.get(T::class.java, key)
+inline fun <reified T : Any> JsonObject.getReified(key: String, comment: String? = null): T? =
+    this.get(T::class.java, key)
         ?.also { setComment(key, comment) }
 
-inline fun <reified T : Any> JsonObject.getReifiedOrDelete(key: String, comment: String? = null): T? = this.get(T::class.java, key)
+inline fun <reified T : Any> JsonObject.getReifiedOrDelete(key: String, comment: String? = null): T? =
+    this.get(T::class.java, key)
         ?.also { setComment(key, comment) }
         ?: run {
             this.remove(key)
@@ -124,7 +129,11 @@ inline fun <reified T : Any> JsonObject.getOrPutList(key: String, default: List<
     } ?: this.putDefault(key, default, comment) ?: default
 }
 
-inline fun <reified T : Any> JsonObject.getOrPutMap(key: String, default: Map<String, T>, comment: String?): Map<String, T> {
+inline fun <reified T : Any> JsonObject.getOrPutMap(
+    key: String,
+    default: Map<String, T>,
+    comment: String?
+): Map<String, T> {
     return this[key]?.let { map ->
         when (map) {
             is JsonObject -> {

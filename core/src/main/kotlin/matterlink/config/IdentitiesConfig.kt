@@ -11,34 +11,34 @@ import matterlink.logger
 import matterlink.stackTraceString
 import java.io.File
 import java.io.FileNotFoundException
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 typealias IdentMap = Map<String, Map<String, List<String>>>
 
 data class AuthRequest(
-        val username: String,
-        val uuid: String,
-        val nonce: String,
-        val platform: String,
-        val userid: String
+    val username: String,
+    val uuid: String,
+    val nonce: String,
+    val platform: String,
+    val userid: String
 )
 
 object IdentitiesConfig {
     val authRequests: Cache<String, AuthRequest> = CacheBuilder.newBuilder()
-            .expireAfterWrite(10, TimeUnit.MINUTES)
-            .build()
+        .expireAfterWrite(10, TimeUnit.MINUTES)
+        .build()
 
     private val jankson = Jankson
-            .builder()
-            .build()
+        .builder()
+        .build()
 
     private val configFile: File = baseCfg.cfgDirectory.resolve("identities.hjson")
 
     private val default = mapOf(
-            ("edd31c45-b095-49c5-a9f5-59cec4cfed8c" to mapOf(
-                    "discord.game" to (listOf("112228624366575616") to "discord id")
-            ) to "username: NikkyAi")
+        ("edd31c45-b095-49c5-a9f5-59cec4cfed8c" to mapOf(
+            "discord.game" to (listOf("112228624366575616") to "discord id")
+        ) to "username: NikkyAi")
     )
 
     var idents: IdentMap = mapOf()

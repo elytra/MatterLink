@@ -1,39 +1,38 @@
 package matterlink.update
 
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 import matterlink.handlers.ChatEvent
 import matterlink.handlers.LocationHandler
 import matterlink.instance
-import matterlink.logger
 import matterlink.jenkins.JenkinsServer
+import matterlink.logger
 import java.io.BufferedReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-class UpdateChecker : Thread() {
-    companion object {
-        fun run() {
-            if (cfg.update.enable) {
-                UpdateChecker().start()
-            }
+object UpdateChecker : CoroutineScope {
+    override val coroutineContext = Job() + CoroutineName("UpdateChacker")
+
+    suspend fun check() {
+        if (cfg.update.enable) {
+            run()
         }
     }
 
-    init {
-        name = "UpdateCheckerThread"
-    }
-
-    override fun run() {
+    private suspend fun run() {
         if (instance.buildNumber > 0) {
             val server = JenkinsServer("https://ci.elytradev.com")
             val job = server.getJob("elytra/MatterLink/master", "MatterLink/${instance.modVersion}")
-                    ?: run {
-                        logger.error("failed obtaining job: elytra/MatterLink/master")
-                        return
-                    }
+                ?: run {
+                    logger.error("failed obtaining job: elytra/MatterLink/master")
+                    return
+                }
             //TODO: add job name to constants at build time
             val build = job.lastSuccessfulBuild ?: run {
                 logger.error("no successful build found")
@@ -45,10 +44,10 @@ class UpdateChecker : Thread() {
                         logger.warn("Mod out of date! New build $number available at $url")
                         val difference = number - build.number
                         LocationHandler.sendToLocations(
-                                msg = "MatterLink out of date! You are $difference builds behind! Please download new version from $url",
-                                x = 0, y =0, z = 0, dimension = null,
-                                event = ChatEvent.STATUS,
-                                cause = "MatterLink update notice"
+                            msg = "MatterLink out of date! You are $difference builds behind! Please download new version from $url",
+                            x = 0, y = 0, z = 0, dimension = null,
+                            event = ChatEvent.STATUS,
+                            cause = "MatterLink update notice"
                         )
                     }
                     number < instance.buildNumber -> logger.error("lastSuccessfulBuild: $number is older than installed build: ${instance.buildNumber}")
@@ -64,7 +63,7 @@ class UpdateChecker : Thread() {
 
         val gson = GsonBuilder()
 //                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
-                .create()
+            .create()
 
         logger.info("Checking for new versions...")
 
@@ -72,7 +71,8 @@ class UpdateChecker : Thread() {
         val con = url.openConnection() as HttpURLConnection
 
         with(instance) {
-            val useragent = "MatterLink/$modVersion MinecraftForge/$mcVersion-$forgeVersion (https://github.com/elytra/MatterLink)"
+            val useragent =
+                "MatterLink/$modVersion MinecraftForge/$mcVersion-$forgeVersion (https://github.com/elytra/MatterLink)"
             logger.debug("setting User-Agent: '$useragent'")
             con.setRequestProperty("User-Agent", useragent)
         }
@@ -87,10 +87,10 @@ class UpdateChecker : Thread() {
             logger.trace("updateData: $content")
 
             gson.fromJson(content, Array<CurseFile>::class.java)
-                    .filter {
-                        it.fileStatus == "SemiNormal" && it.gameVersion.contains(instance.mcVersion)
-                    }
-                    .sortedByDescending { it.fileName.substringAfterLast(" ") }
+                .filter {
+                    it.fileStatus == "SemiNormal" && it.gameVersion.contains(instance.mcVersion)
+                }
+                .sortedByDescending { it.fileName.substringAfterLast(" ") }
 
         } else {
             logger.error("Could not check for updates!")
@@ -98,12 +98,12 @@ class UpdateChecker : Thread() {
         }
 
         val modVersionChunks = instance.modVersion
-                .substringBefore("-dev")
-                .substringBefore("-build")
-                .split('.')
-                .map {
-                    it.toInt()
-                }
+            .substringBefore("-dev")
+            .substringBefore("-build")
+            .split('.')
+            .map {
+                it.toInt()
+            }
 
         val possibleUpdates = mutableListOf<CurseFile>()
         apiUpdateList.forEach {
@@ -138,9 +138,9 @@ class UpdateChecker : Thread() {
 
         logger.warn("Mod out of date! New $version available at ${latest.downloadURL}")
         MessageHandlerInst.transmit(
-                ApiMessage(
-                        text = "MatterLink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}"
-                )
+            ApiMessage(
+                text = "MatterLink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}"
+            )
         )
     }
 }

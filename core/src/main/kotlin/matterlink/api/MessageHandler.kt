@@ -1,15 +1,31 @@
 package matterlink.api
 
+import awaitStringResponse
+import com.github.kittinunf.fuel.core.FuelManager
+import com.github.kittinunf.fuel.core.Method
+import com.github.kittinunf.fuel.core.ResponseDeserializable
+import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPost
+import com.github.kittinunf.result.Result
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.channels.broadcast
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.JSON
+import kotlinx.serialization.list
 import matterlink.Logger
-import java.io.BufferedReader
-import java.io.DataOutputStream
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.ProtocolException
-import java.net.URL
-import java.util.concurrent.ConcurrentLinkedQueue
+import java.io.Reader
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by nikky on 07/05/18.
@@ -17,66 +33,60 @@ import java.util.concurrent.ConcurrentLinkedQueue
  * @author Nikky
  * @version 1.0
  */
-open class MessageHandler {
+open class MessageHandler : CoroutineScope {
+    override val coroutineContext: CoroutineContext = Job()
     private var enabled = false
 
     private var connectErrors = 0
-    private var reconnectCooldown = 0
+    private var reconnectCooldown = 0L
     private var sendErrors = 0
 
-    var config: Config = Config()
-        set(value) {
-            field = value.apply {
-                sync(streamConnection)
-            }
+
+    private var sendChannel: SendChannel<ApiMessage> = senderActor()
+
+    private val messageStream = Channel<ApiMessage>(Channel.UNLIMITED)
+    var broadcast: BroadcastChannel<ApiMessage> = broadcast {
+        while (true) {
+            val msg = messageStream.receive()
+            send(msg)
         }
-
-    //TODO: make callbacks: onConnect onDisconnect onError etc
-
-    var queue: ConcurrentLinkedQueue<ApiMessage> = ConcurrentLinkedQueue()
+    }
         private set
-    private var streamConnection: StreamConnection = StreamConnection(queue)
-
-    var logger: Logger
-    get() = streamConnection.logger
-    set(l) {
-        streamConnection.logger = l
+    private val keepOpenManager = FuelManager().apply {
+        timeoutInMillisecond = 0
+        timeoutReadInMillisecond = 0
     }
 
+    var config: Config = Config()
 
-    private var nextCheck: Long = 0
-
-    init {
-        streamConnection.addOnSuccess { success ->
-            if (success) {
-                logger.info("connected successfully")
-                connectErrors = 0
-                reconnectCooldown = 0
-            } else {
-                reconnectCooldown = connectErrors
-                connectErrors++
-                logger.error(String.format("connectErrors: %d", connectErrors))
-            }
-        }
+    var logger = object : Logger {
+        override fun info(message: String) = println("INFO: $message")
+        override fun debug(message: String) = println("DEBUG: $message")
+        override fun error(message: String) = println("ERROR: $message")
+        override fun warn(message: String) = println("WARN: $message")
+        override fun trace(message: String) = println("TRACE: $message")
     }
 
-    fun stop(message: String? = null) {
+    suspend fun stop(message: String? = null) {
         if (message != null && config.announceDisconnect) {
             sendStatusUpdate(message)
         }
         enabled = false
-        streamConnection.close()
+        rcvJob?.cancel()
+        rcvJob = null
     }
 
+    private var rcvJob: Job? = null
 
-    fun start(message: String?, clear: Boolean) {
-        config.sync(streamConnection)
+    suspend fun start(message: String?, clear: Boolean) {
+        logger.debug("starting connection")
         if (clear) {
             clear()
         }
 
         enabled = true
-        streamConnection.open()
+
+        rcvJob = messageBroadcast()
 
         if (message != null && config.announceConnect) {
             sendStatusUpdate(message)
@@ -84,118 +94,138 @@ open class MessageHandler {
     }
 
 
-    private fun clear() {
-        try {
-            val url = URL(config.url + "/api/messages")
-            val conn = url.openConnection() as HttpURLConnection
-
-            if (!config.token.isEmpty()) {
-                val bearerAuth = "Bearer " + config.token
-                conn.setRequestProperty("Authorization", bearerAuth)
+    private suspend fun clear() {
+        val url = "${config.url}/api/messages"
+        val (request, response, result) = url.httpGet()
+            .apply {
+                if (config.token.isNotEmpty()) {
+                    headers["Authorization"] = "Bearer ${config.token}"
+                }
             }
+            .awaitStringResponse()
 
-            conn.requestMethod = "GET"
-
-            BufferedReader(InputStreamReader(conn.inputStream)).forEachLine { line ->
-                logger.trace("skipping $line")
+        when (result) {
+            is Result.Success -> {
+                val messages: List<ApiMessage> = JSON.parse(ApiMessage.list, result.value)
+                messages.forEach { msg ->
+                    logger.trace("skipping $msg")
+                }
+                logger.debug("skipped ${messages.count()} messages")
             }
-        } catch (e: MalformedURLException) {
-            e.printStackTrace()
-        } catch (e: ProtocolException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
+            is Result.Failure -> {
+                logger.error("failed to clear messages")
+                logger.error("url: $url")
+                logger.error("cUrl: ${request.cUrlString()}")
+                logger.error("response: $response")
+                logger.error(result.error.exception.localizedMessage)
+                result.error.exception.printStackTrace()
+            }
         }
 
     }
 
-    open fun sendStatusUpdate(message: String) {
+    open suspend fun sendStatusUpdate(message: String) {
         transmit(ApiMessage(text = message))
     }
 
-    open fun transmit(msg: ApiMessage) {
-        if (streamConnection.isConnected || streamConnection.isConnecting) {
-            if (msg.username.isEmpty())
-                msg.username = config.systemUser
-            if (msg.gateway.isEmpty()) {
-                logger.error("missing gateway on message: $msg")
-                return
-            }
-            logger.debug("Transmitting: $msg")
-            transmitMessage(msg)
+    open suspend fun transmit(msg: ApiMessage) {
+//        if (streamConnection.isConnected || streamConnection.isConnecting) {
+        if (msg.username.isEmpty())
+            msg.username = config.systemUser
+        if (msg.gateway.isEmpty()) {
+            logger.error("missing gateway on message: $msg")
+            return
         }
+        logger.debug("Transmitting: $msg")
+        sendChannel.send(msg)
+//        }
     }
 
-    private fun transmitMessage(message: ApiMessage) {
-        try {
-            val url = URL(config.url + "/api/message")
-            val conn = url.openConnection() as HttpURLConnection
-
-            if (!config.token.isEmpty()) {
-                val bearerAuth = "Bearer " + config.token
-                conn.setRequestProperty("Authorization", bearerAuth)
-            }
-
-            val postData = message.encode()
-            logger.trace(postData)
-
-            conn.requestMethod = "POST"
-            conn.setRequestProperty("Content-Type", "application/json")
-            conn.setRequestProperty("charset", "utf-8")
-            conn.setRequestProperty("Content-Length", "" + postData.toByteArray().size)
-            conn.doOutput = true
-            conn.doInput = true
-
-            DataOutputStream(conn.outputStream).use { wr -> wr.write(postData.toByteArray()) }
-
-            //            conn.getInputStream().close();
-            conn.connect()
-            val code = conn.responseCode
-            if (code != 200) {
-                logger.error("Server returned $code")
-                sendErrors++
-                if (sendErrors > 5) {
-                    logger.error("Interrupting Connection to matterbridge API due to status code $code")
-                    stop()
-                }
-            } else {
-                sendErrors = 0
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            logger.error("sending message caused $e")
-            sendErrors++
-            if (sendErrors > 5) {
-                logger.error("Caught too many errors, closing bridge")
-                stop()
-            }
-        }
-
-    }
-
-    /**
-     * clll this method every tick / cycle to make sure it is reconnecting
-     */
+    @Deprecated("use coroutine api", level = DeprecationLevel.ERROR)
     fun checkConnection() {
-        if (enabled && !streamConnection.isConnected && !streamConnection.isConnecting) {
-            logger.trace("check connection")
-            logger.trace("next: $nextCheck")
-            logger.trace("now: " + System.currentTimeMillis())
-            if (nextCheck > System.currentTimeMillis()) return
-            nextCheck = System.currentTimeMillis() + config.reconnectWait
+    }
 
-            if (connectErrors >= 10) {
-                logger.error("Caught too many errors, closing bridge")
-                stop("Interrupting connection to matterbridge API due to accumulated connection errors")
-                return
+    private fun CoroutineScope.senderActor() = actor<ApiMessage>(context = Dispatchers.IO) {
+        consumeEach {
+            logger.debug("sending $it")
+            val url = "${config.url}/api/message"
+            val (request, response, result) = url.httpPost()
+                .apply {
+                    if (config.token.isNotEmpty()) {
+                        headers["Authorization"] = "Bearer ${config.token}"
+                    }
+                }
+                .jsonBody(it.encode())
+                .responseString()
+            when (result) {
+                is Result.Success -> {
+                    logger.info("sent $it")
+                    sendErrors = 0
+                }
+                is Result.Failure -> {
+                    sendErrors++
+                    logger.error("failed to deliver: $it")
+                    logger.error("url: $url")
+                    logger.error("cUrl: ${request.cUrlString()}")
+                    logger.error("response: $response")
+                    logger.error(result.error.exception.localizedMessage)
+                    result.error.exception.printStackTrace()
+//                    close()
+                    throw result.error.exception
+                }
             }
+        }
+    }
 
-            if (reconnectCooldown <= 0) {
-                logger.info("Trying to reconnect")
-                start("Reconnecting to matterbridge API after connection error", false)
-            } else {
-                reconnectCooldown--
+    private fun CoroutineScope.messageBroadcast() = launch(context = Dispatchers.IO + CoroutineName("msgBroadcaster")) {
+        loop@ while (isActive) {
+            logger.info("opening connection")
+            val url = "${config.url}/api/stream"
+            val (request, response, result) = keepOpenManager.request(Method.GET, url)
+                .apply {
+                    if (config.token.isNotEmpty()) {
+                        headers["Authorization"] = "Bearer ${config.token}"
+                    }
+                }
+                .responseObject(object : ResponseDeserializable<Unit> {
+                    override fun deserialize(reader: Reader) =
+                        runBlocking(Dispatchers.IO + CoroutineName("msgReceiver")) {
+                            logger.info("connected successfully")
+                            connectErrors = 0
+                            reconnectCooldown = 0
+
+                            reader.useLines { lines ->
+                                lines.forEach { line ->
+                                    val msg = ApiMessage.decode(line)
+                                    logger.info("received: $msg")
+                                    if (msg.event != "api_connect") {
+                                        messageStream.send(msg)
+                                    }
+                                }
+                            }
+                        }
+                })
+
+            when (result) {
+                is Result.Success -> {
+                    logger.info("connection closed")
+                }
+                is Result.Failure -> {
+                    connectErrors++
+                    reconnectCooldown = connectErrors * 1000L
+                    logger.error("connectErrors: $connectErrors")
+                    logger.error("connection error")
+                    logger.error("curl: ${request.cUrlString()}")
+                    logger.error(result.error.localizedMessage)
+                    result.error.exception.printStackTrace()
+                    if (connectErrors >= 10) {
+                        logger.error("Caught too many errors, closing bridge")
+                        stop("Interrupting connection to matterbridge API due to accumulated connection errors")
+                        break@loop
+                    }
+                }
             }
+            delay(reconnectCooldown) // reconnect delay in ms
         }
     }
 }

@@ -1,6 +1,5 @@
 package matterlink.handlers
 
-import matterlink.bridge.MessageHandlerInst
 import matterlink.update.UpdateChecker
 
 /**
@@ -13,17 +12,17 @@ object TickHandler {
         private set
     private var accumulator = 0
     private const val updateInterval = 12 * 60 * 60 * 20
-    fun handleTick() {
+    suspend fun handleTick() {
         tickCounter++
-        if (tickCounter % 100 == 0) {
-            MessageHandlerInst.checkConnection()
-        }
+//        if (tickCounter % 100 == 0) {
+//            MessageHandlerInst.checkConnection()
+//        }
 
         ServerChatHandler.writeIncomingToChat()
 
         if (accumulator++ > updateInterval) {
             accumulator -= updateInterval
-            UpdateChecker.run()
+            UpdateChecker.check()
         }
     }
 }

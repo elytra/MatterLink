@@ -1,5 +1,6 @@
 package matterlink.command
 
+import kotlinx.coroutines.runBlocking
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.command.WrongUsageException
@@ -21,9 +22,9 @@ object MatterLinkCommand : CommandBase() {
         return CommandCoreML.aliases
     }
 
-    override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<String>) {
+    override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<String>) = runBlocking {
         if (args.isEmpty()) {
-            throw WrongUsageException("Invalid command! Valid uses: ${this.getUsage(sender)}")
+            throw WrongUsageException("Invalid command! Valid uses: ${getUsage(sender)}")
         }
 
         val uuid = (sender as? EntityPlayer)?.uniqueID?.toString()

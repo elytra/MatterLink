@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath group: "org.jetbrains.kotlin", name: "kotlin-gradle-plugin", version: kotlinVersion
+        classpath group: "org.jetbrains.kotlin", name: "kotlin-serialization", version: kotlinVersion
     }
 }
 
@@ -14,6 +15,7 @@ plugins {
 
 subprojects {
     apply plugin: "kotlin"
+    apply plugin: "kotlinx-serialization"
     apply plugin: "idea"
 
     if (System.env.BUILD_NUMBER) {
@@ -35,23 +37,27 @@ subprojects {
     }
     repositories {
         jcenter()
+        mavenCentral()
         maven {
             name = "bintray"
-            url = 'http://jcenter.bintray.com'
+            url = "http://jcenter.bintray.com"
         }
         maven {
-            name = "elytradev"
-            url = 'http://unascribed.com/maven/releases'
-            url = 'https://repo.elytradev.com'
+            name = "jitpack"
+            url = "https://jitpack.io"
         }
+        maven {
+            name = "kotlinx"
+            url = "https://kotlin.bintray.com/kotlinx/"
+        }
+//        maven {
+//            name = "elytradev"
+//           // url = 'http://unascribed.com/maven/releases'
+//            url = "https://repo.elytradev.com"
+//        }
         maven {
             name = "shadowfacts"
             url = "http://maven.shadowfacts.net/"
-        }
-        ivy {
-            //Resolves baubles and jankson
-            name = "endless.blue dependency mirror"
-            artifactPattern "https://endless.blue/files/ivy/[module]-[revision].[ext]"
         }
     }
     compileKotlin {

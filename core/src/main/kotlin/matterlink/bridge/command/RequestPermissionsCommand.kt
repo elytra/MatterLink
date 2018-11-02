@@ -11,7 +11,7 @@ object RequestPermissionsCommand : IBridgeCommand() {
     override val permLevel: Double
         get() = cfg.command.defaultPermAuthenticated
 
-    override fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean {
+    override suspend fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean {
 
         val uuid = env.uuid
         if (uuid == null) {
@@ -23,8 +23,10 @@ object RequestPermissionsCommand : IBridgeCommand() {
         val requestedLevelArg = argList.getOrNull(0)
         val requestedLevel = requestedLevelArg?.takeIf { it.isNotEmpty() }?.let {
             it.toDoubleOrNull() ?: run {
-                env.respond("cannot parse permlevel '$requestedLevelArg'\n" +
-                        syntax)
+                env.respond(
+                    "cannot parse permlevel '$requestedLevelArg'\n" +
+                            syntax
+                )
                 return true
             }
         }
@@ -33,7 +35,10 @@ object RequestPermissionsCommand : IBridgeCommand() {
 
         val requestId = user.toLowerCase()
 
-        PermissionConfig.permissionRequests.put(requestId, PermissionRequest(uuid = uuid, user = user, nonce = nonce, powerlevel = requestedLevel))
+        PermissionConfig.permissionRequests.put(
+            requestId,
+            PermissionRequest(uuid = uuid, user = user, nonce = nonce, powerlevel = requestedLevel)
+        )
         env.respond("please ask a op to accept your permission elevation with `/ml permAccept $requestId $nonce [permLevel]`")
 
         return true

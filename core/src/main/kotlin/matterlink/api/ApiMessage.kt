@@ -1,7 +1,10 @@
 package matterlink.api
 
-import com.google.gson.GsonBuilder
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Encoder
+import kotlinx.serialization.Optional
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.json.JSON
 
 /**
  * Created by nikky on 07/05/18.
@@ -9,84 +12,77 @@ import com.google.gson.annotations.SerializedName
  * @author Nikky
  * @version 1.0
  */
-class ApiMessage (
-        username: String? = null,
-        text: String? = null,
-        gateway: String? = null,
-        channel: String? = null,
-        userid: String? = null,
-        avatar: String? = null,
-        account: String? = null,
-        protocol: String? = null,
-        event: String? = null,
-        id: String? = null
+@Serializable
+data class ApiMessage(
+    @Optional var username: String = "",
+    @Optional var text: String = "",
+    @Optional var gateway: String = "",
+    @Optional var timestamp: String = "",
+    @Optional var channel: String = "",
+    @Optional var userid: String = "",
+    @Optional var avatar: String = "",
+    @Optional var account: String = "",
+    @Optional var protocol: String = "",
+    @Optional var event: String = "",
+    @Optional var id: String = "",
+    @Optional var Extra: Map<String, String>? = null
 ) {
-    @SerializedName("username") private var _username: String? = username
-    @SerializedName("text")     private var _text:     String? = text
-    @SerializedName("gateway")  private var _gateway:  String? = gateway
-    @SerializedName("channel")  private var _channel:  String? = channel
-    @SerializedName("userid")   private var _userid:   String? = userid
-    @SerializedName("avatar")   private var _avatar:   String? = avatar
-    @SerializedName("account")  private var _account:  String? = account
-    @SerializedName("protocol") private var _protocol: String? = protocol
-    @SerializedName("event")    private var _event:    String? = event
-    @SerializedName("id")       private var _id:       String? = id
 
-    var username: String
-        get() = _username ?: ""
-        set(username) { this._username = username }
-
-    var text: String
-        get() = _text ?: ""
-        set(text) { this._text = text }
-    
-    var gateway: String
-        get() = _gateway ?: ""
-        set(gateway) { this._gateway = gateway }
-    
-    var channel: String
-        get() = _channel ?: ""
-        set(channel) { this._channel = channel }
-    
-    var userid: String
-        get() = _userid ?: ""
-        set(userid) { this._userid = userid }
-    
-    var avatar: String
-        get() = _avatar ?: ""
-        set(avatar) { this._avatar = avatar }
-    
-    var account: String
-        get() = _account ?: ""
-        set(account) { this._account = account }
-
-    var protocol: String
-        get() = _protocol ?: ""
-        set(protocol) { this._protocol = protocol }
-
-    var event: String
-        get() = _event ?: ""
-        set(event) { this._event = event }
-
-    var id: String
-        get() = _id ?: ""
-        set(id) { this._id = id }
-    
     fun encode(): String {
-        return gson.toJson(this)
+        return JSON.stringify(Companion, this)
     }
 
     override fun toString(): String = encode()
 
+    @Serializer(forClass = ApiMessage::class)
     companion object {
+        override fun serialize(output: Encoder, obj: ApiMessage) {
+            val elemOutput = output.beginStructure(descriptor)
+            obj.username.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 0, it)
+            }
+            obj.text.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 1, it)
+            }
+            obj.gateway.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 2, it)
+            }
+            obj.timestamp.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 3, it)
+            }
+            obj.channel.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 4, it)
+            }
+            obj.userid.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 5, it)
+            }
+            obj.avatar.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 6, it)
+            }
+            obj.account.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 7, it)
+            }
+            obj.protocol.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 8, it)
+            }
+            obj.event.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 9, it)
+            }
+            obj.id.takeIf { it.isNotEmpty() }?.let {
+                elemOutput.encodeStringElement(descriptor, 10, it)
+            }
+//            obj.Extra.takeIf { ! it.isNullOrEmpty() }?.let {
+//                elemOutput.encodeStringElement(descriptor, 11, it)
+//            }
+            elemOutput.endStructure(descriptor)
+        }
+
         val USER_ACTION = "user_action"
         val JOIN_LEAVE = "join_leave"
 
-        private val gson = GsonBuilder()
-                .create()
 
         fun decode(json: String): ApiMessage {
-            return gson.fromJson(json, ApiMessage::class.java)
+            return JSON.parse(Companion, json)
         }
     }
 }

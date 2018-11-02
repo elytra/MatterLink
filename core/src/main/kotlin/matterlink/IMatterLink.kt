@@ -4,10 +4,9 @@ import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
 import matterlink.bridge.command.IBridgeCommand
 import matterlink.bridge.command.IMinecraftCommandSender
-import matterlink.config.BaseConfig
 import matterlink.config.cfg
 import matterlink.update.UpdateChecker
-import java.util.*
+import java.util.UUID
 
 lateinit var logger: Logger
 
@@ -19,7 +18,11 @@ abstract class IMatterLink {
     abstract val buildNumber: Int
     abstract val forgeVersion: String
 
-    abstract fun commandSenderFor(user: String, env: IBridgeCommand.CommandEnvironment, op: Boolean): IMinecraftCommandSender
+    abstract fun commandSenderFor(
+        user: String,
+        env: IBridgeCommand.CommandEnvironment,
+        op: Boolean
+    ): IMinecraftCommandSender
 
     abstract fun wrappedSendToPlayers(msg: String)
 
@@ -29,49 +32,18 @@ abstract class IMatterLink {
     abstract fun nameToUUID(username: String): UUID?
     abstract fun uuidToName(uuid: UUID): String?
 
-    init {
-
-    }
-
-    fun start() {
-//        MessageHandlerInst.logger = { level, msg ->
-//            when (level) {
-//                "FATAL" -> logger.fatal(msg)
-//                "ERROR" -> logger.error(msg)
-//                "WARN" -> logger.warn(msg)
-//                "INFO" -> logger.info(msg)
-//                "DEBUG" -> logger.debug(msg)
-//                "TRACE" -> logger.trace(msg)
-//            }
-//        }
+    suspend fun start() {
         MessageHandlerInst.logger = logger
         serverStartTime = System.currentTimeMillis()
 
         if (cfg.connect.autoConnect)
             MessageHandlerInst.start("Server started, connecting to matterbridge API", true)
-        UpdateChecker.run()
+        UpdateChecker.check()
     }
 
-    fun stop() {
+    suspend fun stop() {
         MessageHandlerInst.stop("Server shutting down, disconnecting from matterbridge API")
     }
-
-//    abstract fun log(level: String, formatString: String, vararg data: Any)
-
-//    fun fatal(formatString: String, vararg data: Any) = log("FATAL", formatString, *data)
-//    fun error(formatString: String, vararg data: Any) = log("ERROR", formatString, *data)
-//    fun warn(formatString: String, vararg data: Any) = log("WARN", formatString, *data)
-//    fun info(formatString: String, vararg data: Any) = log("INFO", formatString, *data)
-//
-//    fun debug(formatString: String, vararg data: Any) {
-//        if (cfg.debug.logLevel == "DEBUG" || cfg.debug.logLevel == "TRACE")
-//            log("INFO", "DEBUG: " + formatString.replace("\n", "\nDEBUG: "), *data)
-//    }
-//
-//    fun trace(formatString: String, vararg data: Any) {
-//        if (cfg.debug.logLevel == "TRACE")
-//            log("INFO", "TRACE: " + formatString.replace("\n", "\nTRACE: "), *data)
-//    }
 
     /**
      * in milliseconds

@@ -1,8 +1,6 @@
 package matterlink
 
 import blue.endless.jankson.Jankson
-import blue.endless.jankson.JsonObject
-import blue.endless.jankson.impl.Marshaller
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -13,34 +11,34 @@ import java.net.URL
  */
 
 data class Paste(
-        val encrypted: Boolean = false,
-        val description: String,
-        val sections: List<PasteSection>
+    val encrypted: Boolean = false,
+    val description: String,
+    val sections: List<PasteSection>
 )
 
 data class PasteSection(
-        val name: String,
-        val syntax: String = "text",
-        val contents: String
+    val name: String,
+    val syntax: String = "text",
+    val contents: String
 )
 
 data class PasteResponse(
-        val id: String,
-        val link: String
+    val id: String,
+    val link: String
 )
 
 object PasteUtil {
     private const val DEFAULT_KEY = "uKJoyicVJFnmpnrIZMklOURWxrCKXYaiBWOzPmvon"
 
     private val jankson = Jankson.builder()
-            .registerTypeAdapter {
-                PasteResponse(
-                        id = it.getReified("id") ?: "",
-                        link = it.getReified<String>("link")
-                                ?.replace("\\/", "/")
-                                ?: "invalid"
-                )
-            }
+        .registerTypeAdapter {
+            PasteResponse(
+                id = it.getReified("id") ?: "",
+                link = it.getReified<String>("link")
+                    ?.replace("\\/", "/")
+                    ?: "invalid"
+            )
+        }
 //            .registerSerializer { paste: Paste, marshaller: Marshaller ->
 //                JsonObject().apply {
 //                    with(paste) {
@@ -62,7 +60,7 @@ object PasteUtil {
 //                    }
 //                }
 //            }
-            .build()
+        .build()
 
     fun paste(paste: Paste, key: String = ""): PasteResponse {
         val apiKey = key.takeIf { it.isNotBlank() } ?: DEFAULT_KEY
@@ -73,8 +71,8 @@ object PasteUtil {
         http.doOutput = true
 
         val out = jankson.toJson(paste)
-                .toJson(false, false)
-                .toByteArray()
+            .toJson(false, false)
+            .toByteArray()
 
         http.setFixedLengthStreamingMode(out.size)
         http.setRequestProperty("Content-Type", "application/json; charset=UTF-8")

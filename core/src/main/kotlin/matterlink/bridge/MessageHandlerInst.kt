@@ -1,32 +1,37 @@
 package matterlink.bridge
 
-import matterlink.*
+import matterlink.Paste
+import matterlink.PasteSection
+import matterlink.PasteUtil
+import matterlink.antiping
 import matterlink.api.ApiMessage
 import matterlink.api.MessageHandler
 import matterlink.config.cfg
 import matterlink.handlers.ChatEvent
 import matterlink.handlers.LocationHandler
+import matterlink.mapFormat
+import matterlink.stackTraceString
 
 object MessageHandlerInst : MessageHandler() {
-    override fun transmit(msg: ApiMessage) {
+    override suspend fun transmit(msg: ApiMessage) {
         transmit(msg, cause = "")
     }
 
-    override fun sendStatusUpdate(message: String) {
+    override suspend fun sendStatusUpdate(message: String) {
         LocationHandler.sendToLocations(
-                msg = message,
-                x = 0, y = 0, z = 0, dimension = null,
-                systemuser = true,
-                event = ChatEvent.STATUS,
-                cause = "status update message"
+            msg = message,
+            x = 0, y = 0, z = 0, dimension = null,
+            systemuser = true,
+            event = ChatEvent.STATUS,
+            cause = "status update message"
         )
     }
 
-    fun transmit(msg: ApiMessage, cause: String, maxLines: Int = cfg.outgoing.inlineLimit) {
+    suspend fun transmit(msg: ApiMessage, cause: String, maxLines: Int = cfg.outgoing.inlineLimit) {
         if (msg.username.isEmpty()) {
             msg.username = cfg.outgoing.systemUser
 
-            if(msg.avatar.isEmpty() && cfg.outgoing.avatar.enable) {
+            if (msg.avatar.isEmpty() && cfg.outgoing.avatar.enable) {
                 msg.avatar = cfg.outgoing.avatar.systemUserAvatar
             }
         }
@@ -38,20 +43,20 @@ object MessageHandlerInst : MessageHandler() {
         if (msg.text.lines().count() >= maxLines) {
             try {
                 val response = PasteUtil.paste(
-                        Paste(
-                                description = cause,
-                                sections = listOf(
-                                        PasteSection(
-                                                name = "log.txt",
-                                                syntax = "text",
-                                                contents = msg.text
-                                        )
-                                )
+                    Paste(
+                        description = cause,
+                        sections = listOf(
+                            PasteSection(
+                                name = "log.txt",
+                                syntax = "text",
+                                contents = msg.text
+                            )
                         )
+                    )
                 )
                 msg.text = msg.text.substringBefore('\n')
-                        .take(25) + "...  " + response.link
-            } catch(e: Exception) {
+                    .take(25) + "...  " + response.link
+            } catch (e: Exception) {
                 logger.error(cause)
                 logger.error(e.stackTraceString)
             }
@@ -62,13 +67,13 @@ object MessageHandlerInst : MessageHandler() {
 
 fun ApiMessage.format(fmt: String): String {
     return fmt.mapFormat(
-            mapOf(
-                    "{username}" to username,
-                    "{text}" to text,
-                    "{gateway}" to gateway,
-                    "{channel}" to channel,
-                    "{protocol}" to protocol,
-                    "{username:antiping}" to username.antiping
-            )
+        mapOf(
+            "{username}" to username,
+            "{text}" to text,
+            "{gateway}" to gateway,
+            "{channel}" to channel,
+            "{protocol}" to protocol,
+            "{username:antiping}" to username.antiping
+        )
     )
 }

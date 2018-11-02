@@ -13,7 +13,7 @@ object CommandCoreML {
 
     val usage = "ml <connect|disconnect|reload|permAccept>"
 
-    fun execute(args: Array<String>, user: String, uuid: String?): String {
+    suspend fun execute(args: Array<String>, user: String, uuid: String?): String {
         val cmd = args[0].toLowerCase()
 
         return when (cmd) {
@@ -49,8 +49,8 @@ object CommandCoreML {
                 }
                 val powerLevelArg = args.getOrNull(2)?.toDoubleOrNull()
                 val powerLevel = powerLevelArg ?: run { return "permLevel cannot be parsed" }
-                        ?: request.powerlevel
-                        ?: return "no permLevel provided"
+                ?: request.powerlevel
+                ?: return "no permLevel provided"
                 PermissionConfig.add(request.uuid, powerLevel, "${request.user} Authorized by $user")
                 PermissionConfig.permissionRequests.invalidate(requestId)
                 "added ${request.user} (uuid: ${request.uuid}) with power level: $powerLevel"

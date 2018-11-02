@@ -7,7 +7,7 @@ package matterlink.jenkins
 
 //@JsonIgnoreProperties(ignoreUnknown = true)
 data class Artifact(
-        val displayPath: String,
-        val fileName: String,
-        val relativePath: String
+    val displayPath: String,
+    val fileName: String,
+    val relativePath: String
 )

@@ -1,5 +1,6 @@
 package matterlink.command
 
+import kotlinx.coroutines.runBlocking
 import matterlink.bridge.command.IBridgeCommand
 import matterlink.bridge.command.IMinecraftCommandSender
 import net.minecraft.command.ICommandSender
@@ -10,14 +11,15 @@ import net.minecraft.util.IChatComponent
 import net.minecraft.world.World
 
 class MatterLinkCommandSender(
-        user: String,
-        env: IBridgeCommand.CommandEnvironment,
-        op: Boolean) : IMinecraftCommandSender(user, env, op), ICommandSender {
+    user: String,
+    env: IBridgeCommand.CommandEnvironment,
+    op: Boolean
+) : IMinecraftCommandSender(user, env, op), ICommandSender {
 
-    override fun execute(cmdString: String): Boolean {
-        return 0 < MinecraftServer.getServer().commandManager.executeCommand(
-                this,
-                cmdString
+    override fun execute(cmdString: String): Boolean = runBlocking {
+        return@runBlocking 0 < MinecraftServer.getServer().commandManager.executeCommand(
+            this@MatterLinkCommandSender,
+            cmdString
         ).apply {
             sendReply(cmdString)
         }

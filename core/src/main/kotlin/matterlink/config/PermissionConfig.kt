@@ -6,34 +6,33 @@ import blue.endless.jankson.impl.SyntaxError
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import matterlink.getReified
-import matterlink.instance
 import matterlink.logger
 import java.io.File
 import java.io.FileNotFoundException
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 typealias PermissionMap = Map<String, Double>
 
 data class PermissionRequest(
-        val uuid: UUID,
-        val user: String,
-        val nonce: String,
-        val powerlevel: Double? = null
+    val uuid: UUID,
+    val user: String,
+    val nonce: String,
+    val powerlevel: Double? = null
 )
 
 object PermissionConfig {
     val permissionRequests: Cache<String, PermissionRequest> = CacheBuilder.newBuilder()
-            .expireAfterWrite(10, TimeUnit.MINUTES)
-            .build()
+        .expireAfterWrite(10, TimeUnit.MINUTES)
+        .build()
     private val jankson = Jankson
-            .builder()
-            .build()
+        .builder()
+        .build()
 
     private val configFile: File = baseCfg.cfgDirectory.resolve("permissions.hjson")
 
     private val default = mapOf(
-            "edd31c45-b095-49c5-a9f5-59cec4cfed8c" to 9000.0 to "Superuser"
+        "edd31c45-b095-49c5-a9f5-59cec4cfed8c" to 9000.0 to "Superuser"
     )
 
     val perms: PermissionMap = mutableMapOf()

@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent
 import cpw.mods.fml.common.event.FMLPreInitializationEvent
 import cpw.mods.fml.common.event.FMLServerStartingEvent
 import cpw.mods.fml.common.event.FMLServerStoppingEvent
+import kotlinx.coroutines.runBlocking
 import matterlink.bridge.command.IBridgeCommand
 import matterlink.command.AuthCommand
 import matterlink.command.MatterLinkCommand
@@ -18,13 +19,13 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ChatComponentText
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.common.MinecraftForge
-import java.util.*
+import java.util.UUID
 
 @Mod(
-        modid = MODID,
-        name = NAME, version = MODVERSION,
-        useMetadata = true,
-        acceptableRemoteVersions = "*"
+    modid = MODID,
+    name = NAME, version = MODVERSION,
+    useMetadata = true,
+    acceptableRemoteVersions = "*"
 )
 class MatterLink : IMatterLink() {
     init {
@@ -57,7 +58,7 @@ class MatterLink : IMatterLink() {
     }
 
     @Mod.EventHandler
-    fun serverStarting(event: FMLServerStartingEvent) {
+    fun serverStarting(event: FMLServerStartingEvent) = runBlocking {
         logger.debug("Registering server commands")
         event.registerServerCommand(MatterLinkCommand)
         event.registerServerCommand(AuthCommand)
@@ -65,7 +66,7 @@ class MatterLink : IMatterLink() {
     }
 
     @Mod.EventHandler
-    fun serverStopping(event: FMLServerStoppingEvent) {
+    fun serverStopping(event: FMLServerStoppingEvent) = runBlocking {
         stop()
     }
 
@@ -99,10 +100,11 @@ class MatterLink : IMatterLink() {
     }
 
     override fun isOnline(username: String) = (FMLCommonHandler.instance()
-            .minecraftServerInstance.configurationManager.getPlayerByUsername(username) ?: null) != null
+        .minecraftServerInstance.configurationManager.getPlayerByUsername(username) ?: null) != null
 
     private fun playerByProfile(gameProfile: GameProfile): EntityPlayerMP? {
-        return FMLCommonHandler.instance().minecraftServerInstance.configurationManager.createPlayerForUser(gameProfile)
+        return FMLCommonHandler.instance()
+            .minecraftServerInstance.configurationManager.getPlayerByUsername(gameProfile.name)
     }
 
     private fun profileByUUID(uuid: UUID): GameProfile? = try {
@@ -121,11 +123,11 @@ class MatterLink : IMatterLink() {
 
     override fun collectPlayers(area: Area): Set<UUID> {
         val players = MinecraftServer.getServer().configurationManager.playerEntityList
-                .map { it as EntityPlayerMP }
-                .filter {
-                    (area.allDimensions || area.dimensions.contains(it.dimension))
-                            && area.testInBounds(it.posX.toInt(), it.posY.toInt(), it.posZ.toInt())
-                }
+            .map { it as EntityPlayerMP }
+            .filter {
+                (area.allDimensions || area.dimensions.contains(it.dimension))
+                        && area.testInBounds(it.posX.toInt(), it.posY.toInt(), it.posZ.toInt())
+            }
         return players.map { it.uniqueID }.toSet()
     }
 
@@ -134,9 +136,9 @@ class MatterLink : IMatterLink() {
     override fun uuidToName(uuid: UUID): String? = profileByUUID(uuid)?.name
 
     override fun commandSenderFor(
-            user: String,
-            env: IBridgeCommand.CommandEnvironment,
-            op: Boolean
+        user: String,
+        env: IBridgeCommand.CommandEnvironment,
+        op: Boolean
     ) = MatterLinkCommandSender(user, env, op)
 
     override val mcVersion: String = MCVERSION

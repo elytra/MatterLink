@@ -1,7 +1,7 @@
 package matterlink
 
 import com.mojang.authlib.GameProfile
-import jline.internal.Log.warn
+import kotlinx.coroutines.runBlocking
 import matterlink.bridge.command.IBridgeCommand
 import matterlink.command.AuthCommand
 import matterlink.command.MatterLinkCommand
@@ -9,9 +9,7 @@ import matterlink.command.MatterLinkCommandSender
 import matterlink.config.BaseConfig
 import matterlink.config.cfg
 import net.minecraft.entity.player.EntityPlayerMP
-import net.minecraft.server.MinecraftServer
 import net.minecraft.util.text.TextComponentString
-import net.minecraftforge.common.DimensionManager
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.common.Mod
@@ -21,17 +19,17 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.core.config.Configurator
-import java.util.*
+import java.util.UUID
 
 
 @Mod(
-        modid = MODID,
-        name = NAME, version = MODVERSION,
-        serverSideOnly = true,
-        useMetadata = true,
-        acceptableRemoteVersions = "*",
-        modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter",
-        dependencies = DEPENDENCIES
+    modid = MODID,
+    name = NAME, version = MODVERSION,
+    serverSideOnly = true,
+    useMetadata = true,
+    acceptableRemoteVersions = "*",
+    modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter",
+    dependencies = DEPENDENCIES
 )
 object MatterLink : IMatterLink() {
 
@@ -59,6 +57,7 @@ object MatterLink : IMatterLink() {
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
+        logger.debug("Registering bridge commands")
         this.registerBridgeCommands()
     }
 
@@ -67,11 +66,13 @@ object MatterLink : IMatterLink() {
         logger.debug("Registering server commands")
         event.registerServerCommand(MatterLinkCommand)
         event.registerServerCommand(AuthCommand)
-        start()
+        runBlocking {
+            start()
+        }
     }
 
     @Mod.EventHandler
-    fun serverStopping(event: FMLServerStoppingEvent) {
+    fun serverStopping(event: FMLServerStoppingEvent) = runBlocking {
         stop()
     }
 
@@ -104,21 +105,23 @@ object MatterLink : IMatterLink() {
         player.sendMessage(TextComponentString(msg))
     }
 
-    override fun isOnline(username: String) = FMLCommonHandler.instance().minecraftServerInstance.onlinePlayerNames.contains(username)
+    override fun isOnline(username: String) =
+        FMLCommonHandler.instance().minecraftServerInstance.onlinePlayerNames.contains(username)
 
-    private fun playerByProfile(gameProfile: GameProfile): EntityPlayerMP? = FMLCommonHandler.instance().minecraftServerInstance.playerList.getPlayerByUUID(gameProfile.id)
+    private fun playerByProfile(gameProfile: GameProfile): EntityPlayerMP? =
+        FMLCommonHandler.instance().minecraftServerInstance.playerList.getPlayerByUUID(gameProfile.id)
 
     private fun profileByUUID(uuid: UUID): GameProfile? = try {
         FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.getProfileByUUID(uuid)
     } catch (e: IllegalArgumentException) {
-        warn("cannot find profile by uuid $uuid")
+        logger.warn("cannot find profile by uuid $uuid")
         null
     }
 
     private fun profileByName(username: String): GameProfile? = try {
         FMLCommonHandler.instance().minecraftServerInstance.playerProfileCache.getGameProfileForUsername(username)
     } catch (e: IllegalArgumentException) {
-        warn("cannot find profile by username $username")
+        logger.warn("cannot find profile by username $username")
         null
     }
 
@@ -135,9 +138,9 @@ object MatterLink : IMatterLink() {
     override fun uuidToName(uuid: UUID): String? = profileByUUID(uuid)?.name
 
     override fun commandSenderFor(
-            user: String,
-            env: IBridgeCommand.CommandEnvironment,
-            op: Boolean
+        user: String,
+        env: IBridgeCommand.CommandEnvironment,
+        op: Boolean
     ) = MatterLinkCommandSender(user, env, op)
 
     override val mcVersion: String = MCVERSION

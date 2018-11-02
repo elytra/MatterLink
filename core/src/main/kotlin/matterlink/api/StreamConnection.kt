@@ -2,7 +2,6 @@ package matterlink.api
 
 import matterlink.Logger
 import java.io.IOException
-import java.io.InputStream
 import java.net.ConnectException
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
@@ -22,7 +21,7 @@ class StreamConnection(private val rcvQueue: ConcurrentLinkedQueue<ApiMessage>) 
     private var urlConnection: HttpURLConnection? = null
     private val onSuccessCallbacks = LinkedList<(Boolean) -> Unit>()
 
-    var logger =  object : Logger {
+    var logger = object : Logger {
         override fun info(message: String) = println("INFO: $message")
         override fun debug(message: String) = println("DEBUG: $message")
         override fun error(message: String) = println("ERROR: $message")
@@ -88,7 +87,7 @@ class StreamConnection(private val rcvQueue: ConcurrentLinkedQueue<ApiMessage>) 
                         }
                         val chars = input.read(buf)
 
-                        logger.trace( String.format("read %d chars", chars))
+                        logger.trace(String.format("read %d chars", chars))
                         if (chars > 0) {
                             val added = String(Arrays.copyOfRange(buf, 0, chars))
                             logger.debug("json: $added")

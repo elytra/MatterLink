@@ -5,7 +5,7 @@ import matterlink.config.IdentitiesConfig
 import matterlink.config.cfg
 import matterlink.instance
 import matterlink.randomString
-import java.util.*
+import java.util.UUID
 
 object AuthBridgeCommand : IBridgeCommand() {
     val syntax = "Syntax: auth [username]"
@@ -13,7 +13,7 @@ object AuthBridgeCommand : IBridgeCommand() {
     override val permLevel: Double
         get() = cfg.command.defaultPermUnauthenticated
 
-    override fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean {
+    override suspend fun execute(alias: String, user: String, env: CommandEnvironment, args: String): Boolean {
         if (env !is CommandEnvironment.BridgeEnv) {
             env.respond("please initiate authentication from linked external chat")
             return true
@@ -28,8 +28,10 @@ object AuthBridgeCommand : IBridgeCommand() {
 
         val argList = args.split(' ', limit = 2)
         val target = argList.getOrNull(0) ?: run {
-            env.respond("no username/uuid provided\n" +
-                    syntax)
+            env.respond(
+                "no username/uuid provided\n" +
+                        syntax
+            )
 
             return true
         }
@@ -62,7 +64,16 @@ object AuthBridgeCommand : IBridgeCommand() {
         instance.wrappedSendToPlayer(targetUserName, "otherwise you may ignore this message")
 
 
-        IdentitiesConfig.authRequests.put(requestId, AuthRequest(username = targetUserName, uuid = targetUUid, nonce = nonce, platform = env.platform, userid = env.userId))
+        IdentitiesConfig.authRequests.put(
+            requestId,
+            AuthRequest(
+                username = targetUserName,
+                uuid = targetUUid,
+                nonce = nonce,
+                platform = env.platform,
+                userid = env.userId
+            )
+        )
         env.respond("please accept the authentication request ingame, do not share the code")
 
         return true

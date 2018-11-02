@@ -1,15 +1,13 @@
 package matterlink.bridge.command
 
 import matterlink.api.ApiMessage
-import matterlink.bridge.MessageHandlerInst
 import matterlink.config.CommandConfig
 import matterlink.config.IdentitiesConfig
 import matterlink.config.PermissionConfig
 import matterlink.config.cfg
-import matterlink.instance
 import matterlink.logger
-import matterlink.stripColorOut
-import java.util.*
+import java.util.HashMap
+import java.util.UUID
 
 object BridgeCommandRegistry {
 
@@ -19,7 +17,7 @@ object BridgeCommandRegistry {
      *
      * @return consume message flag
      */
-    fun handleCommand(input: ApiMessage): Boolean {
+    suspend fun handleCommand(input: ApiMessage): Boolean {
         if (!cfg.command.enable || input.text.isBlank()) return false
 
         if (input.text[0] != cfg.command.prefix || input.text.length < 2) return false
@@ -29,7 +27,13 @@ object BridgeCommandRegistry {
 
         val uuid = IdentitiesConfig.getUUID(input.account, input.userid)
 
-        val env = IBridgeCommand.CommandEnvironment.BridgeEnv(input.username, input.userid, input.account, input.gateway, uuid)
+        val env = IBridgeCommand.CommandEnvironment.BridgeEnv(
+            input.username,
+            input.userid,
+            input.account,
+            input.gateway,
+            uuid
+        )
         return commandMap[cmd[0]]?.let {
             if (!it.reachedTimeout()) {
                 logger.debug("dropped command ${it.alias}")
@@ -38,7 +42,7 @@ object BridgeCommandRegistry {
             it.preExecute() // resets the tickCounter
             if (!it.canExecute(uuid)) {
                 env.respond(
-                        text = "${input.username} is not permitted to perform command: ${cmd[0]}"
+                    text = "${input.username} is not permitted to perform command: ${cmd[0]}"
                 )
                 return false
             }
@@ -46,7 +50,7 @@ object BridgeCommandRegistry {
         } ?: false
     }
 
-    fun handleCommand(text: String, username: String, uuid: UUID): Boolean {
+    suspend fun handleCommand(text: String, username: String, uuid: UUID): Boolean {
         if (!cfg.command.enable || text.isBlank()) return false
 
         if (text[0] != cfg.command.prefix || text.length < 2) return false
@@ -64,7 +68,7 @@ object BridgeCommandRegistry {
             it.preExecute() // resets the tickCounter
             if (!it.canExecute(uuid)) {
                 env.respond(
-                        text = "$username is not permitted to perform command: ${cmd[0]}"
+                    text = "$username is not permitted to perform command: ${cmd[0]}"
                 )
                 return false
             }
@@ -98,11 +102,11 @@ object BridgeCommandRegistry {
 
     fun getCommandList(permLvl: Double): String {
         return commandMap
-                .filterValues {
-                    it.permLevel <= permLvl
-                }
-                .keys
-                .joinToString(" ")
+            .filterValues {
+                it.permLevel <= permLvl
+            }
+            .keys
+            .joinToString(" ")
     }
 
     fun reloadCommands() {

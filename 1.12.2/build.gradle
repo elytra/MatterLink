@@ -115,3 +115,7 @@ curseforge {
         }
     }
 }
+
+runServer {
+    outputs.upToDateWhen { false }
+}

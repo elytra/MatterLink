@@ -5,7 +5,7 @@ import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
 import matterlink.logger
 import matterlink.stripColorOut
-import java.util.*
+import java.util.UUID
 
 
 enum class ChatEvent {
@@ -14,31 +14,31 @@ enum class ChatEvent {
 
 object LocationHandler {
 
-    fun sendToLocations(
-            user: String = cfg.outgoing.systemUser,
-            msg: String,
-            x: Int, y: Int, z: Int,
-            dimension: Int?,
-            event: ChatEvent,
-            systemuser: Boolean = false,
-            uuid: UUID? = null,
-            cause: String
+    suspend fun sendToLocations(
+        user: String = cfg.outgoing.systemUser,
+        msg: String,
+        x: Int, y: Int, z: Int,
+        dimension: Int?,
+        event: ChatEvent,
+        systemuser: Boolean = false,
+        uuid: UUID? = null,
+        cause: String
     ): Boolean {
         val defaults = cfg.outgoingDefaults
         var handled = false
         val skips = mutableSetOf<String>()
-        logger.info("locations: ${cfg.locations.map { it.label  }}")
+        logger.info("locations: ${cfg.locations.map { it.label }}")
         for (location in cfg.locations) {
             val label = location.label
-            if(skips.contains(label)) {
+            if (skips.contains(label)) {
                 logger.info("skipping $label (contained in in $skips)")
                 continue
             }
-            if(!location.area.testForDim(dimension)) {
+            if (!location.area.testForDim(dimension)) {
                 logger.info("location: $label dropped message '$msg' from $user due to mismatched dimension")
                 continue
-        }
-            if(!location.area.testInBounds(x, y, z)) {
+            }
+            if (!location.area.testInBounds(x, y, z)) {
                 logger.info("location: $label dropped message '$msg' from $user out of coordinate bounds")
                 continue
             }
@@ -85,17 +85,17 @@ object LocationHandler {
             }
             when {
                 msg.isNotBlank() -> MessageHandlerInst.transmit(
-                        ApiMessage(
-                                username = username.stripColorOut,
-                                text = msg.stripColorOut,
-                                event = eventStr,
-                                gateway = location.gateway
-                        ).apply {
-                            avatar?.let {
-                                this.avatar = it
-                            }
-                        },
-                        cause = cause
+                    ApiMessage(
+                        username = username.stripColorOut,
+                        text = msg.stripColorOut,
+                        event = eventStr,
+                        gateway = location.gateway
+                    ).apply {
+                        avatar?.let {
+                            this.avatar = it
+                        }
+                    },
+                    cause = cause
                 )
                 else -> logger.warn("WARN: dropped blank message by '$user'")
             }
