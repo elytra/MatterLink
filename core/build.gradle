@@ -31,7 +31,9 @@ dependencies {
     shadow(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion) { transitive = false }
 
     compile(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "1.0.1")
+
     compile(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: "0.9.0")
+    shadow(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: "0.9.0") { transitive = false }
 
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: kotlinVersion
 }
@@ -47,6 +49,7 @@ shadowJar {
 
     relocate 'blue.endless', 'matterlink.repack.blue.endless'
     relocate 'com.github', 'matterlink.repack.com.github'
+    relocate 'kotlinx', 'matterlink.repack.kotlinx'
     configurations = [project.configurations.shadow]
 }
 
