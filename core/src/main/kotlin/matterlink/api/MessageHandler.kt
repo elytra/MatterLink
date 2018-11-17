@@ -21,10 +21,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.io.IOException
 import kotlinx.serialization.json.JSON
 import kotlinx.serialization.list
 import matterlink.Logger
 import java.io.Reader
+import java.net.ConnectException
+import java.net.MalformedURLException
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -40,7 +43,6 @@ open class MessageHandler : CoroutineScope {
     private var connectErrors = 0
     private var reconnectCooldown = 0L
     private var sendErrors = 0
-
 
     private var sendChannel: SendChannel<ApiMessage> = senderActor()
 
@@ -93,7 +95,6 @@ open class MessageHandler : CoroutineScope {
         }
     }
 
-
     private suspend fun clear() {
         val url = "${config.url}/api/messages"
         val (request, response, result) = url.httpGet()
@@ -102,7 +103,8 @@ open class MessageHandler : CoroutineScope {
                     headers["Authorization"] = "Bearer ${config.token}"
                 }
             }
-            .awaitStringResponse()
+//            .awaitStringResponse()
+            .responseString()
 
         when (result) {
             is Result.Success -> {
@@ -121,7 +123,6 @@ open class MessageHandler : CoroutineScope {
                 result.error.exception.printStackTrace()
             }
         }
-
     }
 
     open suspend fun sendStatusUpdate(message: String) {
