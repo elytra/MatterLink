@@ -23,14 +23,14 @@ dependencies {
     compile group: 'com.google.code.gson', name: 'gson', version: '+'
     compile group: 'com.google.guava', name: 'guava', version: '+'
 
-    compile(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "feature~chunked-SNAPSHOT")
-    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "feature~chunked-SNAPSHOT") { transitive = false }
-    compile(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "feature~chunked-SNAPSHOT")
-    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "feature~chunked-SNAPSHOT") { transitive = false }
+    compile(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "c5239e5db9")
+    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "c5239e5db9") { transitive = false }
+    compile(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "c5239e5db9")
+    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "c5239e5db9") { transitive = false }
     compile(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
     shadow(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion) { transitive = false }
 
-    compile(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "1.0.0")
+    compile(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "1.0.1")
     compile(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: "0.9.0")
 
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: kotlinVersion
