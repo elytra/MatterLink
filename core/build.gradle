@@ -23,10 +23,10 @@ dependencies {
     compile group: 'com.google.code.gson', name: 'gson', version: '+'
     compile group: 'com.google.guava', name: 'guava', version: '+'
 
-    compile(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "c5239e5db9")
-    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "c5239e5db9") { transitive = false }
-    compile(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "c5239e5db9")
-    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "c5239e5db9") { transitive = false }
+    compile(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "742c73082e")
+    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "742c73082e") { transitive = false }
+    compile(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "742c73082e")
+    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "742c73082e") { transitive = false }
     compile(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
     shadow(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion) { transitive = false }
 

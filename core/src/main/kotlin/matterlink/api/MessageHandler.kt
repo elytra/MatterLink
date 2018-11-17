@@ -1,9 +1,11 @@
 package matterlink.api
 
-import awaitStringResponse
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.ResponseDeserializable
+import com.github.kittinunf.fuel.core.extensions.cUrlString
+import com.github.kittinunf.fuel.core.extensions.jsonBody
+import com.github.kittinunf.fuel.coroutines.awaitStringResponseResult
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
@@ -21,13 +23,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.io.IOException
 import kotlinx.serialization.json.JSON
 import kotlinx.serialization.list
 import matterlink.Logger
 import java.io.Reader
-import java.net.ConnectException
-import java.net.MalformedURLException
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -103,8 +102,7 @@ open class MessageHandler : CoroutineScope {
                     headers["Authorization"] = "Bearer ${config.token}"
                 }
             }
-//            .awaitStringResponse()
-            .responseString()
+            .awaitStringResponseResult()
 
         when (result) {
             is Result.Success -> {
