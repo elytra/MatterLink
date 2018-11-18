@@ -82,7 +82,7 @@ data class ApiMessage(
 
 
         fun decode(json: String): ApiMessage {
-            return JSON.parse(Companion, json)
+            return JSON.nonstrict.parse(Companion, json)
         }
     }
 }
