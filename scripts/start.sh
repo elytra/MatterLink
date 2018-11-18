@@ -7,6 +7,10 @@ FORGE_FILE=${FORGE_FILE#"The server installed successfully, you should now be ab
 echo FORGE_FILE
 
 cp -f "$FORGE_FILE" forge.jar
+if [ ! $? -eq 0 ]; then
+    echo "Error installing forge"
+    exit 1
+fi
 
 echo "installed forge"
 

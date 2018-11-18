@@ -7,6 +7,10 @@ rm -rf "$RUN/mods"
 mkdir -p "$RUN/mods"
 
 "$PWD/gradlew" :1.9.4:clean :1.9.4:build && cp -f 1.9.4/build/libs/MatterLink-1.9.4-*-dev.jar "$RUN/mods"
+if [ ! $? -eq 0 ]; then
+    echo "Error compiling matterlink"
+    exit 1
+fi
 
 cd "$RUN"
 

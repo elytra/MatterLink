@@ -7,11 +7,15 @@ rm -rf "$RUN/mods"
 mkdir -p "$RUN/mods"
 
 "$PWD/gradlew" :1.12.2:clean :1.12.2:build && cp -f 1.12.2/build/libs/MatterLink-1.12.2-*-dev.jar "$RUN/mods"
+if [ ! $? -eq 0 ]; then
+    echo "Error compiling matterlink"
+    exit 1
+fi
 
 cd "$RUN"
 
-curl -o forge-installer.jar "https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.12.2-14.23.4.2705/forge-1.12.2-14.23.4.2705-installer.jar"
-curl -L -o "$RUN/mods/Forgelin.jar" "https://minecraft.curseforge.com/projects/shadowfacts-forgelin/files/2573311/download"
+curl -o forge-installer.jar "https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.12.2-14.23.5.2768/forge-1.12.2-14.23.5.2768-installer.jar"
+curl -L -o "$RUN/mods/Forgelin.jar" "https://minecraft.curseforge.com/projects/shadowfacts-forgelin/files/2633578/download"
 
 $DIR/scripts/start.sh
 
