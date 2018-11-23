@@ -194,8 +194,7 @@ data class BaseConfig(val rootDir: File) {
     data class AvatarOptions(
         val enable: Boolean = true,
         val urlTemplate: String = "https://visage.surgeplay.com/head/512/{uuid}",
-        // https://www.freepik.com/free-icon/right-arrow-angle-and-horizontal-down-line-code-signs_732795.htm
-        val systemUserAvatar: String = "https://image.freepik.com/free-icon/right-arrow-angle-and-horizontal-down-line-code-signs_318-53994.jpg"
+        val systemUserAvatar: String = ""
     )
 
     data class JoinPartOptions(
@@ -625,20 +624,32 @@ data class BaseConfig(val rootDir: File) {
             }
             .registerSerializer { locationSettings: SettingsOutgoing, marshaller: Marshaller ->
                 val jsonObject = JsonObject()
+                locationSettings.plain?.let {
+                    jsonObject["plain"] = marshaller.serialize(it)
+                }
+                locationSettings.action?.let {
+                    jsonObject["action"] = marshaller.serialize(it)
+                }
+                locationSettings.join?.let {
+                    jsonObject["join"] = marshaller.serialize(it)
+                }
+                locationSettings.leave?.let {
+                    jsonObject["leave"] = marshaller.serialize(it)
+                }
                 locationSettings.advancement?.let {
-                    jsonObject["advancements"] = marshaller.serialize(it)
+                    jsonObject["advancement"] = marshaller.serialize(it)
                 }
                 locationSettings.death?.let {
                     jsonObject["death"] = marshaller.serialize(it)
                 }
-                locationSettings.join?.let {
-                    jsonObject["joins"] = marshaller.serialize(it)
-                }
-                locationSettings.leave?.let {
-                    jsonObject["leaves"] = marshaller.serialize(it)
-                }
                 locationSettings.broadcast?.let {
-                    jsonObject["say"] = marshaller.serialize(it)
+                    jsonObject["broadcast"] = marshaller.serialize(it)
+                }
+                locationSettings.status?.let {
+                    jsonObject["status"] = marshaller.serialize(it)
+                }
+                locationSettings.skip.let {
+                    jsonObject["skip"] = marshaller.serialize(it)
                 }
                 jsonObject
             }

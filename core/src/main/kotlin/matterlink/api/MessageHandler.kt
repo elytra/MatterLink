@@ -12,7 +12,9 @@ import com.github.kittinunf.result.Result
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
@@ -27,6 +29,7 @@ import kotlinx.serialization.json.JSON
 import kotlinx.serialization.list
 import matterlink.Logger
 import java.io.Reader
+import java.net.ConnectException
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -46,6 +49,7 @@ open class MessageHandler : CoroutineScope {
     private var sendChannel: SendChannel<ApiMessage> = senderActor()
 
     private val messageStream = Channel<ApiMessage>(Channel.UNLIMITED)
+    @UseExperimental(ExperimentalCoroutinesApi::class)
     var broadcast: BroadcastChannel<ApiMessage> = broadcast {
         while (true) {
             val msg = messageStream.receive()
@@ -135,7 +139,7 @@ open class MessageHandler : CoroutineScope {
             logger.error("missing gateway on message: $msg")
             return
         }
-        logger.debug("Transmitting: $msg")
+        logger.info("Transmitting: $msg")
         sendChannel.send(msg)
 //        }
     }
@@ -144,34 +148,40 @@ open class MessageHandler : CoroutineScope {
     fun checkConnection() {
     }
 
+    @UseExperimental(ObsoleteCoroutinesApi::class)
     private fun CoroutineScope.senderActor() = actor<ApiMessage>(context = Dispatchers.IO) {
         consumeEach {
-            logger.debug("sending $it")
-            val url = "${config.url}/api/message"
-            val (request, response, result) = url.httpPost()
-                .apply {
-                    if (config.token.isNotEmpty()) {
-                        headers["Authorization"] = "Bearer ${config.token}"
+            try {
+                logger.debug("sending $it")
+                val url = "${config.url}/api/message"
+                val (request, response, result) = url.httpPost()
+                    .apply {
+                        if (config.token.isNotEmpty()) {
+                            headers["Authorization"] = "Bearer ${config.token}"
+                        }
+                    }
+                    .jsonBody(it.encode())
+                    .responseString()
+                when (result) {
+                    is Result.Success -> {
+                        logger.info("sent $it")
+                        sendErrors = 0
+                    }
+                    is Result.Failure -> {
+                        sendErrors++
+                        logger.error("failed to deliver: $it")
+                        logger.error("url: $url")
+                        logger.error("cUrl: ${request.cUrlString()}")
+                        logger.error("response: $response")
+                        logger.error(result.error.exception.localizedMessage)
+                        result.error.exception.printStackTrace()
+//                    close()
+                        throw result.error.exception
                     }
                 }
-                .jsonBody(it.encode())
-                .responseString()
-            when (result) {
-                is Result.Success -> {
-                    logger.info("sent $it")
-                    sendErrors = 0
-                }
-                is Result.Failure -> {
-                    sendErrors++
-                    logger.error("failed to deliver: $it")
-                    logger.error("url: $url")
-                    logger.error("cUrl: ${request.cUrlString()}")
-                    logger.error("response: $response")
-                    logger.error(result.error.exception.localizedMessage)
-                    result.error.exception.printStackTrace()
-//                    close()
-                    throw result.error.exception
-                }
+            } catch (connectError: ConnectException) {
+                connectError.printStackTrace()
+                sendErrors++
             }
         }
     }

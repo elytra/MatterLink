@@ -28,7 +28,8 @@ object ChatProcessor {
                 msg = message,
                 x = x, y = y, z = z, dimension = dimension,
                 event = event,
-                cause = "Message from $user"
+                cause = "Message from $user",
+                uuid = uuid
             )
 
 

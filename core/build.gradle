@@ -23,18 +23,18 @@ dependencies {
     compile group: 'com.google.code.gson', name: 'gson', version: '+'
     compile group: 'com.google.guava', name: 'guava', version: '+'
 
-    compile(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "742c73082e")
-    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "742c73082e") { transitive = false }
-    compile(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "742c73082e")
-    shadow(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "742c73082e") { transitive = false }
+    compile(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion)
+    shadow(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion) { transitive = false }
+    compile(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion)
+    shadow(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion) { transitive = false }
     compile(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
     shadow(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion) { transitive = false }
 
-    compile(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "1.0.1")
-    shadow(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "1.0.1") { transitive = false }
+    compile(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: coroutinesVersion)
+    shadow(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: coroutinesVersion) { transitive = false }
 
-    compile(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: "0.9.0")
-    shadow(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: "0.9.0") { transitive = false }
+    compile(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: serializationVersion)
+    shadow(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: serializationVersion) { transitive = false }
 
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: kotlinVersion
 }

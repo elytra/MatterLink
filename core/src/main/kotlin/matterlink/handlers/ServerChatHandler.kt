@@ -1,5 +1,6 @@
 package matterlink.handlers
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.bridge.command.BridgeCommandRegistry
@@ -10,6 +11,7 @@ import matterlink.logger
 import java.util.UUID
 
 object ServerChatHandler {
+    @UseExperimental(ExperimentalCoroutinesApi::class)
     val rcvChannel = MessageHandlerInst.broadcast.openSubscription()
 
     /**

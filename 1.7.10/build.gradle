@@ -34,15 +34,15 @@ dependencies {
     shade (project(':Jankson')) { transitive = false }
 
     shade group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: kotlinVersion
-    shade(group: "com.github.NikkyAi.Fuel", name: "fuel", version: "feature~chunked-SNAPSHOT")
-    shade(group: "com.github.NikkyAi.Fuel", name: "fuel-coroutines", version: "feature~chunked-SNAPSHOT")
+
+    shade(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: coroutinesVersion)
+    shade(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: serializationVersion)
+
+    shade(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion)
+    shade(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion)
     shade(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
-
-    shade(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "1.0.0")
-    shade(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: "0.9.0")
-
-    shade group: 'com.github.kittinunf.fuel', name: 'fuel', version: fuelVersion
-    shade group: 'com.github.kittinunf.result', name: 'result', version: resultVersion
+//    shade group: 'com.github.kittinunf.fuel', name: 'fuel', version: fuelVersion
+//    shade group: 'com.github.kittinunf.result', name: 'result', version: resultVersion
 }
 
 

@@ -55,6 +55,9 @@ object LocationHandler {
 
             if (!matchesEvent) {
                 logger.info("location: $label dropped message '$msg' from user: '$user', event not enabled")
+                logger.info("event: $event")
+                logger.info("location.outgoing: ${location.outgoing}")
+                logger.info("defaults: $defaults")
                 continue
             }
 
