@@ -139,7 +139,7 @@ open class MessageHandler : CoroutineScope {
             logger.error("missing gateway on message: $msg")
             return
         }
-        logger.info("Transmitting: $msg")
+        logger.debug("Transmitting: $msg")
         sendChannel.send(msg)
 //        }
     }
