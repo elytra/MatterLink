@@ -110,7 +110,7 @@ open class MessageHandler : CoroutineScope {
 
         when (result) {
             is Result.Success -> {
-                val messages: List<ApiMessage> = JSON.parse(ApiMessage.list, result.value)
+                val messages: List<ApiMessage> = JSON.nonstrict.parse(ApiMessage.list, result.value)
                 messages.forEach { msg ->
                     logger.trace("skipping $msg")
                 }

@@ -29,13 +29,17 @@ data class ApiMessage(
 ) {
 
     fun encode(): String {
-        return JSON.stringify(Companion, this)
+        return JSON.nonstrict.stringify(ApiMessage.serializer(), this)
     }
+
 
     override fun toString(): String = encode()
 
     @Serializer(forClass = ApiMessage::class)
     companion object {
+        val USER_ACTION = "user_action"
+        val JOIN_LEAVE = "join_leave"
+
         override fun serialize(output: Encoder, obj: ApiMessage) {
             val elemOutput = output.beginStructure(descriptor)
             obj.username.takeIf { it.isNotEmpty() }?.let {
@@ -77,12 +81,8 @@ data class ApiMessage(
             elemOutput.endStructure(descriptor)
         }
 
-        val USER_ACTION = "user_action"
-        val JOIN_LEAVE = "join_leave"
-
-
-        fun decode(json: String): ApiMessage {
-            return JSON.nonstrict.parse(Companion, json)
+        fun decode(input: String): ApiMessage {
+            return JSON.nonstrict.parse(ApiMessage.serializer(), input)
         }
     }
 }
