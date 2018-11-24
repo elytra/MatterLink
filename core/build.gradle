@@ -31,7 +31,7 @@ dependencies {
     shadow(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion) { transitive = false }
 
     compile(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: coroutinesVersion)
-    shadow(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: coroutinesVersion) { transitive = false }
+//    shadow(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: coroutinesVersion) { transitive = false }
 
     compile(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: serializationVersion)
     shadow(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: serializationVersion) { transitive = false }
