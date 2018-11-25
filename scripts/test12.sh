@@ -15,7 +15,7 @@ fi
 cd "$RUN"
 
 curl -o forge-installer.jar "https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.12.2-14.23.5.2768/forge-1.12.2-14.23.5.2768-installer.jar"
-curl -L -o "$RUN/mods/Forgelin.jar" "https://minecraft.curseforge.com/projects/shadowfacts-forgelin/files/2633578/download"
+curl -L -o "$RUN/mods/Forgelin.jar" "https://minecraft.curseforge.com/projects/shadowfacts-forgelin/files/2640952/download"
 
 $DIR/scripts/start.sh
 

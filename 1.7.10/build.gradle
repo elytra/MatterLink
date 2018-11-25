@@ -30,7 +30,7 @@ configurations {
 }
 
 dependencies {
-    shade (project(':core')) { transitive = false }
+    shade (project(':core')) { transitive = true }
     shade (project(':Jankson')) { transitive = false }
 
     shade group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: kotlinVersion
@@ -41,6 +41,7 @@ dependencies {
     shade(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion)
     shade(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion)
     shade(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
+
 //    shade group: 'com.github.kittinunf.fuel', name: 'fuel', version: fuelVersion
 //    shade group: 'com.github.kittinunf.result', name: 'result', version: resultVersion
 }

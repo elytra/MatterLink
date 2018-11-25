@@ -24,13 +24,13 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '+'
 
     compile(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion)
-    shadow(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion) { transitive = false }
+    shadow(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion) { transitive = true }
     compile(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion)
-    shadow(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion) { transitive = false }
-    compile(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
-    shadow(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion) { transitive = false }
+    shadow(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion) { transitive = true }
+//    compile(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
+//    shadow(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion) { transitive = false }
 
-    compile(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: coroutinesVersion)
+//    compile(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: coroutinesVersion)
 //    shadow(group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: coroutinesVersion) { transitive = false }
 
     compile(group: "org.jetbrains.kotlinx", name: "kotlinx-serialization-runtime", version: serializationVersion)
