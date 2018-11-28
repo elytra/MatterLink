@@ -45,10 +45,10 @@ object CommandCoreML {
                     return "no code passed"
                 }
                 if (request.nonce != nonce) {
-                    return "nonce in request does not match"
+                    return "nonce in request does not match with $nonce"
                 }
-                val powerLevelArg = args.getOrNull(2)?.toDoubleOrNull()
-                val powerLevel = powerLevelArg ?: run { return "permLevel cannot be parsed (args: $args)" }
+                val powerLevelArg = args.getOrNull(3)?.toDoubleOrNull()
+                val powerLevel = powerLevelArg ?: run { return "permLevel cannot be parsed: ${args.getOrNull(3)}" }
                 ?: request.powerlevel
                 ?: return "no permLevel provided"
                 PermissionConfig.add(request.uuid, powerLevel, "${request.user} Authorized by $user")
