@@ -27,19 +27,19 @@ object LocationHandler {
         val defaults = cfg.outgoingDefaults
         var handled = false
         val skips = mutableSetOf<String>()
-        logger.info("locations: ${cfg.locations.map { it.label }}")
+        logger.debug("locations: ${cfg.locations.map { it.label }}")
         for (location in cfg.locations) {
             val label = location.label
             if (skips.contains(label)) {
-                logger.info("skipping $label (contained in in $skips)")
+                logger.debug("skipping $label (contained in in $skips)")
                 continue
             }
             if (!location.area.testForDim(dimension)) {
-                logger.info("location: $label dropped message '$msg' from $user due to mismatched dimension")
+                logger.debug("location: $label dropped message '$msg' from $user due to mismatched dimension")
                 continue
             }
             if (!location.area.testInBounds(x, y, z)) {
-                logger.info("location: $label dropped message '$msg' from $user out of coordinate bounds")
+                logger.debug("location: $label dropped message '$msg' from $user out of coordinate bounds")
                 continue
             }
             val matchesEvent = when (event) {
@@ -54,10 +54,10 @@ object LocationHandler {
             }
 
             if (!matchesEvent) {
-                logger.info("location: $label dropped message '$msg' from user: '$user', event not enabled")
-                logger.info("event: $event")
-                logger.info("location.outgoing: ${location.outgoing}")
-                logger.info("defaults: $defaults")
+                logger.debug("location: $label dropped message '$msg' from user: '$user', event not enabled")
+                logger.debug("event: $event")
+                logger.debug("location.outgoing: ${location.outgoing}")
+                logger.debug("defaults: $defaults")
                 continue
             }
 
@@ -102,7 +102,7 @@ object LocationHandler {
                 )
                 else -> logger.warn("WARN: dropped blank message by '$user'")
             }
-            logger.info("sent message through location: $label, cause: $cause")
+            logger.debug("sent message through location: $label, cause: $cause")
             handled = true
         }
         return handled
