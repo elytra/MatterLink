@@ -42,7 +42,7 @@ object UpdateChecker : CoroutineScope {
                 when {
                     number > instance.buildNumber -> {
                         logger.warn("Mod out of date! New build $number available at $url")
-                        val difference = number - build.number
+                        val difference = number - instance.buildNumber
                         LocationHandler.sendToLocations(
                             msg = "MatterLink out of date! You are $difference builds behind! Please download new version from $url",
                             x = 0, y = 0, z = 0, dimension = null,
