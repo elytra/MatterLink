@@ -164,7 +164,7 @@ open class MessageHandler : CoroutineScope {
                     .responseString()
                 when (result) {
                     is Result.Success -> {
-                        logger.info("sent $it")
+                        logger.debug("sent $it")
                         sendErrors = 0
                     }
                     is Result.Failure -> {
@@ -206,7 +206,7 @@ open class MessageHandler : CoroutineScope {
                             reader.useLines { lines ->
                                 lines.forEach { line ->
                                     val msg = ApiMessage.decode(line)
-                                    logger.info("received: $msg")
+                                    logger.debug("received: $msg")
                                     if (msg.event != "api_connect") {
                                         messageStream.send(msg)
                                     }
