@@ -48,7 +48,7 @@ object CommandCoreML {
                     return "nonce in request does not match"
                 }
                 val powerLevelArg = args.getOrNull(2)?.toDoubleOrNull()
-                val powerLevel = powerLevelArg ?: run { return "permLevel cannot be parsed" }
+                val powerLevel = powerLevelArg ?: run { return "permLevel cannot be parsed (args: $args)" }
                 ?: request.powerlevel
                 ?: return "no permLevel provided"
                 PermissionConfig.add(request.uuid, powerLevel, "${request.user} Authorized by $user")
