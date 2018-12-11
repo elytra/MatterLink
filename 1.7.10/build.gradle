@@ -40,6 +40,7 @@ dependencies {
 
     shade(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion)
     shade(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion)
+    shade(group: "com.github.kittinunf.Fuel", name: "fuel-kotlinx-serialization", version: fuelVersion)
     shade(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
 
 //    shade group: 'com.github.kittinunf.fuel', name: 'fuel', version: fuelVersion

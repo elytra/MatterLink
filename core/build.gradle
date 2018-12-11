@@ -20,13 +20,14 @@ dependencies {
     compile project(":Jankson")
     shadow(project(':Jankson')) { transitive = false }
 
-    compile group: 'com.google.code.gson', name: 'gson', version: '+'
     compile group: 'com.google.guava', name: 'guava', version: '+'
 
     compile(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion)
     shadow(group: "com.github.kittinunf.Fuel", name: "fuel", version: fuelVersion) { transitive = true }
     compile(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion)
     shadow(group: "com.github.kittinunf.Fuel", name: "fuel-coroutines", version: fuelVersion) { transitive = true }
+    compile(group: "com.github.kittinunf.Fuel", name: "fuel-kotlinx-serialization", version: fuelVersion)
+    shadow(group: "com.github.kittinunf.Fuel", name: "fuel-kotlinx-serialization", version: fuelVersion) { transitive = true }
 //    compile(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion)
 //    shadow(group: 'com.github.kittinunf.result', name: 'result', version: resultVersion) { transitive = false }
 

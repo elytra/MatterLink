@@ -1,9 +1,11 @@
 package matterlink.update
 
-import com.google.gson.GsonBuilder
+import com.github.kittinunf.fuel.core.extensions.cUrlString
+import com.github.kittinunf.fuel.httpGet
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.serialization.list
 import matterlink.api.ApiMessage
 import matterlink.bridge.MessageHandlerInst
 import matterlink.config.cfg
@@ -12,9 +14,9 @@ import matterlink.handlers.LocationHandler
 import matterlink.instance
 import matterlink.jenkins.JenkinsServer
 import matterlink.logger
-import java.io.BufferedReader
-import java.net.HttpURLConnection
-import java.net.URL
+import com.github.kittinunf.fuel.serialization.kotlinxDeserializerOf
+import com.github.kittinunf.result.Result
+import kotlinx.serialization.json.JSON
 
 object UpdateChecker : CoroutineScope {
     override val coroutineContext = Job() + CoroutineName("UpdateChacker")
@@ -61,41 +63,30 @@ object UpdateChecker : CoroutineScope {
             return
         }
 
-        val gson = GsonBuilder()
-//                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
-            .create()
-
         logger.info("Checking for new versions...")
-
-        val url = URL("https://staging_cursemeta.dries007.net/api/v3/direct/addon/287323/files")
-        val con = url.openConnection() as HttpURLConnection
-
-        with(instance) {
+        val (request, response, result) = with(instance) {
             val useragent =
                 "MatterLink/$modVersion MinecraftForge/$mcVersion-$forgeVersion (https://github.com/elytra/MatterLink)"
             logger.debug("setting User-Agent: '$useragent'")
-            con.setRequestProperty("User-Agent", useragent)
+
+            "https://curse.nikky.moe/api/addon/287323/files".httpGet()
+                .header("User-Agent" to useragent)
+                .responseObject(kotlinxDeserializerOf(loader = CurseFile.serializer().list, json = JSON.nonstrict))
         }
 
-        con.connect()
-
-        val apiUpdateList = if (200 == con.responseCode) { //HTTP 200 OK
-            val buffer: BufferedReader = con.inputStream.bufferedReader()
-
-            //put all of the buffer content onto the string
-            val content = buffer.readText()
-            logger.trace("updateData: $content")
-
-            gson.fromJson(content, Array<CurseFile>::class.java)
-                .filter {
-                    it.fileStatus == "SemiNormal" && it.gameVersion.contains(instance.mcVersion)
-                }
-                .sortedByDescending { it.fileName.substringAfterLast(" ") }
-
-        } else {
-            logger.error("Could not check for updates!")
-            return
+        val apiUpdateList = when(result) {
+            is Result.Success -> {
+                result.value
+            }
+            is Result.Failure -> {
+                logger.error("Could not check for updates!")
+                logger.error("cUrl: ${request.cUrlString()}")
+                logger.error("request: $request")
+                logger.error("response: $response")
+                return
+            }
         }
+            .filter { it.fileStatus == "SemiNormal" && it.gameVersion.contains(instance.mcVersion) }
 
         val modVersionChunks = instance.modVersion
             .substringBefore("-dev")
@@ -133,13 +124,13 @@ object UpdateChecker : CoroutineScope {
 
         logger.info("Matterlink out of date! You are $count $version behind")
         possibleUpdates.forEach {
-            logger.info("version: ${it.fileName} download: ${it.downloadURL}")
+            logger.info("version: ${it.fileName} download: ${it.downloadUrl}")
         }
 
-        logger.warn("Mod out of date! New $version available at ${latest.downloadURL}")
+        logger.warn("Mod out of date! New $version available at ${latest.downloadUrl}")
         MessageHandlerInst.transmit(
             ApiMessage(
-                text = "MatterLink out of date! You are $count $version behind! Please download new version from ${latest.downloadURL}"
+                text = "MatterLink out of date! You are $count $version behind! Please download new version from ${latest.downloadUrl}"
             )
         )
     }

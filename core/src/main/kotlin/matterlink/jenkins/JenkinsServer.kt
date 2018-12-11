@@ -2,8 +2,9 @@ package matterlink.jenkins
 
 
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.serialization.kotlinxDeserializerOf
 import com.github.kittinunf.result.Result
-import com.google.gson.Gson
+import kotlinx.serialization.json.JSON
 import matterlink.logger
 
 /**
@@ -21,20 +22,16 @@ class JenkinsServer(val url: String) {
         val (_, _, result) = requestURL
             .httpGet()
             .header("User-Agent" to userAgent)
-            .responseString()
+            .responseObject(kotlinxDeserializerOf(loader = Job.serializer(), json = JSON.nonstrict))
         return when (result) {
             is Result.Success -> {
-                gson.fromJson(result.value, Job::class.java)
+                result.value
             }
             is Result.Failure -> {
                 logger.error(result.error.toString())
                 null
             }
         }
-    }
-
-    companion object {
-        val gson = Gson()
     }
 
 }

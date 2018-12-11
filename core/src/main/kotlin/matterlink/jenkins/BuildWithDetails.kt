@@ -1,12 +1,12 @@
 package matterlink.jenkins
 
+import kotlinx.serialization.Serializable
 import java.util.Date
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@Serializable
 data class BuildWithDetails(
     val number: Int,
     val url: String,
     val artifacts: List<Artifact>,
-//        @JsonFormat(shape=JsonFormat.Shape.NUMBER, pattern="s")
     val timestamp: Date
 )
